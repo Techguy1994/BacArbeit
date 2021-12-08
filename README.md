@@ -1,2 +1,2 @@
 # BacArbeit
-2 Folder inside, one for tflite_intperter and one for tflite_pyarmnn
+scripts for tflite_intepreter and models are in this repository
