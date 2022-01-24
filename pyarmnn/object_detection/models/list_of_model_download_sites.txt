@@ -1,0 +1,4 @@
+https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1
+https://owncloud.tuwien.ac.at/index.php/s/hGZoJyVcKgkhvIQ?path=%2Fyolov3%2Fyolov3-tiny
+http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
+https://tfhub.dev/neso613/lite-model/yolo-v5-tflite/tflite_model/1
