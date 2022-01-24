@@ -14,7 +14,7 @@ With the Ethernet Connection (be aware the default language is english)
 ```bash
   sudo apt update
   sudo apt upgrade
-  sudo apt install Network-Manager
+  sudo apt install network-manager
 ```
 
 With the Network-Manger installed write
