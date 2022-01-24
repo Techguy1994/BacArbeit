@@ -61,5 +61,5 @@ sudo apt-get install -y python3-pyarmnn libarmnn-cpuacc-backend${ARMNN_MAJOR_VER
 python3 -c "import pyarmnn as ann;print(ann.GetVersion())" 
  ```
  
-If the last command return a version number. Then pyarmnn has been successfully installed.
+If the last command return a version number, then pyarmnn has been successfully installed.
 Depending on the script there might be python packages which are missing from the OS. These can be installed normally as with other Ubuntu versions.
