@@ -1,9 +1,9 @@
-import PIL
-from PIL import Image
+#import PIL
+#from PIL import Image
 import pyarmnn as ann
 import numpy as np
 import argparse
-import imageio
+#import imageio
 import time
 import os
 import csv
