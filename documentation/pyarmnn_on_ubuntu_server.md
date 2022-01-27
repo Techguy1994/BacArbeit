@@ -15,7 +15,7 @@ With the Ethernet Connection (be aware the default language is english)
   sudo apt update
   sudo apt upgrade
   sudo apt install network-manager
-  sudo apt install network-tools
+  sudo apt install net-tools
 ```
 
 With the Network-Manger installed write
