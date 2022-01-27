@@ -17,6 +17,20 @@ login: ubuntu
 password: ubuntu
 ```
 
+After first boot up some packages are installed in the background, this usually takes 20-30 minutes. This is the time to wait as no changes are possible.
+
+A first optional task is to change the keyboard layout from english to german.
+
+Soruce: https://www.manthanhd.com/2013/09/27/changing-keyboard-layout-in-ubuntu-server-linux-how-to/
+
+```bash
+sudo dpkg-reconfigure keyboard-configuration
+```
+
+![grafik](https://user-images.githubusercontent.com/31360730/151374375-cc478d24-8082-46b0-a49b-714310037b4b.png)
+
+
+
 With the Ethernet Connection (be aware the default language is english) 
 ```bash
   sudo apt update
