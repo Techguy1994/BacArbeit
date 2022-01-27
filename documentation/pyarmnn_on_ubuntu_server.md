@@ -5,6 +5,7 @@ keyboard interruption
 path in argparse
 keyboard change to german
 and setup wifi without ethernet
+tflite_runtime adding to the script
 
 At the moment Ubuntu 20.04.3 LTS version is the latest ubuntu server version with LTS support and pyarmnn has been tested on in this document. 
 
