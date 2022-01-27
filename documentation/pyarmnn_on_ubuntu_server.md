@@ -21,13 +21,22 @@ After first boot up some packages are installed in the background, this usually 
 
 A first optional task is to change the keyboard layout from english to german.
 
-Soruce: https://www.manthanhd.com/2013/09/27/changing-keyboard-layout-in-ubuntu-server-linux-how-to/
+Source: https://www.manthanhd.com/2013/09/27/changing-keyboard-layout-in-ubuntu-server-linux-how-to/
 
 ```bash
 sudo dpkg-reconfigure keyboard-configuration
 ```
 
 ![grafik](https://user-images.githubusercontent.com/31360730/151374375-cc478d24-8082-46b0-a49b-714310037b4b.png)
+
+Press Enter on the keyboard to accept and get to the next page
+
+![grafik](https://user-images.githubusercontent.com/31360730/151375061-47135d9d-0fac-4f9b-9107-3ec84a362d04.png)
+
+then change the required language. The next pages are not required for the language settings.
+
+
+
 
 
 
