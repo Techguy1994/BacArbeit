@@ -1,11 +1,9 @@
 # Download and installing pyarmnn/tflite package on the raspberry pi (ubntu server version)
 
 ToDO: 
-keyboard interruption
 path in argparse
-keyboard change to german
-and setup wifi without ethernet
-tflite_runtime adding to the script
+add 3rd method of Wifi Connection
+https://bytesofgigabytes.com/raspberrypi/connect-to-wifi-from-terminal-raspberry-pi/
 
 At the moment Ubuntu 20.04.3 LTS version is the latest ubuntu server version with LTS support and pyarmnn has been tested on in this document. 
 
