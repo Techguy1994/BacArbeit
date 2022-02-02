@@ -1,5 +1,12 @@
 # Download and installing pyarmnn package on the raspberry pi (ubntu server version)
 
+ToDO: 
+keyboard interruption
+path in argparse
+keyboard change to german
+and setup wifi without ethernet
+tflite_runtime adding to the script
+
 At the moment Ubuntu 20.04.3 LTS version is the latest ubuntu server version with LTS support and pyarmnn has been tested on in this document. 
 
 With this version installed on a microSD card and put into the raspberry pi 4 the first task is to connect to the internet via the Ethernet as the Network-Manager is not installed on ubuntu server.
@@ -10,12 +17,35 @@ login: ubuntu
 password: ubuntu
 ```
 
+After first boot up some packages are installed in the background, this usually takes 20-30 minutes. This is the time to wait as no changes are possible.
+
+A first optional task is to change the keyboard layout from english to german.
+
+Source: https://www.manthanhd.com/2013/09/27/changing-keyboard-layout-in-ubuntu-server-linux-how-to/
+
+```bash
+sudo dpkg-reconfigure keyboard-configuration
+```
+
+![grafik](https://user-images.githubusercontent.com/31360730/151374375-cc478d24-8082-46b0-a49b-714310037b4b.png)
+
+Press Enter on the keyboard to accept and get to the next page
+
+![grafik](https://user-images.githubusercontent.com/31360730/151375061-47135d9d-0fac-4f9b-9107-3ec84a362d04.png)
+
+then change the required language. The next pages are not required for the language settings.
+
+
+
+
+
+
 With the Ethernet Connection (be aware the default language is english) 
 ```bash
   sudo apt update
   sudo apt upgrade
   sudo apt install network-manager
-  sudo apt install network-tools
+  sudo apt install net-tools
 ```
 
 With the Network-Manger installed write
