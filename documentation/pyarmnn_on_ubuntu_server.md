@@ -1,4 +1,4 @@
-# Download and installing pyarmnn package on the raspberry pi (ubntu server version)
+# Download and installing pyarmnn/tflite package on the raspberry pi (ubntu server version)
 
 ToDO: 
 keyboard interruption
