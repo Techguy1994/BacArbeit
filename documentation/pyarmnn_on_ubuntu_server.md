@@ -178,3 +178,15 @@ python3 -c "import pyarmnn as ann;print(ann.GetVersion())"
  
 If the last command return a version number, then pyarmnn has been successfully installed.
 Depending on the script there might be python packages which are missing from the OS. These can be installed normally as with other Ubuntu versions.
+
+# Installing tflite_runtime for the Raspberry Pi
+
+Before installing the tflite_runtime packages, Ubuntu Server needs to have some basic packages installed. With these commands you can install them.
+
+ ```bash
+sudo apt install python3.8-venv python3-pip
+pip3 install --upgrade pip setuptools
+```
+
+After that refer to this guide for TFLite installation https://github.com/embedded-machine-learning/scripts-and-guides/blob/main/guides/setup_tflite.md
+
