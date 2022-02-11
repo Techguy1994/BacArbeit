@@ -3,6 +3,8 @@ import numpy as np
 import os
 import csv
 
+from PIL import Image
+
 print(f"Working with ARMNN {ann.ARMNN_VERSION}")
 
 def load_labels(path):
@@ -147,10 +149,17 @@ def inf_pyarmnn(model_path, iterations=50):
 
         print()
         print("Results")
+        print()
+        print(type(results[0]))
+        print(results[0].shape)
+        print()
         for result in results:
             print(result)
 
         print("End")
+        print()
+
+        #img = Image.fromarray(results[0])
 
 
     # Profiler Data 
