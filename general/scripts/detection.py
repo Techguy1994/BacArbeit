@@ -33,10 +33,10 @@ def load_labels(path):
 
 def load_image(height, width, image_path):
     img = cv2.imread(image_path)
-    img = cv2.resize(img, (height, width))
-    cv2.imwrite("resized_input.jpg", img)
-    img = np.expand_dims(img, axis=0)
-    return img
+    resized_img = cv2.resize(img, (height, width))
+    cv2.imwrite("resized_input.jpg", resized_img)
+    resized_img = np.expand_dims(resized_img, axis=0)
+    return img, resized_img
 
 def write_txt_file(model_dict):
   file = open("pyarmnn_avg_time.txt", "w")
@@ -47,18 +47,13 @@ def write_txt_file(model_dict):
   file.close()
 
 
-def write_to_csv_file(inf_times, results, label_list ,csv_path):
+def write_to_csv_file(inf_times, results, label_list ,csv_path, pictures_list):
 
     with open(csv_path, 'w', newline='\n') as csvfile:
         infwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
         for i in range(len(inf_times)):
-            row = [f"Inf number: {i+1}", inf_times[i]]
-            print(results[i])
-            #for key,value in results[i].items():
-            #    row.append(label_list[key])
-            #   row.append(key)
-            #    row.append(value)
+            row = [pictures_list[i].split("/")[-1], inf_times[i]]
             for n in range(len(results[i][0])):
                 row.append(label_list[results[i][0][n]])
                 row.append(results[i][0][n])
@@ -142,12 +137,11 @@ def write_profiling_data(profiler, model_path, csv_path):
 
             infwriter.writerow(csv_array)
 
-def draw_rect_and_return_result(output_data, height, width, img, score_threshold, labels):
+def draw_rect_and_return_result(output_data, height, width, img, resized_img, score_threshold, labels):
 
-    print(labels)
     #print(output_data[0][0][0][0])
 
-    img = img[0,:,:]
+    resized_img = resized_img[0,:,:]
 
     key = []
     value = []
@@ -169,17 +163,68 @@ def draw_rect_and_return_result(output_data, height, width, img, score_threshold
             #result[output_data[1][0][i]] = [output_data[2][0][i]]
             key.append(output_data[1][0][i])
             value.append(output_data[2][0][i])
-            # cv2 put_TEXT function um den Text in Bild hineinschreiben 
-            print("Start")
-            img = cv2.rectangle(img, (x_min, y_min), (x_max, y_max), (0, 0, 0), 2)
-            img = cv2.putText(img, labels[int(output_data[1][0][i])], (x_min+2, y_max-2),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1)
-            cv2.imwrite("tst.jpg", img)
-            print("End")
+
+            resized_img = cv2.rectangle(resized_img, (x_min, y_min), (x_max, y_max), (0, 0, 0), 2)
+            resized_img = cv2.putText(resized_img, labels[int(output_data[1][0][i])], (x_min+2, y_max-2),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1)
+            out_img = cv2.resize(resized_img, (img.shape[1], img.shape[0]))
     
-    return result
+    return result, out_img
+
+def classFilter(classdata):
+    classes = []  # create a list
+    for i in range(classdata.shape[0]):         # loop through all predictions
+        classes.append(classdata[i].argmax())   # get the best classification location
+    return classes  # return classes (int)
+
+def draw_rect_and_return_yolo_result(output_data,height, width, img, resized_img, score_threshold, labels):
+    print(output_data[0])
+    output_data = output_data[0][0]               # x(1, 25200, 7) to x(25200, 7)
+    print(output_data.shape)
+    print(output_data)
+    
+    boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
+    scores = np.squeeze(output_data[..., 4:5])
+    classes = classFilter(output_data[..., 5:])
+    x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3]
+    xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]
+
+    resized_img = resized_img[0,:,:]
+    resized_img = resized_img *255
+    #cv2.imwrite("before_img.jpg", resized_img)
+    print(resized_img.shape)
+    print()
+    print(classes)
+    print(len(scores))
+    print()
+
+    status = cv2.imwrite("before_img.jpg", resized_img)
+    print(len(classes), len(scores))
+    for i in range(len(scores)):
+        if scores[i] > 0.9:
+            print(i)
+            print(scores[i])
+            print(classes[i] + 1)
+            print(labels[classes[i] + 1])
+            
+            x_min = int(max(1,(xyxy[0][i] * width)))
+            y_min = int(max(1,(xyxy[1][i] * height)))
+            x_max = int(min(height,(xyxy[2][i] * width)))
+            y_max = int(min(width,(xyxy[3][i] * height)))
+
+            
+            resized_img = cv2.rectangle(resized_img, (x_min, y_min), (x_max, y_max), (0, 0, 0), 2)
+            print(resized_img.shape)
+            status = cv2.imwrite("img.jpg", resized_img)
+            resized_img = cv2.putText(resized_img, labels[classes[i] + 1], (x_min+2, y_max-2),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1)
+            out_img = cv2.resize(resized_img, (img.shape[1], img.shape[0]))
+            status = cv2.imwrite("img2.jpg", out_img)
+            print(status)
+    
+    return None, None
+    
 
 
-def inf_tflite_runtime(model_path, pictures_list, n_iter, score_threshold, labels):
+def inf_tflite_runtime(model_path, pictures_list, n_iter, score_threshold, labels, pic_out_path):
     #source: 
     #https://www.tensorflow.org/lite/guide/inference
     #https://github.com/NXPmicro/pyarmnn-release/tree/master/python/pyarmnn/examples
@@ -206,14 +251,19 @@ def inf_tflite_runtime(model_path, pictures_list, n_iter, score_threshold, label
             #format for output_data: [Locations, classes, scores, number of Detections]
             output_data = []
             
-            img = load_image(input_shape[1], input_shape[2], pic)
+            img, resized_img = load_image(input_shape[1], input_shape[2], pic)
+            
 
             if input_type == np.uint8:
-                img = np.uint8(img)
+                resized_img = np.uint8(resized_img)
             else:
-                img = np.float32(img/np.iinfo("uint8").max)
+                cv2.imwrite("before_in1.jpg", resized_img[0,:,:])
+                resized_img = np.float32(resized_img/np.iinfo("uint8").max)
+                cv2.imwrite("before_in2.jpg", resized_img[0,:,:])
+                cv2.imwrite("before_in3.jpg", resized_img[0,:,:]*255)
+                
 
-            input_data = np.array(img, dtype=input_type)
+            input_data = np.array(resized_img, dtype=input_type)
             interpreter.set_tensor(input_details[0]['index'], input_data)
 
             beg = time()
@@ -228,12 +278,25 @@ def inf_tflite_runtime(model_path, pictures_list, n_iter, score_threshold, label
             for det in output_details:
                 output_data.append(interpreter.get_tensor(det['index']))
 
-            results.append(draw_rect_and_return_result(output_data, input_shape[1], input_shape[2], img, score_threshold, labels))
+
+            print(len(output_data))
+            print(output_data[0].shape)
+            if len(output_data) == 4:
+                result, out_image = draw_rect_and_return_result(output_data, input_shape[1], input_shape[2], img, resized_img, score_threshold, labels)
+                results.append(result)
+                out_path = os.path.join(pic_out_path, pic.split("/")[-1].split(".")[0]) + ".jpg"
+                cv2.imwrite(out_path, out_image)
+            elif len(output_data) == 1:
+                #source: https://stackoverflow.com/questions/65824714/process-output-data-from-yolov5-tflite/65953473#65953473
+                print(resized_img.shape)
+                result, out_image = draw_rect_and_return_yolo_result(output_data, input_shape[1], input_shape[2], img, resized_img, score_threshold, labels)
+                sys.exit("yolo model found")
+
             
     return inf_times, results
     
 
-def inf_pyarmnn(model_path, pictures_list, n_iter, score_threshold, inf_times_path, labels):
+def inf_pyarmnn(model_path, pictures_list, n_iter, score_threshold, inf_times_path, labels, pic_out_path):
     # LINK TO CODE: https://www.youtube.com/watch?v=HQYosuy4ABY&t=1867s
     #https://developer.arm.com/documentation/102557/latest
     #file:///C:/Users/Maroun_Desktop_PC/SynologyDrive/Bachelorarbeit/pyarmnn/pyarmnn_doc.html#pyarmnn.IOutputSlot
@@ -250,7 +313,7 @@ def inf_pyarmnn(model_path, pictures_list, n_iter, score_threshold, inf_times_pa
     preferredBackends = [ann.BackendId('CpuAcc'), ann.BackendId('CpuRef'), ann.BackendId('GpuAcc')]
     opt_network, messages = ann.Optimize(network, preferredBackends, runtime.GetDeviceSpec(), ann.OptimizerOptions())
 
-    print(f"Preferred Backends: {preferredBackends}\n {runtime.GetDeviceSpec()}\n")
+    print(f"Preferred Backends: {[back.Get() for back in preferredBackends]}\n {runtime.GetDeviceSpec()}\n")
     print(f"Optimizationon warnings: {messages}")
 
     # get input binding information for the input layer of the model
@@ -281,17 +344,22 @@ def inf_pyarmnn(model_path, pictures_list, n_iter, score_threshold, inf_times_pa
     
     for i in range(n_iter):
         for pic in pictures_list:
-            image = load_image(width, height, pic)
+            image, resized_image = load_image(width, height, pic)
 
             if ann.TensorInfo.IsQuantized(input_tensor_info):
-                image = np.uint8(image)
+                resized_image = np.uint8(resized_image)
             else:
-                image = np.float32(image/np.iinfo("uint8").max)
+                resized_image = np.float32(resized_image/np.iinfo("uint8").max)
 
-            input_tensors = ann.make_input_tensors([input_binding_info], [image])
+            input_tensors = ann.make_input_tensors([input_binding_info], [resized_image])
             runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
             output_data = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
-            results.append(draw_rect_and_return_result(output_data, width, height, image, score_threshold, labels))
+            result, out_image = draw_rect_and_return_result(output_data, width, height, image, resized_image, score_threshold, labels)
+            results.append(result)
+            out_path = os.path.join(pic_out_path, pic.split("/")[-1].split(".")[0]) + ".jpg"
+            cv2.imwrite(out_path, out_image)
+
+
 
     #Profiler Data 
     inf_times = print_profiling_data_and_return_times(profiler)
@@ -302,25 +370,27 @@ def inf_pyarmnn(model_path, pictures_list, n_iter, score_threshold, inf_times_pa
 
 if __name__ == "__main__":
 
+    general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
+
     pictures_list = []
     model_list = []
     label = []
 
     parser = argparse.ArgumentParser(description="object detection inference")
     parser.add_argument("-m", "--model_path", help="one tflite model", required=False)
-    parser.add_argument("-mf", "--model_folder_path", default="/home/ubuntu2104/pyarmnn/general/models/detection_models", help="one tflite model", required=False)
+    parser.add_argument("-mf", "--model_folder_path", default=os.path.join(general_dir, "models/detection_models"), help="one tflite model", required=False)
     parser.add_argument("-p", "--picture_path", help="one picture for inference", required=False)
-    parser.add_argument("-pf", "--picture_folder_path", default="/home/ubuntu2104/pyarmnn/general/input/detection_input", help="one picture for inference", required=False)
+    parser.add_argument("-pf", "--picture_folder_path", default=os.path.join(general_dir, "input/detection_input"), help="one picture for inference", required=False)
     parser.add_argument("-s", '--sleep', type=float, help='time to sleep between inferences in seconds', required=False)
-    parser.add_argument("-l", "--label_path", default="/home/ubuntu2104/pyarmnn/general/models/detection_models/labels/coco_labels.txt", help="label folder of the model")
+    parser.add_argument("-l", "--label_path", default=os.path.join(general_dir, "models/detection_models/labels/coco_labels.txt"), help="label folder of the model")
     #parser.add_argument("-lf", "--label_folder_path", help="label folder of the model")
     parser.add_argument("-n", '--niter', default=1, type=int, help='number of iterations', required=False)
-    parser.add_argument("-rdtf", '--report_dir_tflite', default='/home/ubuntu2104/pyarmnn/general/results/object_detection/tflite', help='Directory to save tflite_runtime reports into', required=False)
-    parser.add_argument("-rdpy", '--report_dir_pyarmnn', default='/home/ubuntu2104/pyarmnn/general/results/object_detection/pyarmnn', help='Directory to save pyarmnn reports into', required=False)
+    parser.add_argument("-rdtf", '--report_dir_tflite', default=os.path.join(general_dir, "results/object_detection/tflite"), help='Directory to save tflite_runtime reports into', required=False)
+    parser.add_argument("-rdpy", '--report_dir_pyarmnn', default=os.path.join(general_dir, "results/object_detection/pyarmnn"), help='Directory to save pyarmnn reports into', required=False)
     parser.add_argument("--pyarmnn", dest="pyarmnn", action="store_true")
     parser.add_argument("-tflite","--tflite_runtime", dest="tflite_runtime", action="store_true")
     parser.add_argument("-thres","--score_threshold", default=0.5, help="specifies the threshold for the score to be drawn and input into the result")
-    parser.add_argument("-inf", '--times_pyarmnn', default="/home/ubuntu2104/pyarmnn/general/inf_times/object_detection", help='Path where the inference data from the pyarmmn profiler is stored ', required=False)
+    parser.add_argument("-inf", '--times_pyarmnn', default=os.path.join(general_dir, "inf_times/object_detection"), help='Path where the inference data from the pyarmmn profiler is stored ', required=False)
     args = parser.parse_args()
 
     n_iter = args.niter
@@ -346,18 +416,27 @@ if __name__ == "__main__":
     if args.pyarmnn: 
         print("Pyarmnn path")
         for model in model_list:
-            inf_times, results = inf_pyarmnn(model, pictures_list, n_iter, thresh, inf_times_path, label_list)
-            model_name = str(model.split("/")[-1].split(".tflite")[0]) + ".csv"
-            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_pyarmnn, model_name) )
+            model_name = str(model.split("/")[-1].split(".tflite")[0])
+            pic_out_path = os.path.join(report_dir_pyarmnn, model_name)
+            if not os.path.isdir(pic_out_path):
+                os.mkdir(pic_out_path) 
+            
+            inf_times, results = inf_pyarmnn(model, pictures_list, n_iter, thresh, inf_times_path, label_list, pic_out_path)
+            model_name_csv = model_name + ".csv"
+            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_pyarmnn, model_name_csv), pictures_list)
     else:   
         print("no pyarmnn inference")
 
     if args.tflite_runtime:
         print("tflite runtime path")
         for model in model_list:
-            inf_times, results = inf_tflite_runtime(model, pictures_list, n_iter, thresh, label_list)
-            model_name = str(model.split("/")[-1].split(".tflite")[0]) + ".csv"
-            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_tflite, model_name))
+            model_name = str(model.split("/")[-1].split(".tflite")[0])
+            pic_out_path = os.path.join(report_dir_tflite, model_name)
+            if not os.path.isdir(pic_out_path):
+                os.mkdir(pic_out_path) 
+            inf_times, results = inf_tflite_runtime(model, pictures_list, n_iter, thresh, label_list, pic_out_path)
+            model_name_csv = model_name + ".csv"
+            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_tflite, model_name_csv), pictures_list)
     else:
         print("no tlfite inference")
 

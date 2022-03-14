@@ -47,13 +47,13 @@ def write_txt_file(model_dict):
   file.close()
 
 
-def write_to_csv_file(inf_times, results, label_list ,csv_path):
+def write_to_csv_file(inf_times, results, label_list ,csv_path, pictures_list):
 
     with open(csv_path, 'w', newline='\n') as csvfile:
         infwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
         for i in range(len(inf_times)):
-            row = [f"Inf number: {i+1}", inf_times[i]]
+            row = [pictures_list[i].split("/")[-1], inf_times[i]]
             for key,value in results[i].items():
                 row.append(label_list[key])
                 row.append(key)
@@ -257,6 +257,7 @@ def inf_pyarmnn(model_path, pictures_list, n_iter, n_big, inf_times_path):
     # get input binding information for the input layer of the model
     graph_id = parser.GetSubgraphCount() - 1
     input_names = parser.GetSubgraphInputTensorNames(graph_id)
+    print("Names:", input_names[0])
     input_binding_info = parser.GetNetworkInputBindingInfo(graph_id, input_names[0])
     input_tensor_id = input_binding_info[0]
     input_tensor_info = input_binding_info[1]
@@ -308,25 +309,27 @@ def inf_pyarmnn(model_path, pictures_list, n_iter, n_big, inf_times_path):
 
 if __name__ == "__main__":
 
+    general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
+
     pictures_list = []
     model_list = []
     label = []
 
     parser = argparse.ArgumentParser(description="Classification inference")
     parser.add_argument("-m", "--model_path", help="one tflite model", required=False)
-    parser.add_argument("-mf", "--model_folder_path", default="/home/ubuntu2104/pyarmnn/general/models/classification_models", help="one tflite model", required=False)
+    parser.add_argument("-mf", "--model_folder_path", default=os.path.join(general_dir, "models/classification_models"), help="one tflite model", required=False)
     parser.add_argument("-p", "--picture_path", help="one picture for inference", required=False)
-    parser.add_argument("-pf", "--picture_folder_path", default="/home/ubuntu2104/pyarmnn/general/input/classification_input", help="one picture for inference", required=False)
+    parser.add_argument("-pf", "--picture_folder_path", default=os.path.join(general_dir, "input/classification_input"), help="one picture for inference", required=False)
     parser.add_argument("-s", '--sleep', type=float, help='time to sleep between inferences in seconds', required=False)
-    parser.add_argument("-l", "--label_path", default="/home/ubuntu2104/pyarmnn/general/models/classification_models/labels/imagenet_labels.txt", help="label folder of the model")
+    parser.add_argument("-l", "--label_path", default=os.path.join(general_dir, "models/classification_models/labels/imagenet_labels.txt"), help="label folder of the model")
     #parser.add_argument("-lf", "--label_folder_path", help="label folder of the model")
     parser.add_argument("-n", '--niter', default=1, type=int, help='number of iterations', required=False)
-    parser.add_argument("-rdtf", '--report_dir_tflite', default='/home/ubuntu2104/pyarmnn/general/results/classification/tflite', help='Directory to save tflite_runtime reports into', required=False)
-    parser.add_argument("-rdpy", '--report_dir_pyarmnn', default='/home/ubuntu2104/pyarmnn/general/results/classification/pyarmnn', help='Directory to save pyarmnn reports into', required=False)
+    parser.add_argument("-rdtf", '--report_dir_tflite', default=os.path.join(general_dir, "results/classification/tflite"), help='Directory to save tflite_runtime reports into', required=False)
+    parser.add_argument("-rdpy", '--report_dir_pyarmnn', default=os.path.join(general_dir, "results/classification/pyarmnn"), help='Directory to save pyarmnn reports into', required=False)
     parser.add_argument("--pyarmnn", dest="pyarmnn", action="store_true")
     parser.add_argument("-tflite","--tflite_runtime", dest="tflite_runtime", action="store_true")
     parser.add_argument("--n_big", default=3)
-    parser.add_argument("-inf", '--times_pyarmnn', default="/home/ubuntu2104/pyarmnn/general/inf_times/classification", help='Path where the inference data from the pyarmmn profiler is stored ', required=False)
+    parser.add_argument("-inf", '--times_pyarmnn', default=os.path.join(general_dir, "inf_times/classification"), help='Path where the inference data from the pyarmmn profiler is stored ', required=False)
     args = parser.parse_args()
 
     n_iter = args.niter
@@ -352,7 +355,7 @@ if __name__ == "__main__":
         for model in model_list:
             inf_times, results = inf_pyarmnn(model, pictures_list, n_iter, n_big, inf_times_path)
             model_name = str(model.split("/")[-1].split(".tflite")[0]) + ".csv"
-            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_pyarmnn, model_name) )
+            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_pyarmnn, model_name), pictures_list )
     else:   
         print("no pyarmnn")
 
@@ -361,7 +364,7 @@ if __name__ == "__main__":
         for model in model_list:
             inf_times, results = inf_tflite_runtime(model, pictures_list, n_iter, n_big)
             model_name = str(model.split("/")[-1].split(".tflite")[0]) + ".csv"
-            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_tflite, model_name) )
+            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_tflite, model_name), pictures_list )
     else:
         print("no tlfite")
 

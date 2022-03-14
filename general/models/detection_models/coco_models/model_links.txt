@@ -1,0 +1,8 @@
+https://tfhub.dev/tensorflow/lite-model/ssd_mobilenet_v1/1/metadata/2
+https://tfhub.dev/neso613/lite-model/yolo-v5-tflite/tflite_model/1
+https://tfhub.dev/tensorflow/efficientdet/lite2/detection/1
+https://tfhub.dev/tensorflow/lite-model/efficientdet/lite4/detection/metadata/2
+https://tfhub.dev/tensorflow/lite-model/efficientdet/lite1/detection/metadata/1
+https://tfhub.dev/tensorflow/lite-model/efficientdet/lite3/detection/metadata/1
+https://tfhub.dev/tensorflow/lite-model/efficientdet/lite3x/detection/metadata/1
+https://tfhub.dev/tensorflow/lite-model/efficientdet/lite0/detection/metadata/1

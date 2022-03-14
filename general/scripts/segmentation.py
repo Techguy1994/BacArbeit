@@ -29,7 +29,7 @@ def return_picture_list(pictures_path):
 
 def load_labels(path):
   with open(path, 'r') as f:
-    return {i: line.strip() for i, line in enumerate(f.readlines())}
+    return np.asarray([line.strip() for i, line in enumerate(f.readlines())])
 
 def load_image(width, height, image_path):
     img = cv2.imread(image_path)
@@ -54,7 +54,193 @@ def create_pascal_label_colormap():
 
   return colormap
 
-def label_to_color_image(label):
+def create_cityscapes_label_colormap():
+  """Creates a label colormap used in CITYSCAPES segmentation benchmark.
+  Returns:
+    A colormap for visualizing segmentation results.
+  """
+  colormap = np.zeros((256, 3), dtype=np.uint8)
+  colormap[0] = [128, 64, 128]
+  colormap[1] = [244, 35, 232]
+  colormap[2] = [70, 70, 70]
+  colormap[3] = [102, 102, 156]
+  colormap[4] = [190, 153, 153]
+  colormap[5] = [153, 153, 153]
+  colormap[6] = [250, 170, 30]
+  colormap[7] = [220, 220, 0]
+  colormap[8] = [107, 142, 35]
+  colormap[9] = [152, 251, 152]
+  colormap[10] = [70, 130, 180]
+  colormap[11] = [220, 20, 60]
+  colormap[12] = [255, 0, 0]
+  colormap[13] = [0, 0, 142]
+  colormap[14] = [0, 0, 70]
+  colormap[15] = [0, 60, 100]
+  colormap[16] = [0, 80, 100]
+  colormap[17] = [0, 0, 230]
+  colormap[18] = [119, 11, 32]
+  return colormap
+
+def create_ade20k_label_colormap():
+  """Creates a label colormap used in ADE20K segmentation benchmark.
+  Returns:
+    A colormap for visualizing segmentation results.
+  """
+  return np.asarray([
+      [0, 0, 0],
+      [120, 120, 120],
+      [180, 120, 120],
+      [6, 230, 230],
+      [80, 50, 50],
+      [4, 200, 3],
+      [120, 120, 80],
+      [140, 140, 140],
+      [204, 5, 255],
+      [230, 230, 230],
+      [4, 250, 7],
+      [224, 5, 255],
+      [235, 255, 7],
+      [150, 5, 61],
+      [120, 120, 70],
+      [8, 255, 51],
+      [255, 6, 82],
+      [143, 255, 140],
+      [204, 255, 4],
+      [255, 51, 7],
+      [204, 70, 3],
+      [0, 102, 200],
+      [61, 230, 250],
+      [255, 6, 51],
+      [11, 102, 255],
+      [255, 7, 71],
+      [255, 9, 224],
+      [9, 7, 230],
+      [220, 220, 220],
+      [255, 9, 92],
+      [112, 9, 255],
+      [8, 255, 214],
+      [7, 255, 224],
+      [255, 184, 6],
+      [10, 255, 71],
+      [255, 41, 10],
+      [7, 255, 255],
+      [224, 255, 8],
+      [102, 8, 255],
+      [255, 61, 6],
+      [255, 194, 7],
+      [255, 122, 8],
+      [0, 255, 20],
+      [255, 8, 41],
+      [255, 5, 153],
+      [6, 51, 255],
+      [235, 12, 255],
+      [160, 150, 20],
+      [0, 163, 255],
+      [140, 140, 140],
+      [250, 10, 15],
+      [20, 255, 0],
+      [31, 255, 0],
+      [255, 31, 0],
+      [255, 224, 0],
+      [153, 255, 0],
+      [0, 0, 255],
+      [255, 71, 0],
+      [0, 235, 255],
+      [0, 173, 255],
+      [31, 0, 255],
+      [11, 200, 200],
+      [255, 82, 0],
+      [0, 255, 245],
+      [0, 61, 255],
+      [0, 255, 112],
+      [0, 255, 133],
+      [255, 0, 0],
+      [255, 163, 0],
+      [255, 102, 0],
+      [194, 255, 0],
+      [0, 143, 255],
+      [51, 255, 0],
+      [0, 82, 255],
+      [0, 255, 41],
+      [0, 255, 173],
+      [10, 0, 255],
+      [173, 255, 0],
+      [0, 255, 153],
+      [255, 92, 0],
+      [255, 0, 255],
+      [255, 0, 245],
+      [255, 0, 102],
+      [255, 173, 0],
+      [255, 0, 20],
+      [255, 184, 184],
+      [0, 31, 255],
+      [0, 255, 61],
+      [0, 71, 255],
+      [255, 0, 204],
+      [0, 255, 194],
+      [0, 255, 82],
+      [0, 10, 255],
+      [0, 112, 255],
+      [51, 0, 255],
+      [0, 194, 255],
+      [0, 122, 255],
+      [0, 255, 163],
+      [255, 153, 0],
+      [0, 255, 10],
+      [255, 112, 0],
+      [143, 255, 0],
+      [82, 0, 255],
+      [163, 255, 0],
+      [255, 235, 0],
+      [8, 184, 170],
+      [133, 0, 255],
+      [0, 255, 92],
+      [184, 0, 255],
+      [255, 0, 31],
+      [0, 184, 255],
+      [0, 214, 255],
+      [255, 0, 112],
+      [92, 255, 0],
+      [0, 224, 255],
+      [112, 224, 255],
+      [70, 184, 160],
+      [163, 0, 255],
+      [153, 0, 255],
+      [71, 255, 0],
+      [255, 0, 163],
+      [255, 204, 0],
+      [255, 0, 143],
+      [0, 255, 235],
+      [133, 255, 0],
+      [255, 0, 235],
+      [245, 0, 255],
+      [255, 0, 122],
+      [255, 245, 0],
+      [10, 190, 212],
+      [214, 255, 0],
+      [0, 204, 255],
+      [20, 0, 255],
+      [255, 255, 0],
+      [0, 153, 255],
+      [0, 41, 255],
+      [0, 255, 204],
+      [41, 0, 255],
+      [41, 255, 0],
+      [173, 0, 255],
+      [0, 245, 255],
+      [71, 0, 255],
+      [122, 0, 255],
+      [0, 255, 184],
+      [0, 92, 255],
+      [184, 255, 0],
+      [0, 133, 255],
+      [255, 214, 0],
+      [25, 194, 194],
+      [102, 255, 0],
+      [92, 0, 255],
+  ])
+
+def label_to_color_image(label, colormap):
   """Adds color defined by the dataset colormap to the label.
 
   Args:
@@ -72,67 +258,47 @@ def label_to_color_image(label):
   if label.ndim != 2:
     raise ValueError('Expect 2-D input label')
 
-  colormap = create_pascal_label_colormap()
-
   if np.max(label) >= len(colormap):
     raise ValueError('label value too large.')
 
   return colormap[label]
 
-def vis_segmentation_cv2(image, seg_map):
+def vis_segmentation_cv2(image, seg_map, LABEL_NAMES, colormap):
   """Visualizes input image, segmentation map and overlay view."""
-  print("Start segm")
-  #plt.figure(figsize=(15, 5))
-  #grid_spec = gridspec.GridSpec(1, 4, width_ratios=[6, 6, 6, 1])
 
   cv2.imwrite("result1.jpg", image)
-  seg_image = label_to_color_image(seg_map).astype(np.uint8)
-  print(image.shape)
-  print(seg_image.shape)
-  #seg_image = cv2.cvtColor(seg_image, cv2.COLOR_GRAY2RGB)
-  cv2.imwrite("result2.jpg", seg_image)
-
-  print("shapes")
-  print(image.shape)
-  print(seg_image.shape)
-  print("end")
+  seg_image = label_to_color_image(seg_map, colormap).astype(np.uint8)
 
   overlay_picture = cv2.addWeighted(image, 0.7, seg_image, 0.5, 0)
-  cv2.imwrite("result3.png", overlay_picture)
 
-  #image = image.convert("RGBA")
-  #seg_image = seg_image.convert("RGBA")
+  #LABEL_NAMES = np.asarray([
+  #    'background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus',
+  #    'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike',
+  #    'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tv'
+  #])
 
-  #overlay = Image.blend(image, seg_image, 0.5)
-  #overlay.save("result3.png")
-
-  LABEL_NAMES = np.asarray([
-      'background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus',
-      'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike',
-      'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tv'
-  ])
-
-  FULL_LABEL_MAP = np.arange(len(LABEL_NAMES)).reshape(len(LABEL_NAMES), 1)
-  FULL_COLOR_MAP = label_to_color_image(FULL_LABEL_MAP)
+  #print(LABEL_NAMES)
+  #FULL_LABEL_MAP = np.arange(len(LABEL_NAMES)).reshape(len(LABEL_NAMES), 1)
+  #FULL_COLOR_MAP = label_to_color_image(FULL_LABEL_MAP, colormap)
 
 
   unique_labels = np.unique(seg_map)
-  indeces = FULL_COLOR_MAP[unique_labels].astype(np.uint8)
+  #indeces = FULL_COLOR_MAP[unique_labels].astype(np.uint8)
   res = LABEL_NAMES[unique_labels]
-  print(unique_labels)
-  print(indeces)
-  print(res)
+  #print(unique_labels)
+  #print(indeces)
+  #print(res)
 
-def write_to_csv_file(inf_times, results, label_list ,csv_path):
+  return res, overlay_picture, seg_image
+
+def write_to_csv_file(inf_times, results, label_list ,csv_path, picture_list):
 
     with open(csv_path, 'w', newline='\n') as csvfile:
         infwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 
         for i in range(len(inf_times)):
             row = [f"Inf number: {i+1}", inf_times[i]]
-            for key,value in results[i].items():
-                row.append(label_list[key])
-                row.append(key)
+            for value in results[i]:
                 row.append(value)
             infwriter.writerow(row)
 
@@ -213,7 +379,7 @@ def write_profiling_data(profiler, model_path, csv_path):
             infwriter.writerow(csv_array)
 
 
-def inf_tflite_runtime(model_path, pictures_list, n_iter, n_big):
+def inf_tflite_runtime(model_path, pictures_list, n_iter, label_list, pic_out_path, colormap):
     #source: 
     #https://www.tensorflow.org/lite/guide/inference
     #https://github.com/NXPmicro/pyarmnn-release/tree/master/python/pyarmnn/examples
@@ -225,6 +391,9 @@ def inf_tflite_runtime(model_path, pictures_list, n_iter, n_big):
     # Get input and output tensors.
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
+
+    if len(label_list) != output_details[0]["shape"][3]:
+        sys.exit("label and colormap have not the same length")
 
     # Test the model on random input data.
     input_shape = input_details[0]['shape']
@@ -265,23 +434,25 @@ def inf_tflite_runtime(model_path, pictures_list, n_iter, n_big):
             output_data = output_data[0]
 
             seg_map = np.ndarray((img.shape[0],img.shape[1],len(output_data[0,0,:])))
-            print(seg_map.shape)
 
             for i in range(len(output_data[0,0,:])):
                 seg_map[:,:,i] = cv2.resize(output_data[:,:,i], (img.shape[1],img.shape[0]))
 
-            print(seg_map.shape)
-            print(seg_map)
-            
+    
             seg_map = np.argmax(seg_map, axis=2)
-            print(seg_map.shape)
 
-            vis_segmentation_cv2(img, seg_map)
-
-    return inf_times, results
+            result, out_image, out_mask = vis_segmentation_cv2(img, seg_map, label_list, colormap)
+            results.append(result)
+            gen_out_path = os.path.join(pic_out_path, pic.split("/")[-1].split(".")[0])
+            mask_out_path = gen_out_path + "_mask.jpg"
+            result_pic_out_path = gen_out_path + ".jpg"
+            cv2.imwrite(result_pic_out_path, out_image)
+            cv2.imwrite(mask_out_path, out_mask)
+            
+    return inf_times, results, out_mask
     
 
-def inf_pyarmnn(model_path, pictures_list, n_iter, n_big, inf_times_path):
+def inf_pyarmnn(model_path, pictures_list, n_iter, inf_times_path, label_list, pic_out_path, colormap):
     # LINK TO CODE: https://www.youtube.com/watch?v=HQYosuy4ABY&t=1867s
     #https://developer.arm.com/documentation/102557/latest
     #file:///C:/Users/Maroun_Desktop_PC/SynologyDrive/Bachelorarbeit/pyarmnn/pyarmnn_doc.html#pyarmnn.IOutputSlot
@@ -310,7 +481,6 @@ def inf_pyarmnn(model_path, pictures_list, n_iter, n_big, inf_times_path):
     width, height = input_tensor_info.GetShape()[1], input_tensor_info.GetShape()[2]
     print(f"tensor id: {input_tensor_id},tensor info: {input_tensor_info}")
 
-    print(input_tensor_info)
 
     # Get output binding information for an output layer by using the layer name.
     output_names = parser.GetSubgraphOutputTensorNames(graph_id)
@@ -320,6 +490,10 @@ def inf_pyarmnn(model_path, pictures_list, n_iter, n_big, inf_times_path):
     for output_name in output_names:
         output_binding_info.append(parser.GetNetworkOutputBindingInfo(graph_id, output_name))
     output_tensors = ann.make_output_tensors(output_binding_info)
+
+    if len(label_list) != output_tensors[0][1].GetShape()[3]:
+        sys.exit("label and colormap have not the same length")
+
 
     net_id, _ = runtime.LoadNetwork(opt_network)
 
@@ -336,49 +510,64 @@ def inf_pyarmnn(model_path, pictures_list, n_iter, n_big, inf_times_path):
             if ann.TensorInfo.IsQuantized(input_tensor_info):
                 resized_image = np.uint8(resized_image)
             else:
-                resized_image = np.float32(resized_image/np.iinfo("uint8").max)
+                #resized_image = np.float32(resized_image/np.iinfo("uint8").max)
+                resized_image = np.float32(resized_image / 127.5 - 1)
 
             input_tensors = ann.make_input_tensors([input_binding_info], [resized_image])
             runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
-            result = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
+            output_data = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
 
-            seg_map = np.uint8(np.argmax(result, axis=3)[0])
-            seg_map = np.squeeze(np.argmax(result, axis=3)).astype(np.int8)
-            #seg_map = Image.fromarray(seg_map)
-            seg_map = cv2.resize(seg_map, (500,475), interpolation=cv2.INTER_NEAREST)
+            output_data = output_data[0][0]
+    
+            seg_map = np.ndarray((image.shape[0],image.shape[1],len(output_data[0,0,:])))
 
-            vis_segmentation_cv2(image, seg_map)
-            #result = return_n_biggest_result_pyarmnn(result[0], n_big)
-            #results.append(result)
+            for i in range(len(output_data[0,0,:])):
+                seg_map[:,:,i] = cv2.resize(output_data[:,:,i], (image.shape[1],image.shape[0]))
+
+
+            
+            seg_map = np.argmax(seg_map, axis=2)
+
+            result, out_image, out_mask = vis_segmentation_cv2(image, seg_map,label_list, colormap)
+            results.append(result)
+            gen_out_path = os.path.join(pic_out_path, pic.split("/")[-1].split(".")[0])
+            mask_out_path = gen_out_path + "_mask.jpg"
+            result_pic_out_path = gen_out_path + ".jpg"
+            cv2.imwrite(result_pic_out_path, out_image)
+            cv2.imwrite(mask_out_path, out_mask)
+
 
     #Profiler Data 
     inf_times = print_profiling_data_and_return_times(profiler)
     write_profiling_data(profiler, model_path, inf_times_path)
 
-    return inf_times, results
+    return inf_times, results, out_mask
 
 
 if __name__ == "__main__":
+    #source: https://github.com/tensorflow/models/blob/master/research/deeplab/utils/get_dataset_colormap.py
+
+    general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
 
     pictures_list = []
     model_list = []
     label = []
 
-    parser = argparse.ArgumentParser(description="Classification inference")
+    parser = argparse.ArgumentParser(description="Segmentation inference")
     parser.add_argument("-m", "--model_path", help="one tflite model", required=False)
-    parser.add_argument("-mf", "--model_folder_path", default="/home/ubuntu2104/pyarmnn/general/models/segmentation_models", help="one tflite model", required=False)
+    parser.add_argument("-mf", "--model_folder_path", default=os.path.join(general_dir, "models/segmentation_models"), help="one tflite model", required=False)
     parser.add_argument("-p", "--picture_path", help="one picture for inference", required=False)
-    parser.add_argument("-pf", "--picture_folder_path", default="/home/ubuntu2104/pyarmnn/general/input/segmentation_input", help="one picture for inference", required=False)
+    parser.add_argument("-pf", "--picture_folder_path", default=os.path.join(general_dir, "input/segmentation_input"), help="one picture for inference", required=False)
     parser.add_argument("-s", '--sleep', type=float, help='time to sleep between inferences in seconds', required=False)
-    parser.add_argument("-l", "--label_path", default="/home/ubuntu2104/pyarmnn/general/models/segmentation_models/labels/labels_pascal_voc_2012.txt", help="label folder of the model")
-    #parser.add_argument("-lf", "--label_folder_path", help="label folder of the model")
+    parser.add_argument("-l", "--label_path", default=os.path.join(general_dir, "models/segmentation_models/labels/labelmap.txt"), help="label folder of the model")
     parser.add_argument("-n", '--niter', default=1, type=int, help='number of iterations', required=False)
-    parser.add_argument("-rdtf", '--report_dir_tflite', default='/home/ubuntu2104/pyarmnn/general/results/segmentation/tflite', help='Directory to save tflite_runtime reports into', required=False)
-    parser.add_argument("-rdpy", '--report_dir_pyarmnn', default='/home/ubuntu2104/pyarmnn/general/results/segmentation/pyarmnn', help='Directory to save pyarmnn reports into', required=False)
+    parser.add_argument("-rdtf", '--report_dir_tflite', default=os.path.join(general_dir, "results/segmentation/tflite"), help='Directory to save tflite_runtime reports into', required=False)
+    parser.add_argument("-rdpy", '--report_dir_pyarmnn', default=os.path.join(general_dir, "results/segmentation/pyarmnn"), help='Directory to save pyarmnn reports into', required=False)
     parser.add_argument("--pyarmnn", dest="pyarmnn", action="store_true")
     parser.add_argument("-tflite","--tflite_runtime", dest="tflite_runtime", action="store_true")
     parser.add_argument("--n_big", default=3)
-    parser.add_argument("-inf", '--times_pyarmnn', default="/home/ubuntu2104/pyarmnn/general/inf_times/segmentation", help='Path where the inference data from the pyarmmn profiler is stored ', required=False)
+    parser.add_argument("-inf", '--times_pyarmnn', default=os.path.join(general_dir, "inf_times/segmentation"), help='Path where the inference data from the pyarmmn profiler is stored ', required=False)
+    parser.add_argument("-dat", "--dataset", help="which dataset the model/s is/are based on. The ones available are ade20k, pascal_voc_2012, cityscapes", required=True)
     args = parser.parse_args()
 
     n_iter = args.niter
@@ -398,22 +587,41 @@ if __name__ == "__main__":
         pictures_list.append(args.picture_path)
     else:
         pictures_list = return_picture_list(args.picture_folder_path)
-    
+
+    if args.dataset == "ade20k":
+        print(args.dataset)
+        colormap = create_ade20k_label_colormap()
+    elif args.dataset == "pascal_voc_2012":
+        colormap = create_pascal_label_colormap()
+    elif args.dataset == "cityscapes":
+        colormap = create_cityscapes_label_colormap()
+    else:
+        sys.exit("No vaild name for dataset given")
+
     if args.pyarmnn: 
         print("Pyarmnn path")
         for model in model_list:
-            inf_times, results = inf_pyarmnn(model, pictures_list, n_iter, n_big, inf_times_path)
-            #model_name = str(model.split("/")[-1].split(".tflite")[0]) + ".csv"
-            #write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_pyarmnn, model_name) )
+            model_name = str(model.split("/")[-1].split(".tflite")[0])
+            pic_out_path = os.path.join(report_dir_pyarmnn, model_name)
+            if not os.path.isdir(pic_out_path):
+                os.mkdir(pic_out_path)  
+            inf_times, results, pyarmnn_mask = inf_pyarmnn(model, pictures_list, n_iter, inf_times_path, label_list, pic_out_path, colormap)
+            model_name_csv = model_name + ".csv"
+            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_pyarmnn, model_name_csv), pictures_list)
     else:   
         print("no pyarmnn")
 
     if args.tflite_runtime:
         print("tflite runtime path")
         for model in model_list:
-            inf_times, results = inf_tflite_runtime(model, pictures_list, n_iter, n_big)
-            #model_name = str(model.split("/")[-1].split(".tflite")[0]) + ".csv"
-            #write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_tflite, model_name) )
+            model_name = str(model.split("/")[-1].split(".tflite")[0])
+            pic_out_path = os.path.join(report_dir_tflite, model_name)
+            if not os.path.isdir(pic_out_path):
+                os.mkdir(pic_out_path) 
+            inf_times, results, tflite_mask = inf_tflite_runtime(model, pictures_list, n_iter, label_list, pic_out_path, colormap)
+            model_name_csv = model_name + ".csv"
+            write_to_csv_file(inf_times, results, label_list, os.path.join(report_dir_tflite, model_name_csv), pictures_list)
     else:
         print("no tlfite")
+
 
