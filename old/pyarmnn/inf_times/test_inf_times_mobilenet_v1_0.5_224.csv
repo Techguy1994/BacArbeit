@@ -1,0 +1,37 @@
+mobilenet_v1_0.5_224,inferences: time_in_ms
+21.03272,19.49444,23.3035,19.14043,19.37037
+Layer,backend,time_unit,layer_time
+Working Memory Allocation_#5,Unknown,ms,|[1.47026, 0.00037, 0.0003, 0.0003, 0.00028]|
+CopyMemGeneric_Execute_#6,Unknown,ms,|[0.23711, 0.35757, 0.24615, 0.35489, 0.24915]|
+NeonConvolution2dWorkload_Execute_#8,CpuAcc,ms,|[2.21704, 2.54278, 2.42011, 2.50832, 2.50857]|
+NeonDepthwiseConvolutionWorkload_Execute_#9,CpuAcc,ms,|[1.06217, 0.8788, 0.7997, 0.8045, 0.82704]|
+NeonConvolution2dWorkload_Execute_#10,CpuAcc,ms,|[1.57837, 1.42182, 1.5657, 1.38678, 1.48507]|
+NeonDepthwiseConvolutionWorkload_Execute_#11,CpuAcc,ms,|[1.0027, 0.99467, 1.021, 1.04739, 1.04013]|
+NeonConvolution2dWorkload_Execute_#12,CpuAcc,ms,|[0.68841, 0.66609, 0.59606, 0.62026, 0.64344]|
+NeonDepthwiseConvolutionWorkload_Execute_#13,CpuAcc,ms,|[1.03446, 1.03763, 1.05074, 1.04987, 1.04763]|
+NeonConvolution2dWorkload_Execute_#14,CpuAcc,ms,|[0.94433, 0.92246, 0.93074, 0.98689, 1.03991]|
+NeonDepthwiseConvolutionWorkload_Execute_#15,CpuAcc,ms,|[0.50393, 0.49789, 0.49848, 0.52394, 0.53426]|
+NeonConvolution2dWorkload_Execute_#16,CpuAcc,ms,|[0.47415, 0.47407, 0.47119, 0.53659, 0.53143]|
+NeonDepthwiseConvolutionWorkload_Execute_#17,CpuAcc,ms,|[0.36817, 0.31587, 0.37772, 0.36737, 0.38244]|
+NeonConvolution2dWorkload_Execute_#18,CpuAcc,ms,|[0.90656, 0.90659, 0.87541, 0.886, 0.94052]|
+NeonDepthwiseConvolutionWorkload_Execute_#19,CpuAcc,ms,|[0.26102, 0.16145, 0.15574, 0.16259, 0.16241]|
+NeonConvolution2dWorkload_Execute_#20,CpuAcc,ms,|[0.51024, 0.50324, 0.50124, 0.5087, 0.50261]|
+NeonDepthwiseConvolutionWorkload_Execute_#21,CpuAcc,ms,|[0.15576, 0.19241, 0.13911, 0.13791, 0.13291]|
+NeonConvolution2dWorkload_Execute_#22,CpuAcc,ms,|[0.75104, 0.75689, 0.76576, 0.72859, 0.76157]|
+NeonDepthwiseConvolutionWorkload_Execute_#23,CpuAcc,ms,|[0.20704, 0.15217, 0.25715, 0.14861, 0.14024]|
+NeonConvolution2dWorkload_Execute_#24,CpuAcc,ms,|[0.76695, 0.81057, 1.38424, 0.71572, 0.71078]|
+NeonDepthwiseConvolutionWorkload_Execute_#25,CpuAcc,ms,|[0.17446, 0.15052, 0.23935, 0.1457, 0.16924]|
+NeonConvolution2dWorkload_Execute_#26,CpuAcc,ms,|[0.78683, 0.84322, 1.4063, 0.71585, 0.70459]|
+NeonDepthwiseConvolutionWorkload_Execute_#27,CpuAcc,ms,|[0.16865, 0.15194, 0.22989, 0.14478, 0.14428]|
+NeonConvolution2dWorkload_Execute_#28,CpuAcc,ms,|[0.75491, 0.74541, 1.40922, 0.70561, 0.70793]|
+NeonDepthwiseConvolutionWorkload_Execute_#29,CpuAcc,ms,|[0.16885, 0.15293, 0.23259, 0.14652, 0.15072]|
+NeonConvolution2dWorkload_Execute_#30,CpuAcc,ms,|[0.74359, 0.75756, 1.44002, 0.71554, 0.69707]|
+NeonDepthwiseConvolutionWorkload_Execute_#31,CpuAcc,ms,|[0.13357, 0.11237, 0.14783, 0.10698, 0.11337]|
+NeonConvolution2dWorkload_Execute_#32,CpuAcc,ms,|[0.48428, 0.496, 0.83732, 0.46378, 0.456]|
+NeonDepthwiseConvolutionWorkload_Execute_#33,CpuAcc,ms,|[0.25533, 0.22835, 0.27644, 0.2153, 0.23207]|
+NeonConvolution2dWorkload_Execute_#34,CpuAcc,ms,|[1.00604, 1.02356, 1.7125, 0.98132, 1.03287]|
+NeonPooling2dWorkload_Execute_#35,CpuAcc,ms,|[0.06472, 0.08576, 0.09202, 0.07068, 0.05746]|
+NeonConvolution2dWorkload_Execute_#36,CpuAcc,ms,|[0.77944, 0.79104, 0.85206, 0.89176, 0.90406]|
+NeonReshapeWorkload_Execute_#37,CpuAcc,ms,|[0.08154, 0.07835, 0.08085, 0.07528, 0.07608]|
+NeonSoftmaxWorkload_Execute_#38,CpuAcc,ms,|[0.05041, 0.05213, 0.05076, 0.04826, 0.04841]|
+CopyMemGeneric_Execute_#39,Unknown,ms,|[0.01344, 0.01346, 0.01378, 0.01328, 0.01367]|

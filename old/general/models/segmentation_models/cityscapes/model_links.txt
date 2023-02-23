@@ -1,0 +1,2 @@
+https://tfhub.dev/sayakpaul/lite-model/deeplabv3-xception65-cityscapes/1/default/2
+https://tfhub.dev/sayakpaul/lite-model/deeplabv3-mobilenetv3-cityscapes/1/default/2
