@@ -1,11 +1,37 @@
+import torch
+from torchvision import models, transforms
 import argparse
-import logging
+import logging as log
 import os
 from time import sleep, time
 import numpy as np
 import pyarmnn as ann
 import tflite_runtime.interpreter as tflite
 import cv2
+import sys 
+from PIL import Image
+from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
+from openvino.runtime import Core, Layout, Type
+import onnxruntime
+from PIL import Image
+
+
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()
+
+def preprocess_image(image_path, height, width, channels=3):
+    image = Image.open(image_path)
+    image = image.resize((width, height), Image.LANCZOS)
+    image_data = np.asarray(image).astype(np.float32)
+    image_data = image_data.transpose([2, 0, 1]) # transpose to CHW
+    mean = np.array([0.079, 0.05, 0]) + 0.406
+    std = np.array([0.005, 0, 0.001]) + 0.224
+    for channel in range(image_data.shape[0]):
+        image_data[channel, :, :] = (image_data[channel, :, :] / 255 - mean[channel]) / std[channel]
+    image_data = np.expand_dims(image_data, 0)
+    return image_data
 
 def setup_profiling(net_id, runtime):
     profiler = runtime.GetProfiler(net_id)
@@ -38,6 +64,15 @@ def load_image(height, width, image_path):
     cv2.imwrite("resized_input.jpg", img)
     img = np.expand_dims(img, axis=0)
     return img
+
+def get_result(class_dir, probabilities):
+    with open(class_dir, "r") as f:
+        categories = [s.strip() for s in f.readlines()]
+    # Show top categories per image
+    top5_prob, top5_catid = torch.topk(probabilities, 5)
+    for i in range(top5_prob.size(0)):
+        print(categories[top5_catid[i]], top5_prob[i].item())
+
 
 
 def tflite_runtime(model_dir, img_dir):
@@ -169,17 +204,169 @@ def openvino(model_dir, img_dir):
     model_dir = os.path.join(model_dir, "ov")
     print(model_dir)
 
+    device_name = "CPU"
+
+    check_directories(model_dir, img_dir)
+
+    print(os.listdir(model_dir))
+
+    for entry in os.listdir(model_dir):
+        if ".xml" in entry:
+            model_dir = os.path.join(model_dir, entry)
+
+    print(model_dir)
+
+    img_list = return_picture_list(img_dir)
+
+    # --------------------------- Step 1. Initialize OpenVINO Runtime Core ------------------------------------------------
+    log.info('Creating OpenVINO Runtime Core')
+    core = Core()
+
+# --------------------------- Step 2. Read a model --------------------------------------------------------------------
+    log.info(f'Reading the model: {model_dir}')
+    # (.xml and .bin files) or (.onnx file)
+    model = core.read_model(model_dir)
+
+    if len(model.inputs) != 1:
+        log.error('Sample supports only single input topologies')
+        return -1
+
+    if len(model.outputs) != 1:
+        log.error('Sample supports only single output topologies')
+        return -1
+
+
+    for img in img_list:
+# --------------------------- Step 3. Set up input --------------------------------------------------------------------
+        # Read input image
+        image = cv2.imread(img)
+        # Add N dimension
+        input_tensor = np.expand_dims(image, 0)
+
+# --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+        ppp = PrePostProcessor(model)
+
+        _, h, w, _ = input_tensor.shape
+
+        # 1) Set input tensor information:
+        # - input() provides information about a single model input
+        # - reuse precision and shape from already available `input_tensor`
+        # - layout of data is 'NHWC'
+        ppp.input().tensor() \
+            .set_shape(input_tensor.shape) \
+            .set_element_type(Type.u8) \
+            .set_layout(Layout('NHWC'))  # noqa: ECE001, N400
+
+        # 2) Adding explicit preprocessing steps:
+        # - apply linear resize from tensor spatial dims to model spatial dims
+        ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
+
+        # 3) Here we suppose model has 'NCHW' layout for input
+        ppp.input().model().set_layout(Layout('NCHW'))
+
+        # 4) Set output tensor information:
+        # - precision of tensor is supposed to be 'f32'
+        ppp.output().tensor().set_element_type(Type.f32)
+
+        # 5) Apply preprocessing modifying the original 'model'
+        model = ppp.build()
+
+# --------------------------- Step 5. Loading model to the device -----------------------------------------------------
+        log.info('Loading the model to the plugin')
+        compiled_model = core.compile_model(model, device_name)
+
+# --------------------------- Step 6. Create infer request and do inference synchronously -----------------------------
+        log.info('Starting inference in synchronous mode')
+        results = compiled_model.infer_new_request({0: input_tensor})
+
+# --------------------------- Step 7. Process output ------------------------------------------------------------------
+        predictions = next(iter(results.values()))
+
+        # Change a shape of a numpy.ndarray with results to get another one with one dimension
+        probs = predictions.reshape(-1)
+
+        # Get an array of 10 class IDs in descending order of probability
+        top_10 = np.argsort(probs)[-10:][::-1]
+
+        header = 'class_id probability'
+
+        log.info(f'Image path: {img}')
+        log.info('Top 10 results: ')
+        log.info(header)
+        log.info('-' * len(header))
+
+        for class_id in top_10:
+            probability_indent = ' ' * (len('class_id') - len(str(class_id)) + 1)
+            log.info(f'{class_id}{probability_indent}{probs[class_id]:.7f}')
+            print(f'{class_id}{probability_indent}{probs[class_id]:.7f}')
+
+        log.info('')
+    
     print("openvino")
 
 def onnx_runtime(model_dir, img_dir):
     model_dir = os.path.join(model_dir, "onnx")
     print(model_dir)
 
+    check_directories(model_dir, img_dir)
+    model_dir = os.path.join(model_dir, os.listdir(model_dir)[0])
+    img_list = return_picture_list(img_dir)
+
+    session= onnxruntime.InferenceSession(model_dir)
+
+    input_name = session.get_inputs()[0].name
+    output_name = session.get_outputs()[0].name
+
+    image_height = session.get_inputs()[0].shape[2]
+    image_width = session.get_inputs()[0].shape[3]
+
+    for img in img_list:
+        output = session.run([output_name], {input_name:preprocess_image(img, image_height, image_width)})[0]
+        output = output.flatten()
+        output = softmax(output) # this is optional
+        top5_catid = np.argsort(-output)[:5]
+        print(top5_catid)
+
+
     print("onnx")
 
-def pytorch(model_dir, img_dir):
+def pytorch(model_dir, img_dir, class_dir):
     model_dir = os.path.join(model_dir, "pytorch")
     print(model_dir)
+
+    check_directories(model_dir, img_dir)
+    #model_dir = os.path.join(model_dir, os.listdir(model_dir)[0])
+    img_list = return_picture_list(img_dir)
+
+    model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
+    model.eval()
+
+    preprocess = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+
+    for img in img_list:
+        input_image = Image.open(img)
+
+        input_tensor = preprocess(input_image)
+        input_batch = input_tensor.unsqueeze(0) 
+
+        with torch.no_grad():
+            output = model(input_batch)
+
+        # Tensor of shape 1000, with confidence scores over Imagenet's 1000 classes
+        print(output[0])
+        # The output has unnormalized scores. To get probabilities, you can run a softmax on it.
+        probabilities = torch.nn.functional.softmax(output[0], dim=0)
+        get_result(class_dir, probabilities)
+
+
+        # Read the categories
+
 
     print("Pytorch")
 
@@ -193,6 +380,7 @@ def main():
 
     parser.add_argument("-api", '--api', help='inference API', required=False)
     parser.add_argument("-mdl", '--model', help='model', required=False)
+    parser.add_argument("-cl", "--classes", help="txt file with classes", required=False)
     #parser.add_argument("-img", "--images", help="images for inference", required=False)
 
     args = parser.parse_args()
@@ -201,18 +389,21 @@ def main():
     img_dir = os.path.join(general_dir, "images")
     model_dir = os.path.join(general_dir, "models")
     model_dir = os.path.join(model_dir, args.model)
+    class_dir = os.path.join(general_dir, "classes")
+    class_dir = os.path.join(class_dir, args.classes)
+
     print(model_dir)
 
     if args.api == "tflite_runtime":
-        tflite_runtime(model_dir, img_dir)
+        tflite_runtime(model_dir, img_dir, class_dir)
     elif args.api == "pyarmnn":
-        pyarmnn(model_dir, img_dir)
+        pyarmnn(model_dir, img_dir, class_dir)
     elif args.api == "onnx":
-        onnx_runtime(model_dir, img_dir)
+        onnx_runtime(model_dir, img_dir, class_dir)
     elif args.api == "ov":
-        openvino(model_dir, img_dir)
+        openvino(model_dir, img_dir, class_dir)
     elif args.api == "pytorch":
-        pytorch(model_dir, img_dir)
+        pytorch(model_dir, img_dir, class_dir)
 
 
 
