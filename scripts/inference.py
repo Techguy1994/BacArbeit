@@ -15,6 +15,8 @@ from openvino.runtime import Core, Layout, Type
 import onnxruntime
 from PIL import Image
 
+import openvino as ov
+
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
@@ -273,6 +275,7 @@ def openvino(model_dir, img_dir):
 
 # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
         log.info('Loading the model to the plugin')
+        
         compiled_model = core.compile_model(model, device_name)
 
 # --------------------------- Step 6. Create infer request and do inference synchronously -----------------------------
@@ -401,7 +404,7 @@ def main():
     elif args.api == "onnx":
         onnx_runtime(model_dir, img_dir, class_dir)
     elif args.api == "ov":
-        openvino(model_dir, img_dir, class_dir)
+        openvino(model_dir, img_dir)
     elif args.api == "pytorch":
         pytorch(model_dir, img_dir, class_dir)
 
