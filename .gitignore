@@ -5,3 +5,5 @@
 *.bin
 *.xml
 *.pb
+*.pth
+*.yaml
