@@ -1,6 +1,7 @@
-.tflite
-.onnx
-.pt
-.mapping
-.bin
-.xml
+*.tflite
+*.onnx
+*.pt
+*.mapping
+*.bin
+*.xml
+*.pb
