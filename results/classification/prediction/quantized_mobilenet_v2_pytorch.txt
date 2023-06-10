@@ -1,0 +1,1 @@
+[{'object': 'Great Pyrenees', 'Index:': 257, 'Accuracy': 0.009886696003377438}, {'object': 'collie', 'Index:': 231, 'Accuracy': 0.010797764174640179}, {'object': 'keeshond', 'Index:': 261, 'Accuracy': 0.012964102439582348}, {'object': 'Pomeranian', 'Index:': 259, 'Accuracy': 0.06988745182752609}, {'object': 'Samoyed', 'Index:': 258, 'Accuracy': 0.8303049206733704}]

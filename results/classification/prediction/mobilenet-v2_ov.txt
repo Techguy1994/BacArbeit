@@ -1,0 +1,130 @@
+[{'object': 'chow', 'Index:': 261, 'Accuracy': 0.020111041}, {'object': 'Samoyed', 'Index:': 259, 'Accuracy': 0.16987513}, {'object': 'Great Pyrenees', 'Index:': 258, 'Accuracy': 0.6525974}]
+
+[{'object': 'coho', 'Index:': 392, 'Accuracy': 0.115613654}, {'object': 'oboe', 'Index:': 684, 'Accuracy': 0.15745184}, {'object': 'cloak', 'Index:': 502, 'Accuracy': 0.18132034}]
+
+[{'object': 'hair slide', 'Index:': 585, 'Accuracy': 0.13782457}, {'object': 'lens cap', 'Index:': 623, 'Accuracy': 0.13811034}, {'object': 'toaster', 'Index:': 860, 'Accuracy': 0.5256363}]
+
+[{'object': 'hartebeest', 'Index:': 352, 'Accuracy': 3.1010553e-05}, {'object': 'impala', 'Index:': 353, 'Accuracy': 4.2077652e-05}, {'object': 'sorrel', 'Index:': 340, 'Accuracy': 0.99973565}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.020659426}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.41741046}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.5602385}]
+
+[{'object': 'papillon', 'Index:': 158, 'Accuracy': 0.0982571}, {'object': 'porcupine', 'Index:': 335, 'Accuracy': 0.18156014}, {'object': 'Australian terrier', 'Index:': 194, 'Accuracy': 0.19290297}]
+
+[{'object': 'gas pump', 'Index:': 572, 'Accuracy': 0.0016458872}, {'object': 'burrito', 'Index:': 966, 'Accuracy': 0.4128442}, {'object': 'Windsor tie', 'Index:': 907, 'Accuracy': 0.5806555}]
+
+[{'object': 'wardrobe', 'Index:': 895, 'Accuracy': 0.023676122}, {'object': 'aircraft carrier', 'Index:': 404, 'Accuracy': 0.89074403}, {'object': 'wine bottle', 'Index:': 908, 'Accuracy': 0.077114485}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.2797496}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.32866603}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.37983155}]
+
+[{'object': 'spotlight', 'Index:': 819, 'Accuracy': 0.1017251}, {'object': 'flagpole', 'Index:': 558, 'Accuracy': 0.14183386}, {'object': 'ballplayer', 'Index:': 982, 'Accuracy': 0.31722605}]
+
+[{'object': 'planetarium', 'Index:': 728, 'Accuracy': 0.08082551}, {'object': 'beacon', 'Index:': 438, 'Accuracy': 0.12644447}, {'object': 'swab', 'Index:': 841, 'Accuracy': 0.35777128}]
+
+[{'object': 'caldron', 'Index:': 470, 'Accuracy': 0.055814613}, {'object': 'carbonara', 'Index:': 960, 'Accuracy': 0.24993414}, {'object': 'guillotine', 'Index:': 584, 'Accuracy': 0.4558922}]
+
+[{'object': 'pomegranate', 'Index:': 958, 'Accuracy': 0.052554972}, {'object': 'Arabian camel', 'Index:': 355, 'Accuracy': 0.08042594}, {'object': 'horizontal bar', 'Index:': 603, 'Accuracy': 0.05870652}]
+
+[{'object': 'chow', 'Index:': 261, 'Accuracy': 0.020111041}, {'object': 'Samoyed', 'Index:': 259, 'Accuracy': 0.16987513}, {'object': 'Great Pyrenees', 'Index:': 258, 'Accuracy': 0.6525974}]
+
+[{'object': 'coho', 'Index:': 392, 'Accuracy': 0.115613654}, {'object': 'oboe', 'Index:': 684, 'Accuracy': 0.15745184}, {'object': 'cloak', 'Index:': 502, 'Accuracy': 0.18132034}]
+
+[{'object': 'hair slide', 'Index:': 585, 'Accuracy': 0.13782457}, {'object': 'lens cap', 'Index:': 623, 'Accuracy': 0.13811034}, {'object': 'toaster', 'Index:': 860, 'Accuracy': 0.5256363}]
+
+[{'object': 'hartebeest', 'Index:': 352, 'Accuracy': 3.1010553e-05}, {'object': 'impala', 'Index:': 353, 'Accuracy': 4.2077652e-05}, {'object': 'sorrel', 'Index:': 340, 'Accuracy': 0.99973565}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.020659426}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.41741046}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.5602385}]
+
+[{'object': 'papillon', 'Index:': 158, 'Accuracy': 0.0982571}, {'object': 'porcupine', 'Index:': 335, 'Accuracy': 0.18156014}, {'object': 'Australian terrier', 'Index:': 194, 'Accuracy': 0.19290297}]
+
+[{'object': 'gas pump', 'Index:': 572, 'Accuracy': 0.0016458872}, {'object': 'burrito', 'Index:': 966, 'Accuracy': 0.4128442}, {'object': 'Windsor tie', 'Index:': 907, 'Accuracy': 0.5806555}]
+
+[{'object': 'wardrobe', 'Index:': 895, 'Accuracy': 0.023676122}, {'object': 'aircraft carrier', 'Index:': 404, 'Accuracy': 0.89074403}, {'object': 'wine bottle', 'Index:': 908, 'Accuracy': 0.077114485}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.2797496}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.32866603}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.37983155}]
+
+[{'object': 'spotlight', 'Index:': 819, 'Accuracy': 0.1017251}, {'object': 'flagpole', 'Index:': 558, 'Accuracy': 0.14183386}, {'object': 'ballplayer', 'Index:': 982, 'Accuracy': 0.31722605}]
+
+[{'object': 'planetarium', 'Index:': 728, 'Accuracy': 0.08082551}, {'object': 'beacon', 'Index:': 438, 'Accuracy': 0.12644447}, {'object': 'swab', 'Index:': 841, 'Accuracy': 0.35777128}]
+
+[{'object': 'caldron', 'Index:': 470, 'Accuracy': 0.055814613}, {'object': 'carbonara', 'Index:': 960, 'Accuracy': 0.24993414}, {'object': 'guillotine', 'Index:': 584, 'Accuracy': 0.4558922}]
+
+[{'object': 'pomegranate', 'Index:': 958, 'Accuracy': 0.052554972}, {'object': 'Arabian camel', 'Index:': 355, 'Accuracy': 0.08042594}, {'object': 'horizontal bar', 'Index:': 603, 'Accuracy': 0.05870652}]
+
+[{'object': 'chow', 'Index:': 261, 'Accuracy': 0.020111041}, {'object': 'Samoyed', 'Index:': 259, 'Accuracy': 0.16987513}, {'object': 'Great Pyrenees', 'Index:': 258, 'Accuracy': 0.6525974}]
+
+[{'object': 'coho', 'Index:': 392, 'Accuracy': 0.115613654}, {'object': 'oboe', 'Index:': 684, 'Accuracy': 0.15745184}, {'object': 'cloak', 'Index:': 502, 'Accuracy': 0.18132034}]
+
+[{'object': 'hair slide', 'Index:': 585, 'Accuracy': 0.13782457}, {'object': 'lens cap', 'Index:': 623, 'Accuracy': 0.13811034}, {'object': 'toaster', 'Index:': 860, 'Accuracy': 0.5256363}]
+
+[{'object': 'hartebeest', 'Index:': 352, 'Accuracy': 3.1010553e-05}, {'object': 'impala', 'Index:': 353, 'Accuracy': 4.2077652e-05}, {'object': 'sorrel', 'Index:': 340, 'Accuracy': 0.99973565}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.020659426}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.41741046}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.5602385}]
+
+[{'object': 'papillon', 'Index:': 158, 'Accuracy': 0.0982571}, {'object': 'porcupine', 'Index:': 335, 'Accuracy': 0.18156014}, {'object': 'Australian terrier', 'Index:': 194, 'Accuracy': 0.19290297}]
+
+[{'object': 'gas pump', 'Index:': 572, 'Accuracy': 0.0016458872}, {'object': 'burrito', 'Index:': 966, 'Accuracy': 0.4128442}, {'object': 'Windsor tie', 'Index:': 907, 'Accuracy': 0.5806555}]
+
+[{'object': 'wardrobe', 'Index:': 895, 'Accuracy': 0.023676122}, {'object': 'aircraft carrier', 'Index:': 404, 'Accuracy': 0.89074403}, {'object': 'wine bottle', 'Index:': 908, 'Accuracy': 0.077114485}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.2797496}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.32866603}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.37983155}]
+
+[{'object': 'spotlight', 'Index:': 819, 'Accuracy': 0.1017251}, {'object': 'flagpole', 'Index:': 558, 'Accuracy': 0.14183386}, {'object': 'ballplayer', 'Index:': 982, 'Accuracy': 0.31722605}]
+
+[{'object': 'planetarium', 'Index:': 728, 'Accuracy': 0.08082551}, {'object': 'beacon', 'Index:': 438, 'Accuracy': 0.12644447}, {'object': 'swab', 'Index:': 841, 'Accuracy': 0.35777128}]
+
+[{'object': 'caldron', 'Index:': 470, 'Accuracy': 0.055814613}, {'object': 'carbonara', 'Index:': 960, 'Accuracy': 0.24993414}, {'object': 'guillotine', 'Index:': 584, 'Accuracy': 0.4558922}]
+
+[{'object': 'pomegranate', 'Index:': 958, 'Accuracy': 0.052554972}, {'object': 'Arabian camel', 'Index:': 355, 'Accuracy': 0.08042594}, {'object': 'horizontal bar', 'Index:': 603, 'Accuracy': 0.05870652}]
+
+[{'object': 'chow', 'Index:': 261, 'Accuracy': 0.020111041}, {'object': 'Samoyed', 'Index:': 259, 'Accuracy': 0.16987513}, {'object': 'Great Pyrenees', 'Index:': 258, 'Accuracy': 0.6525974}]
+
+[{'object': 'coho', 'Index:': 392, 'Accuracy': 0.115613654}, {'object': 'oboe', 'Index:': 684, 'Accuracy': 0.15745184}, {'object': 'cloak', 'Index:': 502, 'Accuracy': 0.18132034}]
+
+[{'object': 'hair slide', 'Index:': 585, 'Accuracy': 0.13782457}, {'object': 'lens cap', 'Index:': 623, 'Accuracy': 0.13811034}, {'object': 'toaster', 'Index:': 860, 'Accuracy': 0.5256363}]
+
+[{'object': 'hartebeest', 'Index:': 352, 'Accuracy': 3.1010553e-05}, {'object': 'impala', 'Index:': 353, 'Accuracy': 4.2077652e-05}, {'object': 'sorrel', 'Index:': 340, 'Accuracy': 0.99973565}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.020659426}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.41741046}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.5602385}]
+
+[{'object': 'papillon', 'Index:': 158, 'Accuracy': 0.0982571}, {'object': 'porcupine', 'Index:': 335, 'Accuracy': 0.18156014}, {'object': 'Australian terrier', 'Index:': 194, 'Accuracy': 0.19290297}]
+
+[{'object': 'gas pump', 'Index:': 572, 'Accuracy': 0.0016458872}, {'object': 'burrito', 'Index:': 966, 'Accuracy': 0.4128442}, {'object': 'Windsor tie', 'Index:': 907, 'Accuracy': 0.5806555}]
+
+[{'object': 'wardrobe', 'Index:': 895, 'Accuracy': 0.023676122}, {'object': 'aircraft carrier', 'Index:': 404, 'Accuracy': 0.89074403}, {'object': 'wine bottle', 'Index:': 908, 'Accuracy': 0.077114485}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.2797496}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.32866603}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.37983155}]
+
+[{'object': 'spotlight', 'Index:': 819, 'Accuracy': 0.1017251}, {'object': 'flagpole', 'Index:': 558, 'Accuracy': 0.14183386}, {'object': 'ballplayer', 'Index:': 982, 'Accuracy': 0.31722605}]
+
+[{'object': 'planetarium', 'Index:': 728, 'Accuracy': 0.08082551}, {'object': 'beacon', 'Index:': 438, 'Accuracy': 0.12644447}, {'object': 'swab', 'Index:': 841, 'Accuracy': 0.35777128}]
+
+[{'object': 'caldron', 'Index:': 470, 'Accuracy': 0.055814613}, {'object': 'carbonara', 'Index:': 960, 'Accuracy': 0.24993414}, {'object': 'guillotine', 'Index:': 584, 'Accuracy': 0.4558922}]
+
+[{'object': 'pomegranate', 'Index:': 958, 'Accuracy': 0.052554972}, {'object': 'Arabian camel', 'Index:': 355, 'Accuracy': 0.08042594}, {'object': 'horizontal bar', 'Index:': 603, 'Accuracy': 0.05870652}]
+
+[{'object': 'chow', 'Index:': 261, 'Accuracy': 0.020111041}, {'object': 'Samoyed', 'Index:': 259, 'Accuracy': 0.16987513}, {'object': 'Great Pyrenees', 'Index:': 258, 'Accuracy': 0.6525974}]
+
+[{'object': 'coho', 'Index:': 392, 'Accuracy': 0.115613654}, {'object': 'oboe', 'Index:': 684, 'Accuracy': 0.15745184}, {'object': 'cloak', 'Index:': 502, 'Accuracy': 0.18132034}]
+
+[{'object': 'hair slide', 'Index:': 585, 'Accuracy': 0.13782457}, {'object': 'lens cap', 'Index:': 623, 'Accuracy': 0.13811034}, {'object': 'toaster', 'Index:': 860, 'Accuracy': 0.5256363}]
+
+[{'object': 'hartebeest', 'Index:': 352, 'Accuracy': 3.1010553e-05}, {'object': 'impala', 'Index:': 353, 'Accuracy': 4.2077652e-05}, {'object': 'sorrel', 'Index:': 340, 'Accuracy': 0.99973565}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.020659426}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.41741046}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.5602385}]
+
+[{'object': 'papillon', 'Index:': 158, 'Accuracy': 0.0982571}, {'object': 'porcupine', 'Index:': 335, 'Accuracy': 0.18156014}, {'object': 'Australian terrier', 'Index:': 194, 'Accuracy': 0.19290297}]
+
+[{'object': 'gas pump', 'Index:': 572, 'Accuracy': 0.0016458872}, {'object': 'burrito', 'Index:': 966, 'Accuracy': 0.4128442}, {'object': 'Windsor tie', 'Index:': 907, 'Accuracy': 0.5806555}]
+
+[{'object': 'wardrobe', 'Index:': 895, 'Accuracy': 0.023676122}, {'object': 'aircraft carrier', 'Index:': 404, 'Accuracy': 0.89074403}, {'object': 'wine bottle', 'Index:': 908, 'Accuracy': 0.077114485}]
+
+[{'object': 'tabby', 'Index:': 282, 'Accuracy': 0.2797496}, {'object': 'Siamese cat', 'Index:': 285, 'Accuracy': 0.32866603}, {'object': 'grey fox', 'Index:': 281, 'Accuracy': 0.37983155}]
+
+[{'object': 'spotlight', 'Index:': 819, 'Accuracy': 0.1017251}, {'object': 'flagpole', 'Index:': 558, 'Accuracy': 0.14183386}, {'object': 'ballplayer', 'Index:': 982, 'Accuracy': 0.31722605}]
+
+[{'object': 'planetarium', 'Index:': 728, 'Accuracy': 0.08082551}, {'object': 'beacon', 'Index:': 438, 'Accuracy': 0.12644447}, {'object': 'swab', 'Index:': 841, 'Accuracy': 0.35777128}]
+
+[{'object': 'caldron', 'Index:': 470, 'Accuracy': 0.055814613}, {'object': 'carbonara', 'Index:': 960, 'Accuracy': 0.24993414}, {'object': 'guillotine', 'Index:': 584, 'Accuracy': 0.4558922}]
+
+[{'object': 'pomegranate', 'Index:': 958, 'Accuracy': 0.052554972}, {'object': 'Arabian camel', 'Index:': 355, 'Accuracy': 0.08042594}, {'object': 'horizontal bar', 'Index:': 603, 'Accuracy': 0.05870652}]
+

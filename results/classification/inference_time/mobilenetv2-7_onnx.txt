@@ -1,0 +1,347 @@
+         5371 function calls (5312 primitive calls) in 1.008 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.001    0.001    1.008    1.008 classification.py:480(onnx_runtime)
+        6    0.703    0.117    0.703    0.117 /home/pi/.local/lib/python3.8/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:178(run)
+        1    0.000    0.000    0.160    0.160 /home/pi/.local/lib/python3.8/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:308(__init__)
+        1    0.159    0.159    0.160    0.160 /home/pi/.local/lib/python3.8/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:371(_create_inference_session)
+        6    0.013    0.002    0.115    0.019 classification.py:192(preprocess_image_onnx_mobilenet2)
+        6    0.000    0.000    0.078    0.013 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:2089(resize)
+        6    0.048    0.008    0.048    0.008 {method 'resize' of 'ImagingCore' objects}
+       12    0.001    0.000    0.029    0.002 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:155(load)
+        7    0.027    0.004    0.027    0.004 {method 'decode' of 'ImagingDecoder' objects}
+        6    0.000    0.000    0.019    0.003 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3174(open)
+        6    0.000    0.000    0.016    0.003 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:321(preinit)
+     13/5    0.000    0.000    0.015    0.003 <frozen importlib._bootstrap>:1017(_handle_fromlist)
+        1    0.015    0.015    0.015    0.015 /home/pi/.local/lib/python3.8/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:258(end_profiling)
+     19/5    0.000    0.000    0.015    0.003 <frozen importlib._bootstrap>:211(_call_with_frames_removed)
+      9/5    0.000    0.000    0.015    0.003 {built-in method builtins.__import__}
+     10/5    0.000    0.000    0.015    0.003 <frozen importlib._bootstrap>:986(_find_and_load)
+     10/5    0.000    0.000    0.015    0.003 <frozen importlib._bootstrap>:956(_find_and_load_unlocked)
+     10/5    0.000    0.000    0.014    0.003 <frozen importlib._bootstrap>:650(_load_unlocked)
+     10/5    0.000    0.000    0.013    0.003 <frozen importlib._bootstrap_external>:842(exec_module)
+        6    0.001    0.000    0.012    0.002 classification.py:120(return_n_biggest_result_onnx)
+       31    0.010    0.000    0.010    0.000 {built-in method builtins.print}
+     10/5    0.000    0.000    0.010    0.002 {built-in method builtins.exec}
+       10    0.000    0.000    0.006    0.001 <frozen importlib._bootstrap_external>:914(get_code)
+        1    0.000    0.000    0.004    0.004 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:34(<module>)
+       31    0.001    0.000    0.004    0.000 {built-in method builtins.__build_class__}
+       10    0.000    0.000    0.003    0.000 <frozen importlib._bootstrap_external>:638(_compile_bytecode)
+       10    0.003    0.000    0.003    0.000 {built-in method marshal.loads}
+        6    0.000    0.000    0.003    0.000 {built-in method numpy.asarray}
+        6    0.000    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3242(_open_core)
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:34(<module>)
+        6    0.000    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:687(__array_interface__)
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/PIL/GifImagePlugin.py:27(<module>)
+        6    0.000    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:821(jpeg_factory)
+       10    0.000    0.000    0.002    0.000 <frozen importlib._bootstrap>:890(_find_spec)
+        6    0.000    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:88(__init__)
+        6    0.000    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:729(tobytes)
+        6    0.000    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:351(_open)
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:41(<module>)
+       10    0.000    0.000    0.002    0.000 <frozen importlib._bootstrap_external>:1399(find_spec)
+       18    0.000    0.000    0.002    0.000 {built-in method numpy.core._multiarray_umath.implement_array_function}
+       10    0.000    0.000    0.002    0.000 <frozen importlib._bootstrap_external>:1367(_get_spec)
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:27(<module>)
+        6    0.002    0.000    0.002    0.000 {method 'astype' of 'numpy.ndarray' objects}
+       10    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1498(find_spec)
+        6    0.001    0.000    0.001    0.000 classification.py:144(softmax)
+       10    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1034(get_data)
+        6    0.000    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:292(load_prepare)
+        6    0.001    0.000    0.001    0.000 {built-in method PIL._imaging.new}
+        3    0.000    0.000    0.001    0.000 /usr/lib/python3.8/enum.py:157(__new__)
+      243    0.001    0.000    0.001    0.000 {method 'read' of '_io.BufferedReader' objects}
+       18    0.001    0.000    0.001    0.000 {method 'encode' of 'ImagingEncoder' objects}
+       30    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:135(_path_stat)
+       30    0.001    0.000    0.001    0.000 {built-in method posix.stat}
+        6    0.000    0.000    0.001    0.000 <__array_function__ internals>:177(expand_dims)
+       10    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:549(module_from_spec)
+       10    0.001    0.000    0.001    0.000 {built-in method io.open_code}
+       10    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:477(_init_module_attrs)
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/re.py:250(compile)
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/re.py:289(_compile)
+        6    0.000    0.000    0.001    0.000 <__array_function__ internals>:177(amax)
+        6    0.000    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/lib/shape_base.py:512(expand_dims)
+       39    0.001    0.000    0.001    0.000 {method 'format' of 'str' objects}
+        6    0.001    0.000    0.001    0.000 {built-in method io.open}
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/sre_compile.py:759(compile)
+       20    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:354(cache_from_source)
+        6    0.000    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/fromnumeric.py:2703(amax)
+       11    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:243(DQT)
+       14    0.000    0.000    0.000    0.000 {built-in method __new__ of type object at 0x8deb80}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:430(ImageFileDirectory_v2)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/fromnumeric.py:69(_wrapreduction)
+       20    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:376(cached)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/abc.py:84(__new__)
+       12    0.000    0.000    0.000    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+        7    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:404(load_read)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:484(_get_cached)
+        6    0.000    0.000    0.000    0.000 <__array_function__ internals>:177(argpartition)
+        6    0.000    0.000    0.000    0.000 {method 'join' of 'bytes' objects}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:147(__enter__)
+       60    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:121(_path_join)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:276(PngInfo)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/fromnumeric.py:792(argpartition)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:30(<module>)
+        1    0.000    0.000    0.000    0.000 {built-in method posix.rename}
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:248(_conv_type_shape)
+        8    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:61(APP)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:154(_path_isfile)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/fromnumeric.py:51(_wrapfunc)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:200(<setcomp>)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:145(_path_is_mode_type)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:543(_new)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1075(path_stats)
+      126    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:937(parse)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:598(_code)
+       27    0.000    0.000    0.000    0.000 {built-in method builtins.max}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1493(_get_spec)
+        6    0.000    0.000    0.000    0.000 {method 'argpartition' of 'numpy.ndarray' objects}
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:417(_getencoder)
+       65    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:389(parent)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:157(_get_module_lock)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/numeric.py:1348(normalize_axis_tuple)
+       12    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:263(<listcomp>)
+       20    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:127(_path_split)
+        6    0.000    0.000    0.000    0.000 {method 'close' of '_io.BufferedReader' objects}
+       20    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:75(__setitem__)
+      526    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:435(_parse_sub)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PpmImagePlugin.py:18(<module>)
+       30    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:56(Skip)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:689(spec_from_file_location)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:493(_parse)
+        6    0.000    0.000    0.000    0.000 {method 'sum' of 'numpy.ndarray' objects}
+      137    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/_binary.py:80(i16be)
+        6    0.000    0.000    0.000    0.000 {method 'flatten' of 'numpy.ndarray' objects}
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:143(__prepare__)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:393(_getdecoder)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageMode.py:36(getmode)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:193(SOF)
+       60    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:123(<listcomp>)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:2018(getLogger)
+       98    0.000    0.000    0.000    0.000 {built-in method builtins.hasattr}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:1284(getLogger)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/_methods.py:47(_sum)
+        9    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:686(_register_basic)
+       23    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:417(__setattr__)
+       12    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:512(__init__)
+       24    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:835(load)
+       12    0.000    0.000    0.000    0.000 {built-in method numpy.array}
+       55    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:555(_safe_read)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:151(__exit__)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:536(_compile_info)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:579(_find_new_)
+      4/2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:71(_compile)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:553(_classify_pyc)
+  394/390    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+       49    0.000    0.000    0.000    0.000 {built-in method builtins.setattr}
+        6    0.000    0.000    0.000    0.000 {method 'reshape' of 'numpy.ndarray' objects}
+        3    0.000    0.000    0.000    0.000 {built-in method _abc._abc_init}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:103(release)
+      115    0.000    0.000    0.000    0.000 {method 'rpartition' of 'str' objects}
+      143    0.000    0.000    0.000    0.000 {built-in method _struct.unpack_from}
+        6    0.000    0.000    0.000    0.000 {built-in method PIL._imaging.raw_encoder}
+        6    0.000    0.000    0.000    0.000 {built-in method PIL._imaging.jpeg_decoder}
+       30    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:79(_unpack_uint32)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:78(acquire)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/numeric.py:1398(<listcomp>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/GifImagePlugin.py:39(LoadingStrategy)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:55(_dib_accept)
+      114    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:260(<genexpr>)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:586(_validate_timestamp_pyc)
+       70    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:222(_verbose_message)
+        6    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:532(_get_mixins_)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:487(_getmp)
+       18    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:525(__getattr__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:99(Disposal)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageSequence.py:19(<module>)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:669(decorator)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:58(__init__)
+       18    0.000    0.000    0.000    0.000 {method 'seek' of '_io.BufferedReader' objects}
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:229(<listcomp>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:303(IFDRational)
+       34    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageMode.py:25(__init__)
+       10    0.000    0.000    0.000    0.000 {built-in method _imp._fix_co_filename}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:657(get)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:176(cb)
+       40    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:129(<genexpr>)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:512(_getmp)
+        7    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3392(register_open)
+       12    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/_util.py:5(is_path)
+        5    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:276(_optimize_charset)
+       15    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3441(register_extension)
+      161    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/_binary.py:60(i32le)
+       20    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:22(_is_dunder)
+        4    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3452(register_extensions)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:516(_check_name_wrapper)
+       80    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+      4/2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:174(getwidth)
+       18    0.000    0.000    0.000    0.000 {method 'pixel_access' of 'ImagingCore' objects}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:175(_path_isabs)
+       20    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:33(_is_sunder)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:938(__and__)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:522(_check_for_existing_members)
+      140    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+        6    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:543(_find_data_type)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:1335(_fixupParents)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegPresets.py:1(<module>)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/lib/shape_base.py:600(<listcomp>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:120(Blend)
+       30    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:867(__exit__)
+        6    0.000    0.000    0.000    0.000 {method 'setimage' of 'ImagingEncoder' objects}
+        6    0.000    0.000    0.000    0.000 {built-in method numpy.core._multiarray_umath.normalize_axis_index}
+        6    0.000    0.000    0.000    0.000 {method 'sort' of 'list' objects}
+       72    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:539(size)
+       69    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:71(join)
+       30    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:863(__enter__)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:800(find_spec)
+        6    0.000    0.000    0.000    0.000 {method 'transpose' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:62(BmpImageFile)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:1404(__init__)
+       16    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:35(_new_module)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/fromnumeric.py:70(<dictcomp>)
+       23    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:164(__getitem__)
+       11    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:254(get)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageChops.py:18(<module>)
+        1    0.000    0.000    0.000    0.000 {built-in method onnxruntime.capi.onnxruntime_pybind11_state.get_available_providers}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:342(__init__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:1872(AppendingTiffWriter)
+       24    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+       12    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:535(height)
+        3    0.000    0.000    0.000    0.000 {method 'tell' of '_io.BufferedReader' objects}
+       13    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:233(__next)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:51(_accept)
+        6    0.000    0.000    0.000    0.000 {method 'setimage' of 'ImagingDecoder' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/os.py:670(__getitem__)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:224(__init__)
+       50    0.000    0.000    0.000    0.000 {built-in method _imp.acquire_lock}
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:313(__call__)
+        9    0.000    0.000    0.000    0.000 {built-in method _struct.calcsize}
+        5    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:249(_compile_charset)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:272(_accept)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:218(_acquireLock)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1330(_path_importer_cache)
+       30    0.000    0.000    0.000    0.000 {built-in method from_bytes}
+       50    0.000    0.000    0.000    0.000 {built-in method _imp.release_lock}
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:370(__getattr__)
+        8    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:12(_is_descriptor)
+       11    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+       20    0.000    0.000    0.000    0.000 {built-in method _thread.allocate_lock}
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:68(__init__)
+       21    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:360(PngStream)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:143(__init__)
+       23    0.000    0.000    0.000    0.000 {method 'get' of 'mappingproxy' objects}
+        6    0.000    0.000    0.000    0.000 {method 'copy' of 'dict' objects}
+       24    0.000    0.000    0.000    0.000 {built-in method builtins.issubclass}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1004(__init__)
+       26    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:388(_delegate)
+       12    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:531(width)
+       10    0.000    0.000    0.000    0.000 {built-in method _imp.is_frozen}
+        7    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3418(register_save)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3153(_decompression_bomb_check)
+        7    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3407(register_mime)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:346(JpegImageFile)
+       27    0.000    0.000    0.000    0.000 {method 'get' of 'dict' objects}
+       16    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+        6    0.000    0.000    0.000    0.000 {method 'cleanup' of 'ImagingDecoder' objects}
+       20    0.000    0.000    0.000    0.000 {built-in method _thread.get_ident}
+       12    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:337(_accept)
+        3    0.000    0.000    0.000    0.000 {built-in method builtins.any}
+       31    0.000    0.000    0.000    0.000 {built-in method posix.fspath}
+       15    0.000    0.000    0.000    0.000 {method 'items' of 'mappingproxy' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/GifImagePlugin.py:63(GifImageFile)
+        9    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:172(append)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:960(ImageFileDirectory_v1)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:423(_simple)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/os.py:748(encode)
+       10    0.000    0.000    0.000    0.000 {built-in method builtins.min}
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/GifImagePlugin.py:54(_accept)
+        6    0.000    0.000    0.000    0.000 {built-in method numpy.asanyarray}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:358(Parser)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:227(_releaseLock)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:461(_get_literal_prefix)
+        9    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:223(<genexpr>)
+       19    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+       18    0.000    0.000    0.000    0.000 {built-in method builtins.next}
+        8    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:160(__len__)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:595(isstring)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:723(PngImageFile)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:631(__new__)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:355(_escape)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:1059(TiffImageFile)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:162(ChunkStream)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:175(<dictcomp>)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:300(load_end)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:138(<dictcomp>)
+        2    0.000    0.000    0.000    0.000 {method 'acquire' of '_thread.RLock' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method _sre.compile}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:1089(_idat)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:492(_get_charset_prefix)
+       15    0.000    0.000    0.000    0.000 {method 'lower' of 'str' objects}
+        5    0.000    0.000    0.000    0.000 {built-in method builtins.divmod}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:776(__init__)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:75(_tilesort)
+        5    0.000    0.000    0.000    0.000 {method 'find' of 'bytearray' objects}
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/lib/shape_base.py:508(_expand_dims_dispatcher)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:68(_relax_case)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:232(<lambda>)
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3429(register_save_all)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:41(_get_sep)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:286(tell)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1029(get_filename)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:111(__init__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:673(PyDecoder)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:725(find_spec)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/fromnumeric.py:2698(_amax_dispatcher)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:85(ImageFile)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:76(__init__)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:397(has_location)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:1230(append)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:921(fix_flags)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:81(groups)
+        6    0.000    0.000    0.000    0.000 {built-in method builtins.iter}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:839(create_module)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:107(__init__)
+        3    0.000    0.000    0.000    0.000 {method 'setdefault' of 'dict' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:193(_checkLevel)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:679(_register_writer)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:722(PyEncoder)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:254(iTXt)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:680(decorator)
+        6    0.000    0.000    0.000    0.000 {built-in method builtins.vars}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:601(PyCodec)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageSequence.py:19(Iterator)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PpmImagePlugin.py:149(PpmPlainDecoder)
+        6    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/numpy/core/fromnumeric.py:788(_argpartition_dispatcher)
+        2    0.000    0.000    0.000    0.000 {method 'release' of '_thread.RLock' objects}
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:249(match)
+        3    0.000    0.000    0.000    0.000 {method 'mro' of 'type' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'setter' of 'property' objects}
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:453(_get_iscased)
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3473(register_decoder)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:668(_register_loader)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PpmImagePlugin.py:53(PpmImageFile)
+        4    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:117(get_inputs)
+        1    0.000    0.000    0.000    0.000 {method 'encode' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:328(StubImageFile)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:288(BmpRleDecoder)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:24(check_and_normalize_provider_args)
+        3    0.000    0.000    0.000    0.000 {built-in method builtins.ord}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:1100(_fdat)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:362(DibImageFile)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:168(__setitem__)
+        1    0.000    0.000    0.000    0.000 {method 'keys' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:590(PyCodecState)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py:121(get_outputs)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PpmImagePlugin.py:279(PpmDecoder)
+
+
