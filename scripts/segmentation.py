@@ -1,23 +1,14 @@
-import torch
-from torchvision import models, transforms
 import argparse
 import logging as log
 import os
-from time import sleep, time
+from time import sleep, perf_counter
 import numpy as np
-import pyarmnn as ann
-import tflite_runtime.interpreter as tflite
 import cv2
 import sys 
 from PIL import Image
-from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
-from openvino.runtime import Core, Layout, Type
-import onnxruntime
-from PIL import Image
-import cProfile, pstats, timeit
-import csv
-import json
-from torch.profiler import profile, record_function, ProfilerActivity
+import cProfile, pstats
+
+InferRequest = None
 
 def create_pascal_label_colormap():
   """Creates a label colormap used in PASCAL VOC segmentation benchmark.
@@ -33,9 +24,9 @@ def create_pascal_label_colormap():
       colormap[:, channel] |= ((ind >> channel) & 1) << shift
     ind >>= 3
 
-  print("colormap: --- >", colormap.shape)
-  print(colormap)
-  print("finto")
+  #print("colormap: --- >", colormap.shape)
+  #print(colormap)
+  #print("finto")
   return colormap
 
 def create_cityscapes_label_colormap():
@@ -240,17 +231,17 @@ def label_to_color_image(label, colormap):
       map maximum entry.
   """
 
-  print("Label shape: ", label.shape)  
+  #print("Label shape: ", label.shape)  
 
   if label.ndim != 2:
     raise ValueError('Expect 2-D input label')
 
   if np.max(label) >= len(colormap):
     raise ValueError('label value too large.')
-  print("label to color")
+  #print("label to color")
   #print(label)
   #print(colormap)
-  print(label.shape, colormap.shape)
+  #print(label.shape, colormap.shape)
   #print(colormap[label])
 
   return colormap[label]
@@ -262,8 +253,8 @@ def vis_segmentation_cv2(image, seg_map, LABEL_NAMES, colormap):
  cv2.imwrite("result1.jpg", image)
  seg_image = label_to_color_image(seg_map, colormap).astype(np.uint8)
 
- print(image.shape, seg_image.shape)
- print(LABEL_NAMES)
+ #print(image.shape, seg_image.shape)
+ #print(LABEL_NAMES)
 
  overlay_picture = cv2.addWeighted(image, 0.7, seg_image, 0.5, 0)
 
@@ -298,7 +289,7 @@ def output_data_tflite_runtime(output_details, interpreter, img_res, img_org, im
     # my method, first resize, then argmax 
     output_data = output_data[0]
 
-    print(output_data.shape)
+    #print(output_data.shape)
 
     seg_map = np.ndarray((img_res.shape[0],img_res.shape[1],len(output_data[0,0,:])))
 
@@ -309,7 +300,7 @@ def output_data_tflite_runtime(output_details, interpreter, img_res, img_org, im
     seg_map = np.argmax(seg_map, axis=2)
 
     result, out_image, out_mask = vis_segmentation_cv2(img_res, seg_map, labels, colormap)
-    print(img_result_file)
+    #print(img_result_file)
     #results.append(result)
     #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
     #mask_out_path = gen_out_path + "_mask.jpg"
@@ -324,7 +315,7 @@ def output_data_pyarmnn(output_data, img_res, img_org, img_result_file, img_resu
     with open(class_dir, 'r') as f:
         labels =  np.asarray([line.strip() for i, line in enumerate(f.readlines())])
 
-    print("label shape", labels.shape)
+    #print("label shape", labels.shape)
 
     #print(output_data[0].shape)
     #print(output_data[0][0].shape)
@@ -340,7 +331,7 @@ def output_data_pyarmnn(output_data, img_res, img_org, img_result_file, img_resu
     #seg_map = np.ndarray((img_res.shape[0],img_res.shape[1],len(output_data[0,0,:])))
     seg_map = np.ndarray((img_res.shape[0],img_res.shape[1],len(output_data[0,0,:])))
 
-    print("segmap", seg_map.shape)
+    #print("segmap", seg_map.shape)
 
     for i in range(len(output_data[0,0,:])):
         seg_map[:,:,i] = cv2.resize(output_data[:,:,i], (img_res.shape[1],img_res.shape[0]))
@@ -348,10 +339,10 @@ def output_data_pyarmnn(output_data, img_res, img_org, img_result_file, img_resu
 
     seg_map = np.argmax(seg_map, axis=2)
 
-    print("segmap after argmax (labels)", seg_map.shape)
+    #print("segmap after argmax (labels)", seg_map.shape)
 
     result, out_image, out_mask = vis_segmentation_cv2(img_res, seg_map, labels, colormap)
-    print(img_result_file)
+    #print(img_result_file)
     #results.append(result)
     #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
     #mask_out_path = gen_out_path + "_mask.jpg"
@@ -377,14 +368,14 @@ def output_data_pytorch_deeplabv3(output_data, img_res, img_org, img_result_file
     # my method, first resize, then argmax 
     #output_data = output_data[0]
 
-    print(output_data.shape)
-    print(output.shape)
-    print(img_res.shape)
-    print(len(output_data[:,0,0]))
+    #print(output_data.shape)
+    #print(output.shape)
+    #print(img_res.shape)
+    #print(len(output_data[:,0,0]))
 
     seg_map = np.ndarray((img_res.shape[0],img_res.shape[1],len(output[:,0,0])))
 
-    print(seg_map.shape)
+    #print(seg_map.shape)
 
     for i in range(len(output[:,0,0])):
         seg_map[:,:,i] = cv2.resize(output[i,:,:], (img_res.shape[1],img_res.shape[0]))
@@ -393,7 +384,7 @@ def output_data_pytorch_deeplabv3(output_data, img_res, img_org, img_result_file
     seg_map = np.argmax(seg_map, axis=2)
 
     result, out_image, out_mask = vis_segmentation_cv2(img_res, seg_map, labels, colormap)
-    print(img_result_file)
+    #print(img_result_file)
     #results.append(result)
     #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
     #mask_out_path = gen_out_path + "_mask.jpg"
@@ -407,19 +398,10 @@ def output_data_onnx(output_data, img_res, img_org, img_result_file, img_result_
     #https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/ssd-mobilenetv1
     results = []
 
-    print("label dir", class_dir)
+    #print("label dir", class_dir)
 
     with open(class_dir, 'r') as f:
         labels =  np.asarray([line.strip() for i, line in enumerate(f.readlines())])
-
-    print(labels.shape)
-
-    
-    # my method, first resize, then argmax 
-    #output_data = output_data[0]
-    print("---------------Output-------------------------------")
-    #print(output_data[0][0])
-    #print(output_data[0][0].shape)
 
     output_data = output_data[0][0]
 
@@ -433,7 +415,7 @@ def output_data_onnx(output_data, img_res, img_org, img_result_file, img_result_
     seg_map = np.argmax(seg_map, axis=2)
 
     result, out_image, out_mask = vis_segmentation_cv2(img_res, seg_map, labels, colormap)
-    print(img_result_file)
+    #print(img_result_file)
     #results.append(result)
     #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
     #mask_out_path = gen_out_path + "_mask.jpg"
@@ -450,9 +432,12 @@ def output_data_ov(output_data, img_res, img_org, img_result_file, img_result_ma
     with open(class_dir, 'r') as f:
         labels =  np.asarray([line.strip() for i, line in enumerate(f.readlines())])
 
-    print("-----------------Output----------------")
-    print("colormap: ", colormap.shape)
-    print(colormap)
+    #print("-----------------Output----------------")
+    #print("colormap: ", colormap.shape)
+    #print(colormap)
+
+    #print("out: ", output_data)
+
     for element in output_data:
         output = output_data[element][0]
         
@@ -460,6 +445,7 @@ def output_data_ov(output_data, img_res, img_org, img_result_file, img_result_ma
     output = np.array(output, dtype="int")
 
 
+    print("out shape", output.shape)
     print(img_res.shape)
     print(img_org.shape, output.shape)
 
@@ -478,12 +464,7 @@ def output_data_ov(output_data, img_res, img_org, img_result_file, img_result_ma
 
     return results
 
-def softmax(x):
-    """Compute softmax values for each sets of scores in x."""
-    e_x = np.exp(x - np.max(x))
-    return e_x / e_x.sum()
-
-def preprocess_image_pytorch_deeplabv3():
+def preprocess_pytorch():
 
     preprocess = transforms.Compose([
     transforms.ToTensor(),
@@ -491,6 +472,19 @@ def preprocess_image_pytorch_deeplabv3():
 ])
 
     return preprocess
+
+def preprocess_image_pytorch_deeplabv3(img, preprocess):
+    input_image = Image.open(img)
+    input_image = input_image.convert("RGB")
+
+    #img = 'https://ultralytics.com/images/zidane.jpg'
+
+    #input_image = input_image.resize((64,64))
+
+
+    input_tensor = preprocess(input_image)
+    input_batch = input_tensor.unsqueeze(0)
+    return input_batch
 
 def preprocess_image_ov_deeplabv3(input_tensor, model):
     # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
@@ -538,41 +532,32 @@ def preprocess_image_onnx_deeplabv3(image_path, input_type, image_height, image_
     #print(input_type.numpy())
 
     image = cv2.imread(image_path)
-    print("---------------------------------------------------------------------------------")
-    print(image_height, image_width)
-    print(image.shape)
     image = cv2.resize(image, (image_height, image_width))
-    image_data = cv2.normalize(image.astype(np.float32), None, 0.0, 1.0, cv2.NORM_MINMAX)
-    print(image.shape)
+    image_data = cv2.normalize(image.astype(np.float32), None, -1.0, 1.0, cv2.NORM_MINMAX)
     image_data = np.expand_dims(image_data, 0)
-    print(image.shape)
+
 
     return image_data
-
 
 def preprocess_image_tflite_deeplabv3(image_path, height, width, input_type, channels=3):
-    """
-    image = Image.open(image_path)
-    image = image.resize((width, height), Image.LANCZOS)
-    image_data = np.asarray(image).astype(input_type)
+    
+    #image = Image.open(image_path)
+    #image = image.resize((height, width), Image.LANCZOS)
+    #image_data = np.asarray(image).astype(input_type)
     #for channel in range(image_data.shape[0]):
-    #    image_data[channel, :, :] = image_data[channel, :, :]*2 / 255 - 1
-    image_data = np.expand_dims(image_data, 0)
+    #    image_data[channel, :, :] = image_data[channel, :, :]*127.5 - 1
+    #image_data = np.expand_dims(image_data, 0)
     #print(image_data.shape)
     #quit()
-    return image_data
-    """
+    #return image, image_data
+    
 
     image = cv2.imread(image_path)
     image = cv2.resize(image, (width, height))
-    image_data = cv2.normalize(image.astype(input_type), None, 0.0, 1.0, cv2.NORM_MINMAX)
-    print(image.shape)
+    image_data = cv2.normalize(image.astype(input_type), None, -1.0, 1.0, cv2.NORM_MINMAX)
     image_data = np.expand_dims(image_data, 0)
-    print(image.shape)
 
     return image, image_data
-
-
 
 def setup_profiling(net_id, runtime):
     profiler = runtime.GetProfiler(net_id)
@@ -590,7 +575,6 @@ def check_directories(model_dir, img_dir, model_type):
         if model_type not in model:
             print(model, model_type)
             model_dir.remove(model)
-
 
 def print_profiling_data_pyarmmn_and_return_times(profiler):
 
@@ -662,18 +646,28 @@ def write_profiling_data_pyarmnn(profiler, model_path, csv_path):
 
             infwriter.writerow(csv_array)
 
-def tflite_runtime(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_mask_dir, colormap):
+def tflite_runtime(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_mask_dir, colormap, optimize):
     #source: 
     #https://www.tensorflow.org/lite/guide/inference
     #https://github.com/NXPmicro/pyarmnn-release/tree/master/python/pyarmnn/examples
-    print("tflite")
+    print("Chosen API: tflite runtime intepreter")
 
     results = []
     inf_times = []
 
-
     # Load the TFLite model and allocate tensors.
-    interpreter = tflite.Interpreter(model_path=model_dir)
+    # Load the TFLite model and allocate tensors.
+
+    if optimize:
+        print("optimize")
+        import tensorflow as tf
+        interpreter = tf.lite.Interpreter(model_path=model_dir, experimental_delegates=None, num_threads=2)
+        #interpreter = tflite.Interpreter(model_path=model_dir, experimental_delegates=None, num_threads=2)
+    else: 
+        import tflite_runtime.interpreter as tflite
+        #interpreter = tf.lite.Interpreter(model_path=model_dir)
+        interpreter = tflite.Interpreter(model_path=model_dir)
+
     interpreter.allocate_tensors()
 
     # Get input and output tensors.
@@ -684,42 +678,43 @@ def tflite_runtime(model_dir, img_dir, label_dir, niter, img_result_dir, img_res
     input_shape = input_details[0]['shape']
     input_type = input_details[0]['dtype']
 
-
-
     for i in range(niter):
         for img in img_dir:
             img_result_file = os.path.join(img_result_dir, img.split("/")[-1])
             img_result_mask_file = os.path.join(img_result_mask_dir, img.split("/")[-1])
+            img_name = img.split("/")[-1]
             img_org = cv2.imread(img)
             img, image_data = preprocess_image_tflite_deeplabv3(img, input_shape[1], input_shape[2], input_type)
 
             interpreter.set_tensor(input_details[0]['index'], image_data)
 
-            beg = time()
+            beg = perf_counter()
             interpreter.invoke()
-            end = time()
-            inf_time = end-beg
-            inf_times.append(inf_time*1000)
-            print(inf_time*1000)
+            end = perf_counter()
+            diff = end-beg
+            
+            print("Time in ms:", diff*1000)
 
 
+            inf_times.append(diff)
 
-            results.append(output_data_tflite_runtime(output_details, interpreter, img, img_org, img_result_file, img_result_mask_file, label_dir, colormap))
-            #sys.exit("Finish")
-
-            #results.append(output_data_tflite_runtime(output_details, interpreter, img_org, img_result_file, label_dir))
+            results.append([img_name, output_data_tflite_runtime(output_details, interpreter, img, img_org, img_result_file, img_result_mask_file, label_dir, colormap)])
     
-    return results
+    return results, inf_times
     
+def pyarmnn(model_dir, img_dir, label_dir, niter, csv_path, img_result_dir, img_result_mask_dir, colormap, en_profiler):
 
-def pyarmnn(model_dir, img_dir, label_dir, niter, csv_path, img_result_dir, img_result_mask_dir, colormap):
-
-    print("pyarmnn")
+    print("Chosen API: PyArmnn")
     # LINK TO CODE: https://www.youtube.com/watch?v=HQYosuy4ABY&t=1867s
     #https://developer.arm.com/documentation/102557/latest
     #file:///C:/Users/Maroun_Desktop_PC/SynologyDrive/Bachelorarbeit/pyarmnn/pyarmnn_doc.html#pyarmnn.IOutputSlot
 
+    global ann, csv
+    import pyarmnn as ann
+    import csv
+
     results = []
+    inf_times = []
 
     print(f"Working with ARMNN {ann.ARMNN_VERSION}")
 
@@ -728,11 +723,11 @@ def pyarmnn(model_dir, img_dir, label_dir, niter, csv_path, img_result_dir, img_
 
     options = ann.CreationOptions()
     runtime = ann.IRuntime(options)
+    print(f"{runtime.GetDeviceSpec()}\n")
 
     preferredBackends = [ann.BackendId('CpuAcc'), ann.BackendId('CpuRef')]
     opt_network, messages = ann.Optimize(network, preferredBackends, runtime.GetDeviceSpec(), ann.OptimizerOptions())
 
-    print(f"Preferred Backends: {preferredBackends}\n {runtime.GetDeviceSpec()}\n")
     print(f"Optimizationon warnings: {messages}")
 
     # get input binding information for the input layer of the model
@@ -744,7 +739,6 @@ def pyarmnn(model_dir, img_dir, label_dir, niter, csv_path, img_result_dir, img_
     width, height = input_tensor_info.GetShape()[1], input_tensor_info.GetShape()[2]
     print(f"tensor id: {input_tensor_id},tensor info: {input_tensor_info}")
 
-    print(input_tensor_info)
 
     # Get output binding information for an output layer by using the layer name.
     output_names = parser.GetSubgraphOutputTensorNames(graph_id)
@@ -758,34 +752,50 @@ def pyarmnn(model_dir, img_dir, label_dir, niter, csv_path, img_result_dir, img_
     net_id, _ = runtime.LoadNetwork(opt_network)
 
     # Setup the Profilier for layer and network and inference time 
-    profiler = setup_profiling(net_id, runtime)
+    if en_profiler:
+        profiler = setup_profiling(net_id, runtime)
 
-    input_type = np.float32
 
     if ann.TensorInfo.IsQuantized(input_tensor_info):
-        print(np.uint8)
-        input_type = np.uint8
+        data_type = np.uint8
+    else:
+        data_type= np.float32
     
     #inference 
-    results = []
     for i in range(niter):
         for img in img_dir:
             img_result_file = os.path.join(img_result_dir, img.split("/")[-1])
             img_result_mask_file = os.path.join(img_result_mask_dir, img.split("/")[-1])
+            img_name = img.split("/")[-1]
+
             img_org = cv2.imread(img)
 
-            image, image_data = preprocess_image_tflite_deeplabv3(img, height, width, input_type)
-
+            image, image_data = preprocess_image_tflite_deeplabv3(img, height, width, data_type)
             input_tensors = ann.make_input_tensors([input_binding_info], [image_data])
+
+            beg = perf_counter()
             runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
+            end = perf_counter()
+            diff = end - beg
+            print("Time in ms: ", diff*1000)
+
             result = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
-            results.append(output_data_pyarmnn(result, image, img_org, img_result_file, img_result_mask_file, label_dir, colormap))
+            results.append([img_name, output_data_pyarmnn(result, image, img_org, img_result_file, img_result_mask_file, label_dir, colormap)])
 
-    write_profiling_data_pyarmnn(profiler, model_dir, csv_path)
+    if en_profiler:
+        write_profiling_data_pyarmnn(profiler, model_dir, csv_path)
 
-    return results
+    return results, inf_times
 
 def openvino(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_mask_dir, colormap):
+
+    log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
+
+    global AsyncInferQueue, Core, Layout, Type, PrePostProcessor, InferRequest, ResizeAlgorithm
+
+    from openvino.runtime import InferRequest
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
+    from openvino.runtime import AsyncInferQueue, Core, Layout, Type
 
     results = []
     print("openvino")
@@ -836,7 +846,6 @@ def openvino(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_ma
             input_tensor = np.expand_dims(image, 0)
             print("Input shape", input_tensor.shape)
 
-
             # Preprpocess
             input_tensor, model = preprocess_image_ov_deeplabv3(input_tensor, model)
 
@@ -847,9 +856,9 @@ def openvino(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_ma
 
     # --------------------------- Step 6. Create infer request and do inference synchronously -----------------------------
             log.info('Starting inference in synchronous mode')
-            start_time = time()
+            start_time = perf_counter()
             result = compiled_model.infer_new_request({0: input_tensor})
-            end_time = time()
+            end_time = perf_counter()
             print(end_time-start_time)
 
 
@@ -860,32 +869,403 @@ def openvino(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_ma
 
     return results
 
-def onnx_runtime(model_dir, img_dir_list, label_dir, niter, json_path, img_result_dir, img_result_mask_dir, colormap):
+def sync_openvino(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_mask_dir, colormap):
+    print("Chosen API: Sync Openvino")
+    print("this is the test")
+    log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
 
-    print("label_dir", label_dir)
-                 
+    global AsyncInferQueue, Core, Layout, Type, PrePostProcessor, InferRequest, ResizeAlgorithm
+
+    from openvino.runtime import InferRequest
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
+    from openvino.runtime import AsyncInferQueue, Core, Layout, Type
+
+    results = []
+    inf_times = []
+    print(model_dir)
+
+    device_name = "CPU"
+
+    # --------------------------- Step 1. Initialize OpenVINO Runtime Core ------------------------------------------------
+    log.info('Creating OpenVINO Runtime Core')
+    core = Core()
+
+# --------------------------- Step 2. Read a model --------------------------------------------------------------------
+    log.info(f'Reading the model: {model_dir}')
+    # (.xml and .bin files) or (.onnx file)
+    model = core.read_model(model_dir)
+
+    if len(model.inputs) != 1:
+        log.error('Sample supports only single input topologies')
+        return -1
+
+    if len(model.outputs) != 1:
+        log.error('Sample supports only single output topologies')
+
+        return -1
+    
+    # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    #preprocess the images 
+    images = [cv2.imread(img) for img in img_dir]
+    _, h, w, _ = model.input().shape
+    #print(model.input().shape)
+    resized_images = [cv2.resize(img, (w,h)) for img in images]
+    bgr_images = [cv2.cvtColor(img, cv2.COLOR_RGB2BGR) for img in resized_images]
+    input_tensors = [np.expand_dims(img, 0) for img in bgr_images]
+
+    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+    print("Preprocess")
+    ppp = PrePostProcessor(model)
+    
+    ppp.input().tensor() \
+        .set_element_type(Type.u8) \
+        .set_layout(Layout('NHWC'))  # noqa: ECE001, N400
+
+    # 2) Adding explicit preprocessing steps:
+    # - apply linear resize from tensor spatial dims to model spatial dims
+    ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
+
+    # 3) Here we suppose model has 'NCHW' layout for input
+    #ppp.input().model().set_layout(Layout('NCHW'))
+    ppp.input().model().set_layout(Layout('NHWC'))
+
+    # 4) Set output tensor information:
+    # - precision of tensor is supposed to be 'f32'
+    ppp.output().tensor().set_element_type(Type.f32)
+
+    # 5) Apply preprocessing modifying the original 'model'
+    model = ppp.build()
+
+# --------------------------- Step 5. Loading model to the device -----------------------------------------------------
+    log.info('Loading the model to the plugin')
+    compiled_model = core.compile_model(model, device_name)
+
+    start_tot_time = perf_counter()
+
+    for i in range(niter):
+        for j, input_tensor in enumerate(input_tensors):
+            img_result_file = os.path.join(img_result_dir, img_dir[j].split("/")[-1])
+            img_result_mask_file = os.path.join(img_result_mask_dir, img_dir[j].split("/")[-1])
+            img_org = cv2.imread(img_dir[j])
+            img_name =  img_dir[j].split("/")[-1]
+
+    # --------------------------- Step 6. Create infer request and do inference synchronously -----------------------------
+            log.info('Starting inference in synchronous mode')
+            beg = perf_counter()
+            result = compiled_model.infer_new_request({0: input_tensor})
+            end = perf_counter()
+            diff = end - beg
+            print("Time in ms: ", diff*1000)
+
+    # --------------------------- Step 7. Process output ------------------------------------------------------------------
+            #predictions = next(iter(result.values()))
+            #probs = predictions.reshape(-1)
+            results.append([img_name, output_data_ov(result, images[j], img_org, img_result_file, img_result_mask_file, label_dir, colormap)])
+
+    end_tot_time = perf_counter()
+    print((end_tot_time-start_tot_time)*1000)
+
+    return results, inf_times
+
+def sync_openvino_backup(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_mask_dir, colormap):
+    print("Chosen API: Sync Openvino")
+    log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
+
+    global AsyncInferQueue, Core, Layout, Type, PrePostProcessor, InferRequest
+
+    from openvino.runtime import InferRequest
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
+    from openvino.runtime import AsyncInferQueue, Core, Layout, Type
+
+    results = []
+    inf_times = []
+    device_name = "CPU"
+
+    # --------------------------- Step 1. Initialize OpenVINO Runtime Core ------------------------------------------------
+    log.info('Creating OpenVINO Runtime Core')
+    core = Core()
+
+# --------------------------- Step 2. Read a model --------------------------------------------------------------------
+    log.info(f'Reading the model: {model_dir}')
+    # (.xml and .bin files) or (.onnx file)
+    model = core.read_model(model_dir)
+
+    if len(model.inputs) != 1:
+        log.error('Sample supports only single input topologies')
+        return -1
+
+    if len(model.outputs) != 1:
+        log.error('Sample supports only single output topologies')
+        return -1
+    
+        # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    # Read input images
+    images = [cv2.imread(image_path) for image_path in img_dir]
+
+    # Resize images to model input dims
+    _, h, w, _ = model.input().shape
+    print(model.input().shape)
+    #h, w = 224, 224
+
+    print("input image: ", images[0].shape)
+
+    res_images = [cv2.resize(image, (w, h)) for image in images]
+
+    print("resized 1: ", res_images[0].shape)
+
+    resized_images = [cv2.cvtColor(image, cv2.COLOR_RGB2BGR) for image in res_images]
+
+    print("resized 2: ", resized_images[0].shape)
+
+    # Add N dimension
+    input_tensors = [np.expand_dims(image, 0) for image in resized_images]
+
+    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+    ppp = PrePostProcessor(model)
+
+    # 1) Set input tensor information:
+    # - input() provides information about a single model input
+    # - precision of tensor is supposed to be 'u8'
+    # - layout of data is 'NHWC'
+    ppp.input().tensor() \
+        .set_element_type(Type.u8) \
+        .set_layout(Layout('NHWC'))  # noqa: N400
+    
+    # - apply linear resize from tensor spatial dims to model spatial dims
+    ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
+
+    # 2) Here we suppose model has 'NCHW' layout for input
+    ppp.input().model().set_layout(Layout('NCHW'))
+
+    # 3) Set output tensor information:
+    # - precision of tensor is supposed to be 'f32'
+    ppp.output().tensor().set_element_type(Type.f32)
+
+    # 4) Apply preprocessing modifing the original 'model'
+    model = ppp.build()
+
+    # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
+    log.info('Loading the model to the plugin')
+    compiled_model = core.compile_model(model, device_name)
+
+    start_tot_time = perf_counter()
+
+    # --------------------------- Step 7. Do inference --------------------------------------------------------------------
+    for i in range(niter):
+        for j, input_tensor in enumerate(input_tensors):
+            img_result_file = os.path.join(img_result_dir, img_dir[j].split("/")[-1])
+            img_result_mask_file = os.path.join(img_result_mask_dir, img_dir[j].split("/")[-1])
+            img_name = img_dir[j].split("/")[-1]
+            img_org = cv2.imread(img_dir[j])
+            print("Input shape", input_tensor.shape)
+            beg = perf_counter()
+            result = compiled_model.infer_new_request({0: input_tensor})
+            end = perf_counter()
+            diff = end - beg
+            print("Time in ms:", diff*1000)
+            results.append([img_name, output_data_ov(result, resized_images[j], img_org, img_result_file, img_result_mask_file, label_dir, colormap)])
+            inf_times.append(diff)
+
+    end_tot_time = perf_counter()
+    print((end_tot_time-start_tot_time)*1000)
+
+    return results, inf_times
+
+def async_openvino(model_dir, img_dir, label_dir, niter, img_result_dir, img_result_mask_dir, colormap):
+    print("Chosen API: Async Openvino")
+    print("this is the test")
+    log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
+
+    global class_dir, img_org, cmap, img_result_file, img_result_mask_file, img_res, resized_image, img_name
+    global AsyncInferQueue, Core, Layout, Type, PrePostProcessor, InferRequest, ResizeAlgorithm
+
+    from openvino.runtime import InferRequest
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
+    from openvino.runtime import AsyncInferQueue, Core, Layout, Type
+
+    results = []
+    inf_times = []
+    class_dir = label_dir
+    cmap = colormap
+    print(model_dir)
+
+    img_res = "Hello"
+    resized_image = "Image res"
+    device_name = "CPU"
+
+    # --------------------------- Step 1. Initialize OpenVINO Runtime Core ------------------------------------------------
+    log.info('Creating OpenVINO Runtime Core')
+    core = Core()
+
+# --------------------------- Step 2. Read a model --------------------------------------------------------------------
+    log.info(f'Reading the model: {model_dir}')
+    # (.xml and .bin files) or (.onnx file)
+    model = core.read_model(model_dir)
+
+    if len(model.inputs) != 1:
+        log.error('Sample supports only single input topologies')
+        return -1
+
+    if len(model.outputs) != 1:
+        log.error('Sample supports only single output topologies')
+
+        return -1
+    
+    # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    #preprocess the images 
+    images = [cv2.imread(img) for img in img_dir]
+    _, h, w, _ = model.input().shape
+    #print(model.input().shape)
+    resized_images = [cv2.resize(img, (w,h)) for img in images]
+    bgr_images = [cv2.cvtColor(img, cv2.COLOR_RGB2BGR) for img in resized_images]
+    input_tensors = [np.expand_dims(img, 0) for img in bgr_images]
+
+    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+    print("Preprocess")
+    ppp = PrePostProcessor(model)
+    
+    ppp.input().tensor() \
+        .set_element_type(Type.u8) \
+        .set_layout(Layout('NHWC'))  # noqa: ECE001, N400
+
+    # 2) Adding explicit preprocessing steps:
+    # - apply linear resize from tensor spatial dims to model spatial dims
+    ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
+
+    # 3) Here we suppose model has 'NCHW' layout for input
+    #ppp.input().model().set_layout(Layout('NCHW'))
+    ppp.input().model().set_layout(Layout('NHWC'))
+
+    # 4) Set output tensor information:
+    # - precision of tensor is supposed to be 'f32'
+    ppp.output().tensor().set_element_type(Type.f32)
+
+    # 5) Apply preprocessing modifying the original 'model'
+    model = ppp.build()
+
+# --------------------------- Step 5. Loading model to the device -----------------------------------------------------
+    log.info('Loading the model to the plugin')
+    compiled_model = core.compile_model(model, device_name)
+
+    start_tot_time = perf_counter()
+
+    # --------------------------- Step 6. Create infer request queue ------------------------------------------------------
+    log.info('Starting inference in asynchronous mode')
+    # create async queue with optimal number of infer requests
+    infer_queue = AsyncInferQueue(compiled_model)
+    infer_queue.set_callback(completion_callback)
+
+    start_tot_time = perf_counter()
+
+# --------------------------- Step 7. Do inference --------------------------------------------------------------------
+    #print("Starting inference ")
+    for i in range(niter):
+        for j, input_tensor in enumerate(input_tensors):
+            img_result_file = os.path.join(img_result_dir, img_dir[j].split("/")[-1])
+            img_result_mask_file = os.path.join(img_result_mask_dir, img_dir[j].split("/")[-1])
+            img_name = img_dir[j].split("/")[-1]
+            resized_image = resized_images[j]
+            img_org = cv2.imread(img_dir[j])
+            beg = perf_counter()
+            infer_queue.start_async({0: input_tensor}, img_dir[j])
+            end = perf_counter()
+            diff = end - beg
+            print("Time in ms:", diff*1000)
+            #results.append(None)
+            inf_times.append(diff)
+
+    infer_queue.wait_all()
+# ----------------------------------------------------------------------------------------------------------------------
+    end_tot_time = perf_counter()
+    print((end_tot_time-start_tot_time)*1000)
+
+
+    return results, inf_times
+
+def completion_callback(infer_request: InferRequest, image_path: str):
+    #print("Callback open")
     results = []
 
-    options = onnxruntime.SessionOptions()
-    options.enable_profiling = True
+    output_data = infer_request.results
 
-    session = onnxruntime.InferenceSession(model_dir, options)
+    with open(class_dir, 'r') as f:
+        labels =  np.asarray([line.strip() for i, line in enumerate(f.readlines())])
+
+    #print("-----------------Output----------------")
+    #print("colormap: ", colormap.shape)
+    #print(colormap)
+
+    #print("out", output_data.shape)
+
+    for element in output_data:
+        output = output_data[element][0]
+        
+    output = np.array(output, dtype="int")
+
+
+    #print("out shape", output.shape)
+    #print(cmap)
+    #print(resized_image)
+    #print(img_org.shape, output.shape)
+
+    img_res = cv2.resize(resized_image, output.shape)
+    #print(resized_image.shape)
+    
+    result, out_image, out_mask = vis_segmentation_cv2(img_res, output, labels, cmap)
+
+    out_image = cv2.resize(out_image, (img_org.shape[0], img_org.shape[1]), interpolation=cv2.INTER_AREA)
+
+    #print(img_result_file)
+    results.append(result)
+    cv2.imwrite(img_result_file, out_image)
+    cv2.imwrite(img_result_mask_file, out_mask)
+
+    with open("async_ov.txt", "a") as file:
+        file.writelines(str([img_name, results]))
+        file.writelines("\n\n")
+
+def onnx_runtime(model_dir, img_dir_list, label_dir, niter, json_path, img_result_dir, img_result_mask_dir, colormap, optimize, en_profiler):
+
+    print("Chosen API: Onnx runtime")
+
+    import onnxruntime
+    import json
+                 
+    results = []
+    inf_times = []
+
+
+    options = onnxruntime.SessionOptions()
+
+    if en_profiler:
+        options.enable_profiling = True
+
+    # 'XNNPACKExecutionProvider'
+    providers = ['CPUExecutionProvider']
+
+    if optimize:
+        print("optimize")
+        options.intra_op_num_threads = 3
+        options.execution_mode = onnxruntime.ExecutionMode.ORT_SEQUENTIAL
+        options.inter_op_num_threads = 4
+        #macht keinen Unterschied in meinen Tests (MobilenetV2)
+        #options.add_session_config_entry('session.dynamic_block_base', '8') 
+        #options.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_ENABLE_ALL
+
+    session = onnxruntime.InferenceSession(model_dir, options, providers=providers)
+    print(session.get_providers())
 
     input_name = session.get_inputs()[0].name
-    print(session.get_outputs()[0].name)
+    #print(session.get_outputs()[0].name)
     outputs = [session.get_outputs()[0].name]
-    print(outputs)
+    #print(outputs)
     #output_name = session.get_outputs()[0].name
     #print(output_name)
 
     #outputs = ["num_detections:0", "detection_boxes:0", "detection_scores:0", "detection_classes:0"]
 
-    image_height = session.get_inputs()[0].shape[1]
-    image_width = session.get_inputs()[0].shape[2]
-    
-    print("------------------------------------------")
-    print(image_height, image_width)
-    print("-----------------------------------------")
+    image_width = session.get_inputs()[0].shape[1]
+    image_height = session.get_inputs()[0].shape[2]
 
     input_data_type = session.get_inputs()[0].type
     output_data_type = session.get_outputs()[0].type
@@ -894,76 +1274,140 @@ def onnx_runtime(model_dir, img_dir_list, label_dir, niter, json_path, img_resul
         for img in img_dir_list:
             img_result_file = os.path.join(img_result_dir, img.split("/")[-1])
             img_result_mask_file = os.path.join(img_result_mask_dir, img.split("/")[-1])
+            img_name = img.split("/")[-1]
             img_org = cv2.imread(img)
+
+            beg = perf_counter()
             output = session.run(outputs, {input_name:preprocess_image_onnx_deeplabv3(img, input_data_type, image_height, image_width)})
+            end = perf_counter()
+            diff = end - beg
+            print("Time in ms: ", diff*1000)
             #print("Output: ", output.shape)
             #print("Output 0: ", output[0].shape)
-
-
-
 
             #output = session.run([output_name], {input_name: img_data})[0]
             #quit()
 
             #output = output.flatten()
             #output = softmax(output) # this is optional
-            results.append(output_data_onnx(output, img_org, img_org, img_result_file, img_result_mask_file, label_dir, colormap))
+            results.append([img_name, output_data_onnx(output, img_org, img_org, img_result_file, img_result_mask_file, label_dir, colormap)])
+            inf_times.append(diff)
         
-    prof_file = session.end_profiling()
-    print(prof_file)
-
-    os.rename(prof_file, os.path.join(json_path, prof_file))
+    if en_profiler:
+        prof_file = session.end_profiling()
+        print(prof_file)
+        os.replace(prof_file, os.path.join(json_path, prof_file))
       
-    return results
+    return results, inf_times
+
+def pytorch(model_dir, img_dir_list, label_dir, niter, json_path, img_result_dir, img_result_mask_dir, colormap, optimize, en_profiler, quantized):
+    print("Chosen API: PyTorch")
+
+    global models, transforms, torch
+
+    if en_profiler:
+        from torch.profiler import profile, record_function, ProfilerActivity
+    
+    import torch
+    from torchvision import models, transforms
 
 
-def pytorch(model_dir, img_dir_list, label_dir, niter, json_path, img_result_dir, img_result_mask_dir, colormap):
-    print("Pytorch")
+    if optimize:
+        print("Optimize")
+        torch.set_num_threads(4)
+        torch.backends.quantized.engine = 'qnnpack'
+
 
     results = []
+    inf_times = []
 
-    model = torch.hub.load('pytorch/vision:v0.10.0', model_dir, pretrained=True)
+    #model = torch.hub.load('pytorch/vision:v0.10.0', model_dir, pretrained=True)
+
+    print(models.list_models())
+
+    if model_dir == "deeplabv3_resnet50":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_resnet50", pretrained=True)
+    elif model_dir == "deeplabv3_resnet101":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_resnet101", pretrained=True)
+    elif model_dir == "deeplabv3_mobilenet_v3_large":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_mobilenet_v3_large", pretrained=True)
+    elif model_dir == "deeplabv3_mobilenet_v3_small":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_mobilenet_v3_small", pretrained=True)
+    else: 
+        sys.exit("Nothing found")
+
+    #sys.exit("Worked")
+
+    preprocess = preprocess_pytorch()
+
     model.eval()
 
-    preprocess = preprocess_image_pytorch_deeplabv3()
+    if optimize:
+        # jit model to take it from ~20fps to ~30fps
+        model = torch.jit.script(model)
 
-    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
-        with record_function("model_inference"):
+        for param in model.parameters():
+            param.grad = None
 
-            for i in range(niter):
-                for img in img_dir_list:
-                    img_result_file = os.path.join(img_result_dir, img.split("/")[-1])
-                    img_result_mask_file = os.path.join(img_result_mask_dir, img.split("/")[-1])
-                    input_image = Image.open(img)
-                    input_image = input_image.convert("RGB")
+    if en_profiler:
+        with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+            with record_function("model_inference"):
 
-                    #img = 'https://ultralytics.com/images/zidane.jpg'
-                    img_org = img_org = cv2.imread(img)
+                for i in range(niter):
+                    for img in img_dir_list:
+                        img_result_file = os.path.join(img_result_dir, img.split("/")[-1])
+                        img_result_mask_file = os.path.join(img_result_mask_dir, img.split("/")[-1])
+                        img_name = img.split("/")[-1]
+                        img_org = cv2.imread(img)
 
-                    input_tensor = preprocess(input_image)
-                    input_batch = input_tensor.unsqueeze(0)
-
-                    start_time = time()
-                    with torch.no_grad():
-                        output = model(input_batch)['out'][0]
-                    end_time = time()
-                    print(end_time-start_time)
-                    print(output)
+                        input_batch = preprocess_image_pytorch_deeplabv3(img, preprocess)
 
 
-                    # Tensor of shape 1000, with confidence scores over Imagenet's 1000 classes
-                    #probabilities = torch.nn.functional.softmax(output[0], dim=0)
-                    #get_result(label_dir, probabilities)
-                    #output_predictions = output.argmax(0)
+                        beg = perf_counter()
+                        with torch.no_grad():
+                            output = model(input_batch)['out'][0]
+                        end = perf_counter()
+                        diff = end - beg 
+                        print("Time in ms: ", diff*1000)
 
-                    results.append(output_data_pytorch_deeplabv3(output, img_org, img_org, img_result_file, img_result_mask_file, label_dir, colormap))
+                        # Tensor of shape 1000, with confidence scores over Imagenet's 1000 classes
+                        #probabilities = torch.nn.functional.softmax(output[0], dim=0)
+                        #get_result(label_dir, probabilities)
+                        #output_predictions = output.argmax(0)
 
-    prof.export_chrome_trace(os.path.join(json_path, model_dir))
-    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+                        results.append([img_name, output_data_pytorch_deeplabv3(output, img_org, img_org, img_result_file, img_result_mask_file, label_dir, colormap)])
+                        inf_times.append(diff)
 
-    return results
+        prof.export_chrome_trace(os.path.join(json_path, model_dir))
+        print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+    else:
+        for i in range(niter):
+            for img in img_dir_list:
+                img_result_file = os.path.join(img_result_dir, img.split("/")[-1])
+                img_result_mask_file = os.path.join(img_result_mask_dir, img.split("/")[-1])
+                img_name = img.split("/")[-1]
+                img_org = cv2.imread(img)
+
+                input_batch = preprocess_image_pytorch_deeplabv3(img, preprocess)
+
+
+                beg = perf_counter()
+                with torch.no_grad():
+                    output = model(input_batch)['out'][0]
+                end = perf_counter()
+                diff = end - beg 
+                print("Time in ms: ", diff*1000)
+
+                # Tensor of shape 1000, with confidence scores over Imagenet's 1000 classes
+                #probabilities = torch.nn.functional.softmax(output[0], dim=0)
+                #get_result(label_dir, probabilities)
+                #output_predictions = output.argmax(0)
+
+                results.append([img_name, output_data_pytorch_deeplabv3(output, img_org, img_org, img_result_file, img_result_mask_file, label_dir, colormap)])
+                inf_times.append(diff)
+
+    return results, inf_times
     
-
 def handle_model_dir(args):
 
     model_dir_list = []
@@ -1004,13 +1448,11 @@ def handle_img_dir(args):
     print("Image list: ", image_dir_list)
     return image_dir_list
 
-
 def handle_label_dir(args):
     if args.labels:
         return args.labels
     else:
         quit("No labels folder specified")
-
 
 def handle_arguments():
     parser = argparse.ArgumentParser(description='Raspberry Pi 4 Inference Module for Classification')
@@ -1031,6 +1473,11 @@ def handle_arguments():
     parser.add_argument("-n", '--niter', default=1, type=int, help='number of iterations', required=False)
     parser.add_argument("-cm", "--colormap", required=False)
     parser.add_argument("-url", "--pytorch_model_name", help="gives the name of the pytorch model which has to be downloaded from the internet", required=False)
+    parser.add_argument("-opt", "--optimize", help="run optimzied inference code",required=False, action="store_true")
+    parser.add_argument("-q", "--quantized", help="load quantized pytroch model", required=False, action="store_true")
+    parser.add_argument("-bp", "--built_in_profiler", help="enable built in profiler", required=False, action="store_true")
+    parser.add_argument("-cp", "--cprofiler", help="enable cProfiler", required=False, action="store_true")
+
 
     return parser.parse_args()
 
@@ -1044,13 +1491,18 @@ def build_dir_paths(args):
     result_dir = os.path.join(args.output, "prediction")
     img_result_dir = os.path.join(args.output, "images")
     img_result_mask_dir = os.path.join(args.output, "images_mask")
+    c_profiler_dir = os.path.join(args.output, "cProfiler")
 
 
-    return general_dir, model_dir_list, img_dir_list, label_dir, inf_times_dir, result_dir, img_result_dir, img_result_mask_dir
+    return general_dir, model_dir_list, img_dir_list, label_dir, inf_times_dir, result_dir, img_result_dir, img_result_mask_dir, c_profiler_dir
 
 def handle_other_args_par(args):
     sleep = args.sleep
     niter = args.niter
+    optimize = args.optimize
+    built_in_profiler = args.built_in_profiler
+    cprofiler = args.cprofiler
+    quantized = args.quantized 
 
     if args.colormap == "ade20k":
         #print(args.dataset)
@@ -1062,20 +1514,20 @@ def handle_other_args_par(args):
     else:
         sys.exit("No vaild name for dataset given")
 
-    return sleep, niter, colormap
+    return sleep, niter, colormap, optimize, built_in_profiler, cprofiler, quantized
     
-
 def main():
     
     profiler = cProfile.Profile()
 
     args = handle_arguments()
-    general_dir, model_dir_list, img_dir_list, label_dir, inf_times_dir, result_dir, img_result_dir, img_result_mask_dir = build_dir_paths(args=args)
-    sleep, niter, colormap = handle_other_args_par(args=args)
+    general_dir, model_dir_list, img_dir_list, label_dir, inf_times_dir, result_dir, img_result_dir, img_result_mask_dir, c_profiler_dir = build_dir_paths(args=args)
+    sleep, niter, colormap, optimize, built_in_profiler, cprofiler, quantized = handle_other_args_par(args=args)
 
-
-
-    print(model_dir_list)
+    print("\n")
+    print("Model list: ", model_dir_list)
+    print("Image list: ", img_dir_list)
+    print("\n")
 
     if args.api == "tflite_runtime":
         check_directories(model_dir_list, img_dir_list, ".tflite")
@@ -1084,20 +1536,30 @@ def main():
             model_name = model.split("/")[-1].split(".tflite")[0] + "_tflite_runtime.txt"
             inf_times_file = os.path.join(inf_times_dir, model_name)
             result_file = os.path.join(result_dir, model_name)
-            profiler.enable()
-            results = tflite_runtime(model, img_dir_list, label_dir, niter, img_result_dir, img_result_mask_dir, colormap)
-            profiler.disable()
             
+            if cprofiler:
+                c_profiler_file = os.path.join(c_profiler_dir, model_name)
+                profiler.enable()
+
+            results, inf_times = tflite_runtime(model, img_dir_list, label_dir, niter, img_result_dir, img_result_mask_dir, colormap, optimize)
+
+            if cprofiler:
+                profiler.disable()
+
+                with open(c_profiler_file, 'w') as stream:
+                    stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
+                    stats.print_stats()
+
             with open(result_file, "w") as file:
                 for r in results:
                     file.writelines(str(r))
                     file.writelines("\n")
-
-            with open(inf_times_file, 'w') as stream:
-                stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
-                stats.print_stats()
             
-     
+            with open(inf_times_file, "w") as file:
+                for r in inf_times:
+                    file.writelines(str(r))
+                    file.writelines("\n")
+
     elif args.api == "pyarmnn":
         check_directories(model_dir_list, img_dir_list, ".tflite")
 
@@ -1109,18 +1571,29 @@ def main():
             result_file = os.path.join(result_dir, model_name_txt)
             csv_path = os.path.join(csv_path, model_name_csv)
 
-            profiler.enable()
-            results = pyarmnn(model, img_dir_list, label_dir, niter, csv_path, img_result_dir, img_result_mask_dir, colormap)
+            if cprofiler:
+                c_profiler_file = os.path.join(c_profiler_dir, model_name_txt)
+                profiler.enable()
+            
+            results, inf_times = pyarmnn(model, img_dir_list, label_dir, niter, csv_path, img_result_dir, img_result_mask_dir, colormap, built_in_profiler)
             profiler.disable()
+
+            if cprofiler:
+                profiler.disable()
+
+                with open(c_profiler_file, 'w') as stream:
+                    stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
+                    stats.print_stats()
 
             with open(result_file, "w") as file:
                 for r in results:
                     file.writelines(str(r))
                     file.writelines("\n")
-
-            with open(inf_times_file, 'w') as stream:
-                stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
-                stats.print_stats()
+            
+            with open(inf_times_file, "w") as file:
+                for r in inf_times:
+                    file.writelines(str(r))
+                    file.writelines("\n")
 
     elif args.api == "onnx":
         check_directories(model_dir_list, img_dir_list, ".onnx")
@@ -1131,18 +1604,27 @@ def main():
             inf_times_file = os.path.join(inf_times_dir, model_name_txt)
             result_file = os.path.join(result_dir, model_name_txt)
 
-            profiler.enable()
-            results = onnx_runtime(model, img_dir_list, label_dir, niter, json_path, img_result_dir, img_result_mask_dir, colormap)
-            profiler.disable()
+            if cprofiler:
+                c_profiler_file = os.path.join(c_profiler_dir, model_name_txt)
+                profiler.enable()
+
+            results, inf_times = onnx_runtime(model, img_dir_list, label_dir, niter, json_path, img_result_dir, img_result_mask_dir, colormap, optimize, built_in_profiler)
+
+            if cprofiler:
+                profiler.disable()
+                with open(c_profiler_file, 'w') as stream:
+                    stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
+                    stats.print_stats()
 
             with open(result_file, "w") as file:
                 for r in results:
                     file.writelines(str(r))
                     file.writelines("\n")
-
-            with open(inf_times_file, 'w') as stream:
-                stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
-                stats.print_stats()
+            
+            with open(inf_times_file, "w") as file:
+                for r in inf_times:
+                    file.writelines(str(r))
+                    file.writelines("\n")
 
     elif args.api == "pytorch":
         for model in model_dir_list:
@@ -1154,40 +1636,69 @@ def main():
             inf_times_file = os.path.join(inf_times_dir, model_name_txt)
             result_file = os.path.join(result_dir, model_name_txt) 
 
-            profiler.enable()
-            results = pytorch(model, img_dir_list, label_dir, niter, json_path, img_result_dir, img_result_mask_dir, colormap)
-            profiler.disable()
+            if cprofiler:
+                c_profiler_file = os.path.join(c_profiler_dir, model_name_txt)
+                profiler.enable()
+            
+            results, inf_times = pytorch(model, img_dir_list, label_dir, niter, json_path, img_result_dir, img_result_mask_dir, colormap,  optimize, built_in_profiler, quantized)
+            
+            if cprofiler:
+                profiler.disable()
+                with open(c_profiler_file, 'w') as stream:
+                    stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
+                    stats.print_stats()
 
             with open(result_file, "w") as file:
                 for r in results:
                     file.writelines(str(r))
                     file.writelines("\n")
-
-            with open(inf_times_file, 'w') as stream:
-                stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
-                stats.print_stats()
+            
+            with open(inf_times_file, "w") as file:
+                for r in inf_times:
+                    file.writelines(str(r))
+                    file.writelines("\n")
     
     elif args.api == "ov":
-        check_directories(model_dir_list, img_dir_list, ".xml")
+        #check_directories(model_dir_list, img_dir_list, ".xml")
     
         for model in model_dir_list:
             model_name_txt = model.split("/")[-1].split(".xml")[0] + "_ov.txt"
             inf_times_file = os.path.join(inf_times_dir, model_name_txt)
             result_file = os.path.join(result_dir, model_name_txt) 
 
-            profiler.enable()
-            results = openvino(model, img_dir_list, label_dir, niter, img_result_dir, img_result_mask_dir, colormap)
-            profiler.disable()
+            if cprofiler:
+                c_profiler_file = os.path.join(c_profiler_dir, model_name_txt)
+                profiler.enable()
 
-            with open(result_file, "w") as file:
-                for r in results:
+            #results = openvino(model, img_dir_list, label_dir, niter, img_result_dir, img_result_mask_dir, colormap)
+            #results = sync_openvino(model, img_dir_list, label_dir, niter, img_result_dir, img_result_mask_dir, colormap)
+            #sys.exit("The end")
+
+            if optimize:
+                with open("async_ov.txt", "w") as file:
+                    file.writelines("")
+
+                results, inf_times = async_openvino(model, img_dir_list, label_dir, niter, img_result_dir, img_result_mask_dir, colormap)
+                os.replace("async_ov.txt", result_file)
+    
+            else:
+                results, inf_times = sync_openvino(model, img_dir_list, label_dir, niter, img_result_dir, img_result_mask_dir, colormap)
+
+                with open(result_file, "w") as file:
+                    for r in results:
+                        file.writelines(str(r))
+                        file.writelines("\n")
+
+            if cprofiler:
+                profiler.disable()
+                with open(c_profiler_file, 'w') as stream:
+                    stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
+                    stats.print_stats()
+            
+            with open(inf_times_file, "w") as file:
+                for r in inf_times:
                     file.writelines(str(r))
                     file.writelines("\n")
-
-            with open(inf_times_file, 'w') as stream:
-                stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
-                stats.print_stats()
-
 
 
 if __name__ == "__main__":
