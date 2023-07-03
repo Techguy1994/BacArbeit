@@ -4,10 +4,12 @@ import lib.directories as d
 
 class Arguments:
     def __init__(self):
-        print("in class")
+        #print("in class")
         self.args = self.handle_arguments()
-        d.test()
-        print(self.args)
+        #d.test()
+        self.model = d.handle_model_directory(self.args)
+        print(self.model)
+        #print(self.args)
 
     def handle_arguments(self):
         parser = argparse.ArgumentParser(description='Raspberry Pi 4 Inference Module for Classification')
