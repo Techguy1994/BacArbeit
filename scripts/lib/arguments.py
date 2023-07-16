@@ -8,7 +8,10 @@ class Arguments:
         self.args = self.handle_arguments()
         #d.test()
         self.model = d.handle_model_directory(self.args)
-        print(self.model)
+        self.images = d.handle_image_directory(self.args)
+        self.label = d.handle_label_directory(self.args)
+        self.output = d.handle_output_directory(self.args)
+        #print(self.model)
         #print(self.args)
 
     def handle_arguments(self):
@@ -30,9 +33,11 @@ class Arguments:
 
         #label
         parser.add_argument("-l", "--labels", help="txt file with classes", required=False)
+        parser.add_argument("-lp", "--labels_path", help="path of the txt file with classes", required=False)
 
         #result folder
         parser.add_argument("-op", "--output", help="where the results are saved", required=False)
+        parser.add_argument("-opd", "--output_defualt", help="where the results are saved", required=False, action="store_true")
 
 
         
