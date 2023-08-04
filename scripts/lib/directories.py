@@ -28,8 +28,6 @@ def handle_model_directory(args):
         sys.exit("Error: no model name or model path given. Please Enter with -m a model name or with -mp the model path")
 
 def handle_image_directory(args):
-    print("Start of image handling")
-    #print(args)
     image_list = []
 
     if args.image_folder: 
@@ -47,7 +45,7 @@ def handle_image_directory(args):
         general_image_dir = os.path.join(general_dir, "images")
         for img in os.listdir(general_image_dir):
                 if ".jpg" in img and "._" not in img:
-                    image_list.append(os.path.join(args.image_folder, img))   
+                    image_list.append(os.path.join(general_image_dir, img))   
     else:
         sys.exit("Error: No image option chosen as input. You can either give the image with -img , image folder path with -imgp or choose the default image folder with -imgd!")
     
@@ -65,17 +63,55 @@ def handle_label_directory(args):
         else:
             sys.exit("The label file name given does not exit! Please enter a vaild path or give the path name")
     elif args.labels_path:
-        if os.path.exists(args.label_path):
+        if os.path.exists(args.labels_path):
             return args.labels_path
         else: 
             sys.exit("The label file name given does not exit! Please enter a vaild path or give the path name")
     else: 
          sys.exit("Error: No label name or path given. Please Enter with -l a model name or with -lp the model path")
 
-def handle_output_directory(args):
+def handle_output_directory(args, api, type, model, profiler):
+    general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
+    general_outputs_dir = os.path.join(general_dir, "results")
+
     if args.output:
         return args.output
+    elif args.output_path:
+        return 2
     elif args.output_default:
-        return 1
+        #handle type 
+        outputs_dir = os.path.join(general_outputs_dir, type, api)
+        model_name = model.split("/")[-1].split(".")[0]
+        outputs_dir = os.path.join(outputs_dir, model_name)
+
+        output = os.path.join(outputs_dir, "output")
+
+        if profiler == "perfcounter":
+            time_dir = os.path.join(outputs_dir, "perfcounter")
+
+        if type in ["det", "seg"]:
+            image_dir = os.path.join(outputs_dir, "images")
+
+            if not os.path.exists(image_dir):
+                os.makedirs(image_dir)
+
+        if not os.path.exists(output):
+            os.makedirs(output)
+
+        if not os.path.exists(time_dir):
+            os.makedirs(time_dir)
+
+        return outputs_dir
+
+
+
+
+
+        print(outputs_dir)
+        print(model_name)
+
+            
+
+        
 
         
