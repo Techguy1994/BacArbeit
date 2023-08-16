@@ -1085,7 +1085,7 @@ def sync_openvino(model_dir, img_dir, label_dir, thres, niter, img_result_dir):
     # Resize images to model input dims
     _, _, h, w = model.input().shape
     #_, h, w, _ = model.input().shape
-    print("Model input shape: "model.input().shape)
+    print("Model input shape: ",model.input().shape)
     #h, w = 224, 224
 
     #resized_images = [cv2.resize(image, (w, h)) for image in images]

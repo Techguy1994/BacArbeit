@@ -27,6 +27,26 @@ def store_output_dictionary_class(data, image, time, output, n_big):
 
     return data
 
+def create_base_dictionary_det():
+    data = {
+        "image": [],
+        "inference time": [],
+        "label": [],
+        "index": [],
+        "value": [],
+    }
+
+    return data
+
+def store_output_dictionary_det(data, image, time, output):
+    pass
+
+def create_base_dictionar_seg():
+    pass  
+
+def store_output_dictionary_seg():
+    pass
+
 def create_pandas_dataframe(dict):
     df = pd.DataFrame(dict)
     return df
@@ -35,6 +55,10 @@ def store_pandas_data_frame_as_csv(df, output):
     date = datetime.now()
     file_name = str(date.year)+ "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" + str(date.minute) + ".csv"
     location = os.path.join(output, "output", file_name)
+    df.to_csv(location)
+
+def store_pandas_data_frame_as_csv_det_seg(df, output, name_date):
+    location = os.path.join(output, "output", name_date + ".csv")
     df.to_csv(location)
 
 

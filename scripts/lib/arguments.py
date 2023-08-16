@@ -16,6 +16,7 @@ class Arguments:
         self.output = d.handle_output_directory(self.args, self.api, self.type, self.model, self.profiler)
         print(self.output)
         self.niter = int(self.args.niter)
+        self.thres = float(self.args.threshold)
         self.sleep = int(self.args.sleep)
         self.n_big = int(self.args.n_big)
         #handle_other_paramters()
@@ -49,6 +50,7 @@ class Arguments:
         #other arguments 
         parser.add_argument("-s", "--sleep", help="when number of iterations defines time gap", required=False, default=0)
         parser.add_argument("-ni", "--niter", help="number of iterations", required=False, default=1)
+        parser.add_argument("-thres", "--threshold", help="threshold for object detectio", required=False, default=0.5)
         parser.add_argument("-ho", "--handle_output", help="defines wheter the output is handled", required=False, action="store_true", default="store_false")
         #parser.add_argument("rand", "--randomized_input", help="specifgfy if the input image should be randomized", required=False, action="store_true")
         parser.add_argument("-p", "--profiler", help="define which profiler is to be used", required=False, default="perfcounter")
