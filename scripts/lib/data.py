@@ -39,7 +39,19 @@ def create_base_dictionary_det():
     return data
 
 def store_output_dictionary_det(data, image, time, output):
-    pass
+    data["image"].append(image)
+    data["inference time"].append(time)
+    data["label"].append([])
+    data["index"].append([])
+    data["value"].append([])
+
+
+    for i in range(len(output)):
+        data["label"][-1].append(output[i]["label"])
+        data["index"][-1].append(output[i]["index"])
+        data["value"][-1].append(output[i]["value"])
+    
+    return data
 
 def create_base_dictionar_seg():
     pass  

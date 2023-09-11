@@ -36,6 +36,41 @@ def run_tf(args):
 
 def run_pyarmnn(args):
     print(args)
+    global ann, csv
+    import pyarmnn as ann
+    import csv
+
+    print(f"Working with ARMNN {ann.ARMNN_VERSION}")
+
+    parser = ann.ITfLiteParser()
+    network = parser.CreateNetworkFromBinaryFile(args.model)
+
+    options = ann.CreationOptions()
+    runtime = ann.IRuntime(options)
+    print(f"{runtime.GetDeviceSpec()}\n")
+
+    preferredBackends = [ann.BackendId('CpuAcc'), ann.BackendId('CpuRef')]
+    opt_network, messages = ann.Optimize(network, preferredBackends, runtime.GetDeviceSpec(), ann.OptimizerOptions())
+
+    net_id, _ = runtime.LoadNetwork(opt_network)
+
+    print(f"Optimizationon warnings: {messages}")
+
+    # get input binding information for the input layer of the model
+    graph_id = parser.GetSubgraphCount() - 1
+    input_names = parser.GetSubgraphInputTensorNames(graph_id)
+    input_binding_info = parser.GetNetworkInputBindingInfo(graph_id, input_names[0])
+    input_tensor_id = input_binding_info[0]
+    input_tensor_info = input_binding_info[1]
+    width, height = input_tensor_info.GetShape()[1], input_tensor_info.GetShape()[2]
+    print(f"tensor id: {input_tensor_id},tensor info: {input_tensor_info}")
+
+    print(input_tensor_info)
+
+    # Get output binding information for an output layer by using the layer name.
+    output_names = parser.GetSubgraphOutputTensorNames(graph_id)
+
+    output_binding_info = []
 
 def run_onnx(args, output_image_folder):
     print("Chosen API: Onnx runtime")
@@ -99,7 +134,9 @@ def run_onnx(args, output_image_folder):
                 print("time in ms: ", lat*1000)
 
                 output = post.handle_output_onnx_yolo_det(output, img_org, args.thres, image_result_file, args.label,(image_height, image_width))
-                df = dat.store_output_dictionary_det(output_dict, image, lat, output)
+                output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
+                df = dat.create_pandas_dataframe(output_dict)
+                print("pandas output: ", df)
 
         time.sleep(args.sleep)     
 
