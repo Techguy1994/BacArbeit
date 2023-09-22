@@ -19,6 +19,7 @@ class Arguments:
         self.thres = float(self.args.threshold)
         self.sleep = int(self.args.sleep)
         self.n_big = int(self.args.n_big)
+        self.a_sync = self.args.a_sync
         #handle_other_paramters()
 
     def arguments(self):
@@ -55,6 +56,7 @@ class Arguments:
         #parser.add_argument("rand", "--randomized_input", help="specifgfy if the input image should be randomized", required=False, action="store_true")
         parser.add_argument("-p", "--profiler", help="define which profiler is to be used", required=False, default="perfcounter")
         parser.add_argument("-big", "--n_big", help=" n biggest results", required=False, default=3)
+        parser.add_argument("-async", "--a_sync", help="in combination with ov inference, handles if it runs in sync or async mode, default is sync", required=False, action="store_true")
 
 
         return parser.parse_args()
@@ -68,7 +70,7 @@ class Arguments:
 
     def handle_api(self):
         #if self.args.api != "tf" and "pyarmn":
-        if self.args.api not in ["tf", "pyarmnn", "ov", "onnx", "pytroch"]:
+        if self.args.api not in ["tf", "pyarmnn", "ov", "onnx", "pytorch"]:
             sys.exit("Error: Api given is not defined or not given all! Please state pyarmnn or tf or ov or onnx or pytorch")
         else: 
             return self.args.api
@@ -80,10 +82,21 @@ class Arguments:
             return self.args.profiler
         
     def create_label_list(self):
-        with open(self.label, "r") as f:
-            categories = [s.strip() for s in f.readlines()]
+        if args.type == "seg":
+            if args.colormap == "ade20k":
+                #print(args.dataset)
+                colormap = create_ade20k_label_colormap()
+            elif args.colormap == "pascal_voc_2012":
+                colormap = create_pascal_label_colormap()
+            elif args.colormap == "cityscapes":
+                colormap = create_cityscapes_label_colormap()
+            else:
+                sys.exit("No vaild name for dataset given")
+        else:
+            with open(self.label, "r") as f:
+                categories = [s.strip() for s in f.readlines()]
         
-        return categories
+            return categories
         
     #def handle_other_parameters(self):
     #    if self.args.niter:

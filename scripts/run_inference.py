@@ -6,6 +6,7 @@ import lib.arguments as ag
 import lib.data as dat
 from datetime import datetime
 import os
+import lib.directories as d
 
 
 def main():
@@ -31,7 +32,7 @@ def run_classification(args):
 
     if args.api == "tf": 
         df = cl.run_tf(args)
-        #dat.store_pandas_data_frame_as_csv(df, args.output)
+        dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "pyarmnn":
         df = cl.run_pyarmnn(args)
         dat.store_pandas_data_frame_as_csv(df, args.output)
@@ -40,20 +41,25 @@ def run_classification(args):
         dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "pytorch":
         print("implement pytorch")
+        df = cl.run_pytorch(args)
+        dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "ov":
-        print("implement ov")
+        print(args.a_sync)
+        if args.a_sync:
+            df = cl.run_async_ov(args)
+            print("run async") 
+        else:
+            df = cl.run_sync_ov(args)
+            print("run sync")
 
 
     if args.profiler == "cprofiler":
         profiler.disable()
 
     
-        
-
-    
 def run_detection(args):
 
-    output_image_folder, name_date = create_image_folder_with_current_time_stamp(args.output)
+    output_image_folder, name_date = d.create_image_folder_with_current_time_stamp(args.output)
 
     if args.profiler == "cprofiler":
         import cProfile
@@ -61,16 +67,18 @@ def run_detection(args):
         profiler.enable()
 
     if args.api == "tf": 
-        df = det.run_tf(args)
-        #dat.store_pandas_data_frame_as_csv(df, args.output)
+        df = det.run_tf(args, output_image_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pyarmnn":
-        df = det.run_pyarmnn(args)
-        #dat.store_pandas_data_frame_as_csv(df, args.output)
+        df = det.run_pyarmnn(args, output_image_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "onnx":
         df = det.run_onnx(args, output_image_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pytorch":
         print("implement pytorch")
+        df = det.run_pytorch(args, output_image_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "ov":
         print("implement ov")
 
@@ -78,10 +86,28 @@ def run_detection(args):
     if args.profiler == "cprofiler":
         profiler.disable()
     
-def run_segmentation():
-    print("run segmentation")
-        
+def run_segmentation(args):
+    if args.profiler == "cprofiler":
+        import cProfile
+        profiler = cProfile.Profile()
+        profiler.enable()
 
+    output_image_folder, name_date = d.create_image_folder_with_current_time_stamp(args.output)
+    raw_folder, overlay_folder = d.create_sub_folder_for_segmentation(output_image_folder)
+
+    if args.api == "tf":
+        df = seg.run_tf(args, output_image_folder, raw_folder, overlay_folder)
+    if args.api == "pyarmnn":
+        df = seg.run_pyarmnn(args, output_image_folder, raw_folder, overlay_folder)
+    if args.api == "onnx":
+        df = seg.run_onnx(args, output_image_folder, raw_folder, overlay_folder)
+
+
+    if args.profiler == "cprofiler":
+        profiler.disable()
+    
+        
+"""
 def create_image_folder_with_current_time_stamp(output_folder):
     date = datetime.now()
     folder_name_date = str(date.year)+ "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" + str(date.minute)
@@ -92,6 +118,7 @@ def create_image_folder_with_current_time_stamp(output_folder):
     print(val)
 
     return images_folder, folder_name_date
+"""
 
 
 

@@ -13,7 +13,13 @@ def search_file(file_name, directory):
 
 
 def handle_model_directory(args):
-    
+
+    if args.api == "pytorch":
+        if args.model:
+            return args.model
+        elif args.model_path:
+            return args.model_path
+
     if args.model_path:
        if os.path.exists(args.model_path):
             return args.model_path
@@ -104,11 +110,30 @@ def handle_output_directory(args, api, type, model, profiler):
         return outputs_dir
 
 
+def create_image_folder_with_current_time_stamp(output_folder):
+    from datetime import datetime
 
+    date = datetime.now()
+    folder_name_date = str(date.year)+ "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" + str(date.minute)
 
+    images_folder = os.path.join(output_folder, "images", folder_name_date)
 
-        print(outputs_dir)
-        print(model_name)
+    if os.makedirs(images_folder):
+        sys.exit("Error creating output image folder")
+
+    return images_folder, folder_name_date
+
+def create_sub_folder_for_segmentation(output_folder):
+    raw_folder = os.path.join(output_folder, "raw")
+    overlay_folder = os.path.join(output_folder, "overlay")
+
+    if os.makedirs(raw_folder):
+        sys.exit("Error creating raw folder")
+    if os.makedirs(overlay_folder):
+        sys.exit("Error creating overlay folder")
+
+    return raw_folder, overlay_folder
+
 
             
 

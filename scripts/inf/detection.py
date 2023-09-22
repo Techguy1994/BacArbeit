@@ -1,4 +1,4 @@
-def run_tf(args):
+def run_tf(args, output_image_folder):
     global cv2
     import cv2
     import tensorflow as tf
@@ -8,6 +8,9 @@ def run_tf(args):
     from time import perf_counter
     import lib.data as dat
     import pandas as pd
+    import os 
+
+    output_dict = dat.create_base_dictionary_det()
     
     interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
 
@@ -23,8 +26,9 @@ def run_tf(args):
 
     for i in range(args.niter):
         for image in args.images:
-            image, unprocessed_image =pre.preprocess_tflite_yolo(image, input_shape[1], input_shape[2], input_type)
-            interpreter.set_tensor(input_details[0]['index'], image)
+            image_result_file = os.path.join(output_image_folder, image.split("/")[-1])
+            processed_image, unprocessed_image =pre.preprocess_tflite_yolov5(image, input_shape[1], input_shape[2], input_type)
+            interpreter.set_tensor(input_details[0]['index'], processed_image)
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()
@@ -32,13 +36,30 @@ def run_tf(args):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-                post.handle_output_tf_det(output_details, interpreter, unprocessed_image, args.thres, "test.jpg", args.label)
+                output = post.handle_output_tf_yolo_det(output_details, interpreter, unprocessed_image, args.thres, image_result_file, args.label)
+                output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
+                df = dat.create_pandas_dataframe(output_dict)
+                print("pandas output: ", df)
 
-def run_pyarmnn(args):
-    print(args)
+        time.sleep(args.sleep)     
+
+    return df 
+
+def run_pyarmnn(args, output_image_folder):
+    print(args.sleep)
     global ann, csv
     import pyarmnn as ann
     import csv
+    import numpy as np
+    import lib.postprocess as post
+    import lib.preprocess as pre
+    import os 
+    import lib.data as dat
+    from time import perf_counter
+    import time
+
+
+    output_dict = dat.create_base_dictionary_det()
 
     print(f"Working with ARMNN {ann.ARMNN_VERSION}")
 
@@ -72,6 +93,39 @@ def run_pyarmnn(args):
 
     output_binding_info = []
 
+    for output_name in output_names:
+        output_binding_info.append(parser.GetNetworkOutputBindingInfo(graph_id, output_name))
+    output_tensors = ann.make_output_tensors(output_binding_info)
+
+    if ann.TensorInfo.IsQuantized(input_tensor_info):
+        input_type = np.uint8
+    else:
+        input_type = np.float32
+
+    for i in range(args.niter):
+        for image in args.images:
+            image_result_file = os.path.join(output_image_folder, image.split("/")[-1])
+            processed_image, unprocessed_image =pre.preprocess_tflite_yolov5(image, width, height, input_type)
+
+            input_tensors = ann.make_input_tensors([input_binding_info], [processed_image])
+            if args.profiler:
+                start_time = perf_counter()
+                runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+
+                output = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
+                output = post.handle_output_pyarmnn_yolo_det(output, unprocessed_image, args.thres, image_result_file, args.label)
+                output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
+                df = dat.create_pandas_dataframe(output_dict)
+                print("pandas output: ", df)
+
+        time.sleep(args.sleep)  
+
+    return df
+
+
 def run_onnx(args, output_image_folder):
     print("Chosen API: Onnx runtime")
 
@@ -88,10 +142,6 @@ def run_onnx(args, output_image_folder):
     import lib.data as dat
     import time 
     import pandas as pd
-
-                 
-    results = []
-    inf_times = []
 
     output_dict = dat.create_base_dictionary_det()
 

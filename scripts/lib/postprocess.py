@@ -67,7 +67,31 @@ def handle_output_onnx(output_data, output_details, label, n_big):
         
     return results
 
-def handle_output_tf_det(output_details, intepreter, original_image, thres, file_name, label):
+def handle_output_pytorch_mobilenet_class(output_data, label, n_big):
+    import numpy as np
+    import torch
+
+    results = []
+
+    probabilities = torch.nn.functional.softmax(output_data[0], dim=0)
+
+    probabilities = probabilities.detach().numpy()
+
+    #prob = probabilities.item()
+    #print(torch.sum(probabilities))
+
+    max_positions = np.argpartition(probabilities, -n_big)[-n_big:]
+
+
+    for entry in max_positions:
+        # go over entries and print their position and result in percent
+        val = probabilities[entry] 
+
+        results.append({"label": label[entry], "index": entry.item(), "value": val.item()})
+        
+    return results
+
+def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres, file_name, label):
     import numpy as np
     import cv2
 
@@ -117,7 +141,49 @@ def handle_output_tf_det(output_details, intepreter, original_image, thres, file
 
     return results
 
+def handle_output_pyarmnn_yolo_det(output_details, img_org, thres, img_result_file, label):
+    import cv2
+    import numpy as np
+    print("Output pyarmnn")
 
+    results = []
+    output_data = output_details[0][0]
+    #print(len(output_details))
+    print(output_data.shape)
+    #output_data = output_data[0][0]
+
+    boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
+    scores = np.squeeze( output_data[..., 4]) # confidences  [25200, 1]
+    classes = classFilter(output_data[..., 5:]) # get classes
+    # Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
+    x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
+    xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
+
+    orig_W, orig_H = img_org.shape[1], img_org.shape[0]
+    print("Boxes shape: ", boxes.shape)
+    print("scores shape: ", scores.shape)
+    print("Classes Len", len(classes))
+    print("Orig: ", img_org.shape)
+    print(orig_H, orig_W)
+
+    output_img = img_org
+
+    for i in range(len(scores)):
+        if ((scores[i] > thres) and (scores[i] <= 1.0)):
+            #print(labels[classes[i]],classes[i], scores[i])
+            xmin = int(max(1,(xyxy[0][i] * orig_W)))
+            ymin = int(max(1,(xyxy[1][i] * orig_H)))
+            xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
+            ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
+
+            output_img = cv2.rectangle(output_img, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
+            results.append({"label": label[classes[i]],"index": classes[i], "value": scores[i]})
+
+        
+    print(output_img.shape)
+    cv2.imwrite(img_result_file, output_img)
+
+    return results
 
 def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file, label, model_shape):
     import numpy as np

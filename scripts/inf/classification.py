@@ -184,5 +184,139 @@ def run_onnx(args):
 
     return df
 
+def run_pytorch(args):
+    print("pytorch")
+
+    import torch
+    from torchvision import models, transforms
+
+    import time 
+    import lib.postprocess as post
+    import lib.preprocess as pre
+    from time import perf_counter
+    import lib.data as dat
+    import pandas as pd
+    from PIL import Image
+
+    output_dict = dat.create_base_dictionary_class(args.n_big)
+
+    func_call = "models." + args.model + "(pretrained=True)"
+    model = eval(func_call)
+
+    preprocess = pre.preprocess_pytorch_mobilenet()
+
+    for i in range(args.niter):
+        for image in args.images:
+            input_image = Image.open(image)
+
+            input_tensor = preprocess(input_image)
+            input_batch = input_tensor.unsqueeze(0) 
+
+            if args.profiler == "perfcounter":
+                start_time = perf_counter()
+                output = model(input_batch)
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+                output = post.handle_output_pytorch_mobilenet_class(output, args.label, args.n_big)
+                output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+                df = dat.create_pandas_dataframe(output_dict)
+
+        time.sleep(args.sleep)
+
+    return df
+
+def run_sync_ov(args):
+
+    from openvino.runtime import InferRequest
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
+    from openvino.runtime import AsyncInferQueue, Core, Layout, Type
+
+    import logging as log
+    import time 
+    import lib.postprocess as post
+    import lib.preprocess as pre
+    from time import perf_counter
+    import lib.data as dat
+    import pandas as pd
+    import cv2
+
+    print("Chosen API: Sync Openvino")
+    log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
+
+    output_dict = dat.create_base_dictionary_class(args.n_big)
+
+    device_name = "CPU"
+
+        # --------------------------- Step 1. Initialize OpenVINO Runtime Core ------------------------------------------------
+    log.info('Creating OpenVINO Runtime Core')
+    core = Core()
+
+# --------------------------- Step 2. Read a model --------------------------------------------------------------------
+    log.info(f'Reading the model: {args.model}')
+    # (.xml and .bin files) or (.onnx file)
+    model = core.read_model(args.model)
+
+    if len(model.inputs) != 1:
+        log.error('Sample supports only single input topologies')
+        return -1
+
+    if len(model.outputs) != 1:
+        log.error('Sample supports only single output topologies')
+        return -1
+    
+    # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    # Read input images
+    images = [cv2.imread(image_path) for image_path in args.images]
+
+    # Resize images to model input dims
+    _, _, h, w = model.input().shape
+    #_, h, w, _ = model.input().shape
+    print(model.input().shape)
+    #h, w = 224, 224
+
+    resized_images = [cv2.resize(image, (w, h)) for image in images]
+
+    # Add N dimension
+    input_tensors = [np.expand_dims(image, 0) for image in resized_images]
+
+    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+    ppp = PrePostProcessor(model)
+
+    # 1) Set input tensor information:
+    # - input() provides information about a single model input
+    # - precision of tensor is supposed to be 'u8'
+    # - layout of data is 'NHWC'
+    ppp.input().tensor() \
+        .set_element_type(Type.u8) \
+        .set_layout(Layout('NHWC'))  # noqa: N400
+    
+    # - apply linear resize from tensor spatial dims to model spatial dims
+    ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
+
+    # 2) Here we suppose model has 'NCHW' layout for input
+    ppp.input().model().set_layout(Layout('NCHW'))
+
+    # 3) Set output tensor information:
+    # - precision of tensor is supposed to be 'f32'
+    ppp.output().tensor().set_element_type(Type.f32)
+
+    # 4) Apply preprocessing modifing the original 'model'
+    model = ppp.build()
+
+    # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
+    log.info('Loading the model to the plugin')
+    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": "4", "NUM_STREAMS": "4"} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
+    compiled_model = core.compile_model(model, device_name, config)
+    #compiled_model = core.compile_model(model, device_name)
+    num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
+    print("optimal number of requests", num_requests)
+
+
+def run_async_ov(args):
+    print("todo")
+
+
+
 
 
