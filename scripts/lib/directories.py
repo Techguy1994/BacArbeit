@@ -135,7 +135,6 @@ def create_sub_folder_for_segmentation(output_folder):
     return raw_folder, overlay_folder
 
 
-            
 
         
 

@@ -53,11 +53,28 @@ def store_output_dictionary_det(data, image, time, output):
     
     return data
 
-def create_base_dictionar_seg():
-    pass  
+def create_base_dictionary_seg():
+    data = {
+        "image": [],
+        "inference time": [],
+        "label": []
+    }  
 
-def store_output_dictionary_seg():
-    pass
+    return data
+
+def store_output_dictionary_seg(data, image, time, output):
+    data["image"].append(image)
+    data["inference time"].append(time)
+    data["label"].append([])
+
+    print(output)
+    
+    for i in range(len(output)):
+        print(data["label"][-1])
+        print(output[i])
+        data["label"][-1].append(output[i])
+
+    return data
 
 def create_pandas_dataframe(dict):
     df = pd.DataFrame(dict)

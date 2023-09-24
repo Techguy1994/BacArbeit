@@ -77,6 +77,27 @@ def preprocess_onnx_yolov5(image_path, input_type, height, width):
 
     return image_data
 
+def preprocess_tf_deeplab(image, height, width, input_type, channels=3):
+    import cv2
+    import numpy as np
+    #image = Image.open(image_path)
+    #image = image.resize((height, width), Image.LANCZOS)
+    #image_data = np.asarray(image).astype(input_type)
+    #for channel in range(image_data.shape[0]):
+    #    image_data[channel, :, :] = image_data[channel, :, :]*127.5 - 1
+    #image_data = np.expand_dims(image_data, 0)
+    #print(image_data.shape)
+    #quit()
+    #return image, image_data
+    
+
+    image = cv2.imread(image)
+    image = cv2.resize(image, (width, height))
+    image_data = cv2.normalize(image.astype(input_type), None, -1.0, 1.0, cv2.NORM_MINMAX)
+    image_data = np.expand_dims(image_data, 0)
+
+    return image, image_data
+
 def preprocess_onnx_deeplab(image, input_type, image_height, image_width):
     import cv2
     import numpy as np

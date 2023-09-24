@@ -237,6 +237,105 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
 
     return results
 
+def handle_output_deeplab_tf(output_details, interpreter, image, raw_file, overlay_file, colormap, label):
+    import numpy as np
+    import cv2
+
+    #print(output_details[0])
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+
+    # my method, first resize, then argmax 
+    output_data = output_data[0]
+
+    #print(output_data.shape)
+
+    seg_map = np.ndarray((image.shape[0],image.shape[1],len(output_data[0,0,:])))
+
+    for i in range(len(output_data[0,0,:])):
+        seg_map[:,:,i] = cv2.resize(output_data[:,:,i], (image.shape[1], image.shape[0]))
+
+
+    seg_map = np.argmax(seg_map, axis=2)
+
+    result, out_image, out_mask = vis_segmentation_cv2(image, seg_map, label, colormap)
+    #print(img_result_file)
+    #results.append(result)
+    #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
+    #mask_out_path = gen_out_path + "_mask.jpg"
+    #result_pic_out_path = gen_out_path + ".jpg"
+    cv2.imwrite(overlay_file, out_image)
+    cv2.imwrite(raw_file, out_mask)
+
+    return result
+
+def handle_output_deeplab_pyarmnn(output_data, image, raw_file, overlay_file, colormap, label):
+    import cv2
+    import numpy as np
+
+    #print("label shape", labels.shape)
+
+    #print(output_data[0].shape)
+    #print(output_data[0][0].shape)
+    #print(output_data[0][0])
+    
+    output_data = output_data[0][0]
+
+    #print(output_data[0,0,:])
+    #print(len(output_data[0,0,:]))
+    #print("output_data", output_data.shape)
+
+
+    #seg_map = np.ndarray((img_res.shape[0],img_res.shape[1],len(output_data[0,0,:])))
+    seg_map = np.ndarray((image.shape[0],image.shape[1],len(output_data[0,0,:])))
+
+    #print("segmap", seg_map.shape)
+
+    for i in range(len(output_data[0,0,:])):
+        seg_map[:,:,i] = cv2.resize(output_data[:,:,i], (image.shape[1],image.shape[0]))
+
+
+    seg_map = np.argmax(seg_map, axis=2)
+
+    #print("segmap after argmax (labels)", seg_map.shape)
+
+    result, out_image, out_mask = vis_segmentation_cv2(image, seg_map, label, colormap)
+    #print(img_result_file)
+    #results.append(result)
+    #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
+    #mask_out_path = gen_out_path + "_mask.jpg"
+    #result_pic_out_path = gen_out_path + ".jpg"
+    cv2.imwrite(overlay_file, out_image)
+    cv2.imwrite(raw_file, out_mask)
+
+    return result
+
+def handle_output_deeplab_onnx(output_data, origanal_image, raw_file, overlay_file, colormap, label):
+    import numpy as np
+    import cv2
+
+    output_data = output_data[0]
+    print(len(output_data))
+    print(len(output_data[0,0,:]))
+
+    seg_map = np.ndarray((origanal_image.shape[0],origanal_image.shape[1],len(output_data[0,0,:])))
+
+    for i in range(len(output_data[0,0,:])):
+        seg_map[:,:,i] = cv2.resize(output_data[:,:,i], (origanal_image.shape[1],origanal_image.shape[0]))
+
+
+    seg_map = np.argmax(seg_map, axis=2)
+
+    result, out_image, out_mask = vis_segmentation_cv2(origanal_image, seg_map, label, colormap)
+    #print(img_result_file)
+    #results.append(result)
+    #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
+    #mask_out_path = gen_out_path + "_mask.jpg"
+    #result_pic_out_path = gen_out_path + ".jpg"
+    cv2.imwrite(overlay_file, out_image)
+    cv2.imwrite(raw_file, out_mask)
+
+    return result
+
 
 def softmax(x):
     import numpy as np
@@ -249,3 +348,71 @@ def classFilter(classdata):
     for i in range(classdata.shape[0]):         # loop through all predictions
         classes.append(classdata[i].argmax())   # get the best classification location
     return classes  # return classes (int)
+
+def vis_segmentation_cv2(image, seg_map, LABEL_NAMES, colormap):
+    import cv2
+    import numpy as np
+    """Visualizes input image, segmentation map and overlay view."""
+
+    #print(image.shape, )
+    cv2.imwrite("result1.jpg", image)
+    seg_image = label_to_color_image(seg_map, colormap).astype(np.uint8)
+
+    #print(image.shape, seg_image.shape)
+    #print(LABEL_NAMES)
+
+    overlay_picture = cv2.addWeighted(image, 0.7, seg_image, 0.5, 0)
+
+    #LABEL_NAMES = np.asarray([
+    #    'background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus',
+    #    'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike',
+    #    'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tv'
+    #])
+
+    #print(LABEL_NAMES)
+    #FULL_LABEL_MAP = np.arange(len(LABEL_NAMES)).reshape(len(LABEL_NAMES), 1)
+    #FULL_COLOR_MAP = label_to_color_image(FULL_LABEL_MAP, colormap)
+
+
+    unique_labels = np.unique(seg_map)
+
+    LABEL_NAMES = np.asarray(LABEL_NAMES)
+    #indeces = FULL_COLOR_MAP[unique_labels].astype(np.uint8)
+    res = LABEL_NAMES[unique_labels]
+    #print(unique_labels) 
+    #print(indeces)
+    #print(res)
+
+    return res, overlay_picture, seg_image
+
+def label_to_color_image(label, colormap):
+    import numpy as np
+    """Adds color defined by the dataset colormap to the label.
+
+    Args:
+    label: A 2D array with integer type, storing the segmentation label.
+
+    Returns:
+    result: A 2D array with floating type. The element of the array
+        is the color indexed by the corresponding element in the input label
+        to the PASCAL color map.
+
+    Raises:
+    ValueError: If label is not of rank 2 or its value is larger than color
+        map maximum entry.
+    """
+
+    #print("Label shape: ", label.shape)  
+
+    if label.ndim != 2:
+        raise ValueError('Expect 2-D input label')
+
+    if np.max(label) >= len(colormap):
+        raise ValueError('label value too large.')
+    #print("label to color")
+    #print(label)
+    #print(colormap)
+    #print(label.shape, colormap.shape)
+    #print(colormap[label])
+
+    return colormap[label]

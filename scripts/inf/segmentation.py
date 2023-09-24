@@ -1,10 +1,148 @@
-def run_tf(args):
-    print("todo")
+def run_tf(args, raw_folder, overlay_folder):
 
-def run_pyarmnn():
-    print("todo")
+    import time 
+    import lib.postprocess as post
+    import lib.preprocess as pre
+    from time import perf_counter
+    import lib.data as dat
+    import pandas as pd
+    import cv2
+    import os 
+    import sys        
+    import tensorflow as tf
+    print("Chosen API: tflite runtime intepreter")
 
-def run_onnx(args, output_image_folder, raw_folder, overlay_folder):
+    output_dict = dat.create_base_dictionary_seg()
+
+    results = []
+    inf_times = []
+
+
+    interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None)
+    #interpreter = tflite.Interpreter(model_path=model_dir, experimental_delegates=None, num_threads=2)
+
+    interpreter.allocate_tensors()
+
+    # Get input and output tensors.
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+
+    # Test the model on random input data.
+    input_shape = input_details[0]['shape']
+    input_type = input_details[0]['dtype']
+
+    for i in range(args.niter):
+        for image in args.images:
+            original_image = cv2.imread(image)
+            raw_file = os.path.join(raw_folder, image.split("/")[-1])
+            overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
+
+            if args.profiler == "perfcounter":
+                image, processed_image = pre.preprocess_tf_deeplab(image, input_shape[1], input_shape[2], input_type)
+                interpreter.set_tensor(input_details[0]['index'], processed_image)
+
+                start_time = perf_counter()
+                interpreter.invoke()
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+
+                output = post.handle_output_deeplab_tf(output, interpreter, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
+                print(output_dict)
+                df = dat.create_pandas_dataframe(output_dict)
+   
+        time.sleep(args.sleep)     
+
+    return df
+
+def run_pyarmnn(args, raw_folder, overlay_folder):
+    import pyarmnn as ann
+    import csv
+    import time 
+    import lib.postprocess as post
+    import lib.preprocess as pre
+    from time import perf_counter
+    import lib.data as dat
+    import pandas as pd
+    import cv2
+    import os 
+    import sys
+    import numpy as np
+
+    output_dict = dat.create_base_dictionary_seg()
+
+    print(f"Working with ARMNN {ann.ARMNN_VERSION}")
+
+    parser = ann.ITfLiteParser()
+    network = parser.CreateNetworkFromBinaryFile(args.model)
+
+    options = ann.CreationOptions()
+    runtime = ann.IRuntime(options)
+    print(f"{runtime.GetDeviceSpec()}\n")
+
+    preferredBackends = [ann.BackendId('CpuAcc'), ann.BackendId('CpuRef')]
+    opt_network, messages = ann.Optimize(network, preferredBackends, runtime.GetDeviceSpec(), ann.OptimizerOptions())
+
+    print(f"Optimizationon warnings: {messages}")
+
+    # get input binding information for the input layer of the model
+    graph_id = parser.GetSubgraphCount() - 1
+    input_names = parser.GetSubgraphInputTensorNames(graph_id)
+    input_binding_info = parser.GetNetworkInputBindingInfo(graph_id, input_names[0])
+    input_tensor_id = input_binding_info[0]
+    input_tensor_info = input_binding_info[1]
+    width, height = input_tensor_info.GetShape()[1], input_tensor_info.GetShape()[2]
+    print(f"tensor id: {input_tensor_id},tensor info: {input_tensor_info}")
+
+
+    # Get output binding information for an output layer by using the layer name.
+    output_names = parser.GetSubgraphOutputTensorNames(graph_id)
+
+    output_binding_info = []
+
+    for output_name in output_names:
+        output_binding_info.append(parser.GetNetworkOutputBindingInfo(graph_id, output_name))
+    output_tensors = ann.make_output_tensors(output_binding_info)
+
+    net_id, _ = runtime.LoadNetwork(opt_network)
+
+    if ann.TensorInfo.IsQuantized(input_tensor_info):
+        data_type = np.uint8
+    else:
+        data_type= np.float32
+
+    for i in range(args.niter):
+        for image in args.images:
+            original_image = cv2.imread(image)
+            raw_file = os.path.join(raw_folder, image.split("/")[-1])
+            overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
+
+            if args.profiler == "perfcounter":
+                image, processed_image = pre.preprocess_tf_deeplab(image, height, width, data_type)
+                input_tensors = ann.make_input_tensors([input_binding_info], [processed_image])
+
+                start_time = perf_counter()
+                runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+
+                output = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
+
+                output = post.handle_output_deeplab_pyarmnn(output, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
+                print(output_dict)
+                df = dat.create_pandas_dataframe(output_dict)
+
+                
+        time.sleep(args.sleep)     
+
+    print(df)
+    return df
+
+
+def run_onnx(args, raw_folder, overlay_folder):
     print("Chosen API: Onnx runtime")
 
     import onnxruntime
@@ -15,6 +153,10 @@ def run_onnx(args, output_image_folder, raw_folder, overlay_folder):
     import lib.data as dat
     import pandas as pd
     import cv2
+    import os 
+    import sys
+
+    output_dict = dat.create_base_dictionary_seg()
 
     options = onnxruntime.SessionOptions()
 
@@ -42,15 +184,30 @@ def run_onnx(args, output_image_folder, raw_folder, overlay_folder):
     for i in range(args.niter):
         for image in args.images:
             original_image = cv2.imread(image)
+            raw_file = os.path.join(raw_folder, image.split("/")[-1])
+            overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
 
             if args.profiler == "perfcounter":
                 processed_image = pre.preprocess_onnx_deeplab(original_image, input_data_type, image_height, image_width)
 
                 start_time = perf_counter()
-                result = session.run(outputs, {input_name:processed_image})[0]
+                output = session.run(outputs, {input_name:processed_image})[0]
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
+
+                output = post.handle_output_deeplab_onnx(output, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
+                print(output_dict)
+                df = dat.create_pandas_dataframe(output_dict)
+
+                
+        time.sleep(args.sleep)     
+
+    print(df)
+    return df
+                
+                
 
 def run_pytorch():
     print("todo")

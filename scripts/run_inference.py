@@ -96,11 +96,14 @@ def run_segmentation(args):
     raw_folder, overlay_folder = d.create_sub_folder_for_segmentation(output_image_folder)
 
     if args.api == "tf":
-        df = seg.run_tf(args, output_image_folder, raw_folder, overlay_folder)
+        df = seg.run_tf(args, raw_folder, overlay_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pyarmnn":
-        df = seg.run_pyarmnn(args, output_image_folder, raw_folder, overlay_folder)
+        df = seg.run_pyarmnn(args, raw_folder, overlay_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "onnx":
-        df = seg.run_onnx(args, output_image_folder, raw_folder, overlay_folder)
+        df = seg.run_onnx(args, raw_folder, overlay_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
 
 
     if args.profiler == "cprofiler":
