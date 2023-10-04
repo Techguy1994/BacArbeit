@@ -1,12 +1,16 @@
+import time 
+import lib.postprocess as post
+import lib.preprocess as pre
+from time import perf_counter
+import lib.data as dat
+import pandas as pd
+import time
+import numpy as np
+from PIL import Image
+import cv2
+
 def run_tf(args):
     import tensorflow as tf
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
-
     
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
@@ -51,13 +55,7 @@ def run_tf(args):
 
 def run_pyarmnn(args):
     import pyarmnn as ann
-    import numpy as np
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
+    
 
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
@@ -132,12 +130,6 @@ def run_pyarmnn(args):
 
 def run_onnx(args):
     import onnxruntime
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
 
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
@@ -176,9 +168,16 @@ def run_onnx(args):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-                output = post.handle_output_onnx(result, output_data_type, args.label, args.n_big)
+                output = post.handle_output_onnx_mobilenet_class(result, output_data_type, args.label, args.n_big)
                 output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
                 df = dat.create_pandas_dataframe(output_dict)
+            else:
+                lat = 0
+                result = session.run([output_name], {input_name:processed_image})[0]
+                output = post.handle_output_onnx_mobilenet_class(result, output_data_type, args.label, args.n_big)
+                output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+                df = dat.create_pandas_dataframe(output_dict)
+
 
         time.sleep(args.sleep)
 
@@ -188,16 +187,8 @@ def run_pytorch(args):
     print("pytorch")
 
     import torch
-    from torchvision import models, transforms
-
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
-    from PIL import Image
-
+    #from torchvision import models, transforms
+    
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
     func_call = "models." + args.model + "(pretrained=True)"
@@ -228,18 +219,12 @@ def run_pytorch(args):
 
 def run_sync_ov(args):
 
-    from openvino.runtime import InferRequest
+    from openvino.runtime import InferRequest, AsyncInferQueue
     from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
-    from openvino.runtime import AsyncInferQueue, Core, Layout, Type
+    from openvino import Core, Layout, Type
 
     import logging as log
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
-    import cv2
+    import sys
 
     print("Chosen API: Sync Openvino")
     log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
@@ -311,6 +296,23 @@ def run_sync_ov(args):
     #compiled_model = core.compile_model(model, device_name)
     num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
     print("optimal number of requests", num_requests)
+
+    for i in range(args.niter):
+        for j, input_tensor in enumerate(input_tensors):
+            for image in images:
+                if args.profiler == "perfcounter":
+                    start_time = perf_counter()
+                    result = compiled_model.infer_new_request({0: input_tensor})
+                    end_time = perf_counter()
+                    lat = end_time - start_time
+                    print("time in ms: ", lat*1000)
+                    output = post.handle_output_openvino_moiblenet_class(result, args.label, args.n_big)
+                    output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+                    df = dat.create_pandas_dataframe(output_dict)
+
+        time.sleep(args.sleep)
+
+    return df
 
 
 def run_async_ov(args):

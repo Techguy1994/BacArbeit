@@ -1,14 +1,18 @@
+import time 
+import lib.postprocess as post
+import lib.preprocess as pre
+from time import perf_counter
+import lib.data as dat
+import pandas as pd
+import os 
+import cv2
+import numpy as np
+from PIL import Image
+
 def run_tf(args, output_image_folder):
-    global cv2
-    import cv2
+    
     import tensorflow as tf
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
-    import os 
+
 
     output_dict = dat.create_base_dictionary_det()
     
@@ -46,18 +50,9 @@ def run_tf(args, output_image_folder):
     return df 
 
 def run_pyarmnn(args, output_image_folder):
-    print(args.sleep)
-    global ann, csv
+
     import pyarmnn as ann
     import csv
-    import numpy as np
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    import os 
-    import lib.data as dat
-    from time import perf_counter
-    import time
-
 
     output_dict = dat.create_base_dictionary_det()
 
@@ -131,20 +126,8 @@ def run_onnx(args, output_image_folder):
 
     import onnxruntime
     import json
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
-    import sys
-    import cv2
-    import os
-    import lib.data as dat
-    import time 
-    import pandas as pd
 
     output_dict = dat.create_base_dictionary_det()
-
 
     options = onnxruntime.SessionOptions()
     providers = ['CPUExecutionProvider']
@@ -191,5 +174,45 @@ def run_onnx(args, output_image_folder):
         time.sleep(args.sleep)     
 
     return df
+
+def run_pytorch(args, output_image_folder):
+
+    import torch
+    from torchvision import models, transforms
+
+    output_dict = dat.create_base_dictionary_det()
+
+    model = torch.hub.load("ultralytics/yolov5", "yolov5l")
+
+    model.eval()
+
+    preprocess = pre.preprocess_pytorch_yolo()
+
+    for i in range(args.niter):
+        for image in args.images:
+            image_result_file = os.path.join(output_image_folder, image.split("/")[-1])
+            img_org = cv2.imread(image)
+            input_image = Image.open(image)
+
+            input_tensor = preprocess(input_image)
+            input_batch = input_tensor.unsqueeze(0) 
+
+            if args.profiler == "perfcounter":
+                start_time = perf_counter()
+                with torch.no_grad():
+                    output = model(input_batch)
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+
+                output = post.handle_output_pytorch_yolo_det(output, img_org, args.thres, image_result_file, args.label,(1, 1))
+                output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
+                df = dat.create_pandas_dataframe(output_dict)
+                print("pandas output: ", df)
+
+        time.sleep(args.sleep)     
+
+    return df
+
 
 

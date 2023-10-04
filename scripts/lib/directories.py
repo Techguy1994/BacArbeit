@@ -95,6 +95,9 @@ def handle_output_directory(args, api, type, model, profiler):
         if profiler == "perfcounter":
             time_dir = os.path.join(outputs_dir, "perfcounter")
 
+        if profiler == "cprofiler":
+            time_dir = os.path.join(outputs_dir, "cprofiler")
+
         if type in ["det", "seg"]:
             image_dir = os.path.join(outputs_dir, "images")
 
@@ -107,7 +110,7 @@ def handle_output_directory(args, api, type, model, profiler):
         if not os.path.exists(time_dir):
             os.makedirs(time_dir)
 
-        return outputs_dir
+        return outputs_dir, time_dir
 
 
 def create_image_folder_with_current_time_stamp(output_folder):

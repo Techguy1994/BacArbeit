@@ -39,7 +39,7 @@ def handle_output_pyarmnn(output_data, label, n_big):
         
     return results
 
-def handle_output_onnx(output_data, output_details, label, n_big):
+def handle_output_onnx_mobilenet_class(output_data, output_details, label, n_big):
     import numpy as np
     results = []
 
@@ -90,6 +90,37 @@ def handle_output_pytorch_mobilenet_class(output_data, label, n_big):
         results.append({"label": label[entry], "index": entry.item(), "value": val.item()})
         
     return results
+
+def handle_output_openvino_moiblenet_class(output_data, label, n_big):
+    import numpy as np
+
+    results = []
+
+    predictions = next(iter(output_data.values()))
+    probs = predictions.reshape(-1)
+
+    max_positions = np.argpartition(probs, -n_big)[-n_big:]
+    out_normalization_factor = 1
+
+    #print(output_details[0]["dtype"])
+
+    #if "integer" in output_details:
+    #    print("int")
+    #    quit("no adapted to onnx, please change following code when quantized model is given")
+    #    out_normalization_factor = np.iinfo(output_details[0]['dtype']).max
+    #elif "float" in output_details:
+    #    print("float")
+    #    out_normalization_factor = 1
+
+    for entry in max_positions:
+        # go over entries and print their position and result in percent
+        val = probs[entry] / out_normalization_factor
+        #result[entry] = [val*100]
+        #print("\tpos {} : {:.2f}%".format(entry, val*100))
+        results.append({"label": label[entry], "index:": entry, "value": val})
+        
+    return results
+
 
 def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres, file_name, label):
     import numpy as np
@@ -237,6 +268,64 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
 
     return results
 
+def handle_output_pytorch_yolo_det(output_details, img_org, thres, img_result_file, label, model_shape):
+
+    import cv2
+
+    results = []
+
+
+
+    print(output_details)
+    output_data = output_details[0]
+    print(output_data.shape)
+    #output_data = output_data[0]
+    print(output_data.shape)
+
+    boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
+    scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
+    classes = classFilter(output_data[..., 5:]) # get classes
+    # Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
+    x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
+    xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
+
+    orig_W, orig_H = img_org.shape[1], img_org.shape[0]
+    print("Boxes shape: ", boxes.shape)
+    print("scores shape: ", scores.shape)
+    print("Classes Len", len(classes))
+    print("Orig: ", img_org.shape)
+    print(orig_H, orig_W)
+
+    #ratio_H, ratio_W = orig_H/576, orig_W/768
+    #print(ratio_H, ratio_W)
+
+    output_img = img_org
+
+    for i in range(len(scores)):
+        if ((scores[i] > thres) and (scores[i] <= 1.0)):
+            print(label[classes[i]],classes[i], scores[i])
+            print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
+
+            xmin, ymin, xmax, ymax = int(xyxy[0][i]), int(xyxy[1][i]), int(xyxy[2][i]), int(xyxy[3][i])
+            #sys.exit()
+            #xmin = int(max(1,(xyxy[0][i] * orig_W)))
+            #ymin = int(max(1,(xyxy[1][i] * orig_H)))
+            #xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
+            #ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
+
+            print(xmin, xmax, ymin, ymax)
+
+            output_img = cv2.rectangle(output_img, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
+            #cv2.imwrite("test.jpg", output_img)
+            #sys.exit()
+            results.append({"label": label[classes[i]],"index": classes[i], "value": scores[i]})
+
+        
+    print(output_img.shape)
+    cv2.imwrite(img_result_file, output_img)
+
+    return results
+
 def handle_output_deeplab_tf(output_details, interpreter, image, raw_file, overlay_file, colormap, label):
     import numpy as np
     import cv2
@@ -326,6 +415,50 @@ def handle_output_deeplab_onnx(output_data, origanal_image, raw_file, overlay_fi
     seg_map = np.argmax(seg_map, axis=2)
 
     result, out_image, out_mask = vis_segmentation_cv2(origanal_image, seg_map, label, colormap)
+    #print(img_result_file)
+    #results.append(result)
+    #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
+    #mask_out_path = gen_out_path + "_mask.jpg"
+    #result_pic_out_path = gen_out_path + ".jpg"
+    cv2.imwrite(overlay_file, out_image)
+    cv2.imwrite(raw_file, out_mask)
+
+    return result
+
+def handle_output_deeplab_pytorch(output_data, image, raw_file, overlay_file, colormap, label):
+    import numpy as np
+    import cv2
+
+    #https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/ssd-mobilenetv1
+    results = []
+
+
+
+    output = output_data.numpy()
+    
+    
+    #print(output_details[0])
+   # output_data = interpreter.get_tensor(output_details[0]['index'])
+    
+    # my method, first resize, then argmax 
+    #output_data = output_data[0]
+
+    #print(output_data.shape)
+    #print(output.shape)
+    #print(img_res.shape)
+    #print(len(output_data[:,0,0]))
+
+    seg_map = np.ndarray((image.shape[0],image.shape[1],len(output[:,0,0])))
+
+    #print(seg_map.shape)
+
+    for i in range(len(output[:,0,0])):
+        seg_map[:,:,i] = cv2.resize(output[i,:,:], (image.shape[1],image.shape[0]))
+
+
+    seg_map = np.argmax(seg_map, axis=2)
+
+    result, out_image, out_mask = vis_segmentation_cv2(image, seg_map, label, colormap)
     #print(img_result_file)
     #results.append(result)
     #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])

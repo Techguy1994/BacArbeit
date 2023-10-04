@@ -1,14 +1,17 @@
+import time 
+import lib.postprocess as post
+import lib.preprocess as pre
+from time import perf_counter
+import lib.data as dat
+import pandas as pd
+import cv2
+import os 
+import sys   
+import numpy as np
+from PIL import Image
+
 def run_tf(args, raw_folder, overlay_folder):
 
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
-    import cv2
-    import os 
-    import sys        
     import tensorflow as tf
     print("Chosen API: tflite runtime intepreter")
 
@@ -59,16 +62,6 @@ def run_tf(args, raw_folder, overlay_folder):
 def run_pyarmnn(args, raw_folder, overlay_folder):
     import pyarmnn as ann
     import csv
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
-    import cv2
-    import os 
-    import sys
-    import numpy as np
 
     output_dict = dat.create_base_dictionary_seg()
 
@@ -146,15 +139,6 @@ def run_onnx(args, raw_folder, overlay_folder):
     print("Chosen API: Onnx runtime")
 
     import onnxruntime
-    import time 
-    import lib.postprocess as post
-    import lib.preprocess as pre
-    from time import perf_counter
-    import lib.data as dat
-    import pandas as pd
-    import cv2
-    import os 
-    import sys
 
     output_dict = dat.create_base_dictionary_seg()
 
@@ -209,8 +193,55 @@ def run_onnx(args, raw_folder, overlay_folder):
                 
                 
 
-def run_pytorch():
-    print("todo")
+def run_pytorch(args, raw_folder, overlay_folder):
+    import torch
+    from torchvision import models, transforms
+
+    output_dict = dat.create_base_dictionary_seg()
+
+    if args.model == "deeplabv3_resnet50":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_resnet50", pretrained=True)
+    elif args.model == "deeplabv3_resnet101":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_resnet101", pretrained=True)
+    elif args.model == "deeplabv3_mobilenet_v3_large":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_mobilenet_v3_large", pretrained=True)
+    elif args.model == "deeplabv3_mobilenet_v3_small":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_mobilenet_v3_small", pretrained=True)
+    else: 
+        sys.exit("Nothing found")
+
+    preprocess = pre.preprocess_pytorch_seg()
+
+    model.eval()
+
+    for i in range(args.niter):
+        for image in args.images:
+            original_image = cv2.imread(image)
+            raw_file = os.path.join(raw_folder, image.split("/")[-1])
+            overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
+
+            if args.profiler == "perfcounter":
+                input_batch = pre.preprocess_pytorch_deeplab(image, preprocess)
+
+                start_time = perf_counter()
+                with torch.no_grad():
+                    output = model(input_batch)['out'][0]
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+
+                output = post.handle_output_deeplab_pytorch(output, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
+                print(output_dict)
+                df = dat.create_pandas_dataframe(output_dict)
+
+                
+        time.sleep(args.sleep)     
+
+    print(df)
+    return df
+
+
 
 def run_sync_openvino():
     print("todo")

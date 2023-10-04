@@ -1,11 +1,5 @@
-from ast import arg
-import numpy as np
-import pandas as pd
-
 import lib.arguments as ag
 import lib.data as dat
-from datetime import datetime
-import os
 import lib.directories as d
 
 
@@ -40,7 +34,6 @@ def run_classification(args):
         df = cl.run_onnx(args)
         dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "pytorch":
-        print("implement pytorch")
         df = cl.run_pytorch(args)
         dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "ov":
@@ -104,6 +97,10 @@ def run_segmentation(args):
     if args.api == "onnx":
         df = seg.run_onnx(args, raw_folder, overlay_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
+    if args.api == "pytorch":
+        df = seg.run_pytorch(args, raw_folder, overlay_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
+
 
 
     if args.profiler == "cprofiler":

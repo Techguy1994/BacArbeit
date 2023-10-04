@@ -2,7 +2,6 @@ import argparse
 import lib.directories as d
 import sys
 
-
 class Arguments:
     def __init__(self):
         self.args = self.arguments()
@@ -21,6 +20,8 @@ class Arguments:
         self.sleep = int(self.args.sleep)
         self.n_big = int(self.args.n_big)
         self.a_sync = self.args.a_sync
+        self.skip_output = self.args.skip_output
+        self.randomized_input = self.args.randomized_input
         #handle_other_paramters()
 
     def arguments(self):
@@ -54,12 +55,13 @@ class Arguments:
         parser.add_argument("-ni", "--niter", help="number of iterations", required=False, default=1)
         parser.add_argument("-thres", "--threshold", help="threshold for object detectio", required=False, default=0.5)
         parser.add_argument("-ho", "--handle_output", help="defines wheter the output is handled", required=False, action="store_true", default="store_false")
-        #parser.add_argument("rand", "--randomized_input", help="specifgfy if the input image should be randomized", required=False, action="store_true")
         parser.add_argument("-p", "--profiler", help="define which profiler is to be used", required=False, default="perfcounter")
         parser.add_argument("-big", "--n_big", help=" n biggest results", required=False, default=3)
         parser.add_argument("-async", "--a_sync", help="in combination with ov inference, handles if it runs in sync or async mode, default is sync", required=False, action="store_true")
         parser.add_argument("-c", "--colormap", help="colormap chosen depending on the data set", required=False)
 
+        parser.add_argument("-so", "--skip_output", help="if provided this skips the output handling", action="store_true")
+        parser.add_argument("-ri", "--randomized_input", help="randomizes inputs for the input, give a of the number of the input", required=False)
 
         return parser.parse_args()
     

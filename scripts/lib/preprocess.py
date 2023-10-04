@@ -77,6 +77,21 @@ def preprocess_onnx_yolov5(image_path, input_type, height, width):
 
     return image_data
 
+def preprocess_pytorch_yolo():
+    import torch
+    from torchvision import models, transforms
+    """
+    preprocess = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+    """
+    preprocess = transforms.Compose([transforms.ToTensor()])
+
+    return preprocess
+
 def preprocess_tf_deeplab(image, height, width, input_type, channels=3):
     import cv2
     import numpy as np
@@ -107,4 +122,30 @@ def preprocess_onnx_deeplab(image, input_type, image_height, image_width):
     image_data = np.expand_dims(image_data, 0)
 
     return image_data
+
+def preprocess_pytorch_seg():
+
+    from torchvision import models, transforms
+
+    preprocess = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+    return preprocess
+
+def preprocess_pytorch_deeplab(image, preprocess):
+    from PIL import Image
+    input_image = Image.open(image)
+    input_image = input_image.convert("RGB")
+
+    #img = 'https://ultralytics.com/images/zidane.jpg'
+
+    #input_image = input_image.resize((64,64))
+
+
+    input_tensor = preprocess(input_image)
+    input_batch = input_tensor.unsqueeze(0)
+    return input_batch
+
 
