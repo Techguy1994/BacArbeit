@@ -80,9 +80,8 @@ def create_pandas_dataframe(dict):
     df = pd.DataFrame(dict)
     return df
 
-def store_pandas_data_frame_as_csv(df, output):
-    date = datetime.now()
-    file_name = str(date.year)+ "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" + str(date.minute) + ".csv"
+def store_pandas_data_frame_as_csv(df, output, name_date):
+    file_name = name_date + ".csv"
     location = os.path.join(output, "output", file_name)
     df.to_csv(location)
 

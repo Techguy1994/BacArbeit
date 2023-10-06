@@ -13,7 +13,7 @@ class Arguments:
         self.type = self.handle_type()
         self.api = self.handle_api()
         self.profiler = self.handle_profiler_selection()
-        self.output = d.handle_output_directory(self.args, self.api, self.type, self.model, self.profiler)
+        self.output, self.time = d.handle_output_directory(self.args, self.api, self.type, self.model, self.profiler)
         print(self.output)
         self.niter = int(self.args.niter)
         self.thres = float(self.args.threshold)
@@ -22,6 +22,7 @@ class Arguments:
         self.a_sync = self.args.a_sync
         self.skip_output = self.args.skip_output
         self.randomized_input = self.args.randomized_input
+        print(int(self.randomized_input))
         #handle_other_paramters()
 
     def arguments(self):

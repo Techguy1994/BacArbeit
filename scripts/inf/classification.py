@@ -1,6 +1,7 @@
 import time 
 import lib.postprocess as post
 import lib.preprocess as pre
+import lib.helper as helper
 from time import perf_counter
 import lib.data as dat
 import pandas as pd
@@ -37,16 +38,18 @@ def run_tf(args):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-                output_data = interpreter.get_tensor(output_details[0]['index'])
-                output = post.handle_output_tf(output_data, output_details, args.label, args.n_big)
-                output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+                if not args.skip_output:
+                    output_data = interpreter.get_tensor(output_details[0]['index'])
+                    output = post.handle_output_tf(output_data, output_details, args.label, args.n_big)
+                    output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
                 df = dat.create_pandas_dataframe(output_dict)
             else:
                 interpreter.invoke()
                 lat = 0
-                output_data = interpreter.get_tensor(output_details[0]['index'])
-                output = post.handle_output_tf(output_data, output_details, args.label, args.n_big)
-                output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+                if not args.skip_output:
+                    output_data = interpreter.get_tensor(output_details[0]['index'])
+                    output = post.handle_output_tf(output_data, output_details, args.label, args.n_big)
+                    output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
                 df = dat.create_pandas_dataframe(output_dict)
 
         time.sleep(args.sleep)
@@ -168,15 +171,14 @@ def run_onnx(args):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-                output = post.handle_output_onnx_mobilenet_class(result, output_data_type, args.label, args.n_big)
-                output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                df = dat.create_pandas_dataframe(output_dict)
             else:
                 lat = 0
                 result = session.run([output_name], {input_name:processed_image})[0]
+                
+            if not args.skip_output: 
                 output = post.handle_output_onnx_mobilenet_class(result, output_data_type, args.label, args.n_big)
                 output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                df = dat.create_pandas_dataframe(output_dict)
+            df = dat.create_pandas_dataframe(output_dict)
 
 
         time.sleep(args.sleep)

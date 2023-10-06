@@ -1,53 +1,56 @@
 import lib.arguments as ag
 import lib.data as dat
 import lib.directories as d
+import os 
 
 
 def main():
     args = ag.Arguments()
+
+    name_date = d.create_name_date()
+
     if args.type == "class":
         global cl
         import inf.classification as cl
-        run_classification(args)
+        run_classification(args, name_date)
     if args.type == "det":
         global det
         import inf.detection as det
-        run_detection(args)
+        run_detection(args, name_date)
     if args.type == "seg":
         global seg
         import inf.segmentation as seg
-        run_segmentation(args)
+        run_segmentation(args, name_date)
 
-def run_classification(args):
+def run_classification(args, name_date):
     if args.profiler == "cprofiler":
-        import cProfile
+        import cProfile, pstats
         profiler = cProfile.Profile()
         profiler.enable()
 
     if args.api == "tf": 
         df = cl.run_tf(args)
-        dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "pyarmnn":
         df = cl.run_pyarmnn(args)
-        dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "onnx":
         df = cl.run_onnx(args)
-        dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "pytorch":
         df = cl.run_pytorch(args)
-        dat.store_pandas_data_frame_as_csv(df, args.output)
     if args.api == "ov":
         print(args.a_sync)
         if args.a_sync:
             df = cl.run_async_ov(args)
-            print("run async") 
         else:
             df = cl.run_sync_ov(args)
-            print("run sync")
 
+    dat.store_pandas_data_frame_as_csv(df, args.output, name_date)
 
     if args.profiler == "cprofiler":
         profiler.disable()
+
+        with open(os.path.join(args.time_dir, name_date), 'w') as stream:
+            stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
+            stats.print_stats()
 
     
 def run_detection(args):

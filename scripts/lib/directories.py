@@ -36,6 +36,9 @@ def handle_model_directory(args):
 def handle_image_directory(args):
     image_list = []
 
+    if args.randomized_input:
+        image_list = create_random_input(args.randomized_input)
+
     if args.image_folder: 
         if os.path.exists(args.image_folder):
             for img in os.listdir(args.image_folder):
@@ -56,6 +59,32 @@ def handle_image_directory(args):
         sys.exit("Error: No image option chosen as input. You can either give the image with -img , image folder path with -imgp or choose the default image folder with -imgd!")
     
     return image_list
+
+def create_random_input(count):
+    print("fucntion")
+
+    import numpy as np
+    from PIL import Image
+
+    general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
+    randomized_image_folder = os.path.join(general_dir, "randomized_iamges")
+    if not os.path.exists(randomized_image_folder):
+        os.makedirs(randomized_image_folder) 
+
+    for i in range(int(count)):
+        output = np.random.randint(255, size=(500, 500, 3), dtype=np.uint8)
+        print(output.shape)
+        image = Image.fromarray(output)
+        image.save(os.path.join(randomized_image_folder, str(i) + ".jpg")
+
+
+    print(output.shape)
+
+    sys.exit("test")
+
+    return randomized_image_folder
+
+
 
 
 def handle_label_directory(args):
@@ -113,11 +142,7 @@ def handle_output_directory(args, api, type, model, profiler):
         return outputs_dir, time_dir
 
 
-def create_image_folder_with_current_time_stamp(output_folder):
-    from datetime import datetime
-
-    date = datetime.now()
-    folder_name_date = str(date.year)+ "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" + str(date.minute)
+def create_image_folder_with_current_time_stamp(output_folder, folder_name_date):
 
     images_folder = os.path.join(output_folder, "images", folder_name_date)
 
@@ -136,6 +161,15 @@ def create_sub_folder_for_segmentation(output_folder):
         sys.exit("Error creating overlay folder")
 
     return raw_folder, overlay_folder
+
+def create_name_date():
+    from datetime import datetime
+
+    date = datetime.now()
+    folder_name_date = str(date.year)+ "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" + str(date.minute)
+
+    return folder_name_date
+
 
 
 
