@@ -1,1 +1,10 @@
 description for setup of raspberry os 
+
+Raspberry Pi OS:
+Mit dem raspberry pi imager raspberry os 64 bit aus sd karte flachen
+
+Sd Karte reinstecken und Installationsprozess durchführen
+
+
+folgender Link für python3.8.10 installation from source:
+https://realpython.com/installing-python/#what-your-options-are_2
