@@ -38,6 +38,7 @@ def handle_image_directory(args):
 
     if args.randomized_input:
         image_list = create_random_input(args.randomized_input)
+        return image_list
 
     if args.image_folder: 
         if os.path.exists(args.image_folder):
@@ -66,6 +67,8 @@ def create_random_input(count):
     import numpy as np
     from PIL import Image
 
+    image_list = []
+
     general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
     randomized_image_folder = os.path.join(general_dir, "randomized_iamges")
     if not os.path.exists(randomized_image_folder):
@@ -75,14 +78,11 @@ def create_random_input(count):
         output = np.random.randint(255, size=(500, 500, 3), dtype=np.uint8)
         print(output.shape)
         image = Image.fromarray(output)
-        image.save(os.path.join(randomized_image_folder, str(i) + ".jpg")
+        file_name = os.path.join(randomized_image_folder, str(i) + ".jpg")
+        image.save(file_name)
+        image_list.append(file_name)
 
-
-    print(output.shape)
-
-    sys.exit("test")
-
-    return randomized_image_folder
+    return image_list
 
 
 

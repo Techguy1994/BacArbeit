@@ -38,19 +38,16 @@ def run_tf(args):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-                if not args.skip_output:
-                    output_data = interpreter.get_tensor(output_details[0]['index'])
-                    output = post.handle_output_tf(output_data, output_details, args.label, args.n_big)
-                    output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                df = dat.create_pandas_dataframe(output_dict)
             else:
                 interpreter.invoke()
                 lat = 0
-                if not args.skip_output:
-                    output_data = interpreter.get_tensor(output_details[0]['index'])
-                    output = post.handle_output_tf(output_data, output_details, args.label, args.n_big)
-                    output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                df = dat.create_pandas_dataframe(output_dict)
+
+            if not args.skip_output:
+                output_data = interpreter.get_tensor(output_details[0]['index'])
+                output = post.handle_output_tf(output_data, output_details, args.label, args.n_big)
+            output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+
+            df = dat.create_pandas_dataframe(output_dict)
 
         time.sleep(args.sleep)
 
@@ -115,17 +112,15 @@ def run_pyarmnn(args):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-                result = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
-                output = post.handle_output_pyarmnn(result, args.label, args.n_big)
-                output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                df = dat.create_pandas_dataframe(output_dict)
             else:
                 lat = 0
                 runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
+
+            if not args.skip_output:
                 result = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
                 output = post.handle_output_pyarmnn(result, args.label, args.n_big)
                 output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                df = dat.create_pandas_dataframe(output_dict)
+            df = dat.create_pandas_dataframe(output_dict)
 
         time.sleep(args.sleep)
 
@@ -211,9 +206,14 @@ def run_pytorch(args):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
+            else:
+                output = model(input_batch)
+
+            if not args.skip_output:
                 output = post.handle_output_pytorch_mobilenet_class(output, args.label, args.n_big)
                 output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                df = dat.create_pandas_dataframe(output_dict)
+            df = dat.create_pandas_dataframe(output_dict)
+            
 
         time.sleep(args.sleep)
 
@@ -308,9 +308,16 @@ def run_sync_ov(args):
                     end_time = perf_counter()
                     lat = end_time - start_time
                     print("time in ms: ", lat*1000)
+                    
+                    df = dat.create_pandas_dataframe(output_dict)
+                else:
+                    result = compiled_model.infer_new_request({0: input_tensor})
+
+                if not args.skip_output:
                     output = post.handle_output_openvino_moiblenet_class(result, args.label, args.n_big)
                     output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                    df = dat.create_pandas_dataframe(output_dict)
+
+                df = dat.create_pandas_dataframe(output_dict)
 
         time.sleep(args.sleep)
 
