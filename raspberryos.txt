@@ -32,3 +32,8 @@ sudo apt install samba
 https://ubuntu.com/tutorials/install-and-configure-samba#4-setting-up-user-accounts-and-connecting-to-share
 firewall rules geht nicht, hat aber trotzdem funktioniert
 
+removie GUI
+https://forum-raspberrypi.de/forum/thread/56993-raspbian-buster-gui-entfernen/
+
+conda 
+https://github.com/conda-forge/miniforge
