@@ -37,3 +37,7 @@ https://forum-raspberrypi.de/forum/thread/56993-raspbian-buster-gui-entfernen/
 
 conda 
 https://github.com/conda-forge/miniforge
+
+pip install pandas
+pip install Pillow
+pip install opencv-python
