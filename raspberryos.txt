@@ -15,6 +15,7 @@ https://www.tensorflow.org/install/pip#cpupython3
 https://pypi.org/project/tflite-runtime/
 
 https://onnxruntime.ai/docs/install/
+pip install onnxruntime
 
 https://pytorch.org/get-started/locally/
 
