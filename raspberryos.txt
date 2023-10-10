@@ -8,3 +8,39 @@ Sd Karte reinstecken und Installationsprozess durchführen
 
 folgender Link für python3.8.10 installation from source:
 https://realpython.com/installing-python/#what-your-options-are_2
+
+https://www.tensorflow.org/install/pip#cpupython3 
+-m pip install tensorflow
+
+https://pypi.org/project/tflite-runtime/
+
+https://onnxruntime.ai/docs/install/
+pip install onnxruntime
+
+https://pytorch.org/get-started/locally/
+
+https://docs.openvino.ai/2023.1/openvino_docs_install_guides_installing_openvino_pip.html
+
+https://www.raspberrypiguide.de/howtos/ssh-zugriff-unter-raspbian-einrichten/
+
+check which ip adress
+ifconfig
+
+setup samba
+https://ubuntu.com/tutorials/install-and-configure-samba#1-overview
+
+sudo apt install samba
+https://ubuntu.com/tutorials/install-and-configure-samba#4-setting-up-user-accounts-and-connecting-to-share
+firewall rules geht nicht, hat aber trotzdem funktioniert
+
+removie GUI
+https://forum-raspberrypi.de/forum/thread/56993-raspbian-buster-gui-entfernen/
+
+conda 
+https://github.com/conda-forge/miniforge
+
+pip install pandas
+pip install Pillow
+pip install opencv-python
+pip install plotly
+pip install torch
