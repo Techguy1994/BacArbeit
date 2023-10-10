@@ -45,7 +45,9 @@ def run_tf(args):
             if not args.skip_output:
                 output_data = interpreter.get_tensor(output_details[0]['index'])
                 output = post.handle_output_tf(output_data, output_details, args.label, args.n_big)
-            output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+                output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+            else: 
+                output_dict = dat.store_output_dictionary_only_lat(output_dict, image, lat, args.n_big)
 
             df = dat.create_pandas_dataframe(output_dict)
 
@@ -120,6 +122,8 @@ def run_pyarmnn(args):
                 result = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
                 output = post.handle_output_pyarmnn(result, args.label, args.n_big)
                 output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+            else: 
+                output_dict = dat.store_output_dictionary_only_lat(output_dict, image, lat, args.n_big)
             df = dat.create_pandas_dataframe(output_dict)
 
         time.sleep(args.sleep)
@@ -173,6 +177,8 @@ def run_onnx(args):
             if not args.skip_output: 
                 output = post.handle_output_onnx_mobilenet_class(result, output_data_type, args.label, args.n_big)
                 output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+            else: 
+                output_dict = dat.store_output_dictionary_only_lat(output_dict, image, lat, args.n_big)
             df = dat.create_pandas_dataframe(output_dict)
 
 
@@ -184,25 +190,39 @@ def run_pytorch(args):
     print("pytorch")
 
     import torch
-    #from torchvision import models, transforms
+    from torchvision import models, transforms
+    import sys
     
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
     func_call = "models." + args.model + "(pretrained=True)"
+    #model = func_call
+    #print(func_call)
     model = eval(func_call)
+
+    #model = models.mobilenet_v2(pretrained=True)
+
+    model.eval()
 
     preprocess = pre.preprocess_pytorch_mobilenet()
 
+    print("hey")
+
     for i in range(args.niter):
         for image in args.images:
+            print("hey")
             input_image = Image.open(image)
 
             input_tensor = preprocess(input_image)
             input_batch = input_tensor.unsqueeze(0) 
 
             if args.profiler == "perfcounter":
+                print("hey")
                 start_time = perf_counter()
-                output = model(input_batch)
+                print("start")
+                with torch.no_grad():
+                    output = model(input_batch)
+                print("end")
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
@@ -212,7 +232,8 @@ def run_pytorch(args):
             if not args.skip_output:
                 output = post.handle_output_pytorch_mobilenet_class(output, args.label, args.n_big)
                 output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-            df = dat.create_pandas_dataframe(output_dict)
+            else:
+                df = dat.create_pandas_dataframe(output_dict)
             
 
         time.sleep(args.sleep)
@@ -316,6 +337,8 @@ def run_sync_ov(args):
                 if not args.skip_output:
                     output = post.handle_output_openvino_moiblenet_class(result, args.label, args.n_big)
                     output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+                else:
+                    output_dict = dat.store_output_dictionary_only_lat(output_dict, image, lat, args.n_big)
 
                 df = dat.create_pandas_dataframe(output_dict)
 

@@ -43,6 +43,7 @@ def run_classification(args, name_date):
         else:
             df = cl.run_sync_ov(args)
 
+    print(df)
     dat.store_pandas_data_frame_as_csv(df, args.output, name_date)
 
     if args.profiler == "cprofiler":
