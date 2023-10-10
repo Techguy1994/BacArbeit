@@ -41,3 +41,4 @@ https://github.com/conda-forge/miniforge
 pip install pandas
 pip install Pillow
 pip install opencv-python
+pip install plotly
