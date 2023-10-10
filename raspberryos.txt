@@ -43,3 +43,4 @@ pip install pandas
 pip install Pillow
 pip install opencv-python
 pip install plotly
+pip install torch
