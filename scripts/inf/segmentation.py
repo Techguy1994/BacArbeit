@@ -12,7 +12,7 @@ from PIL import Image
 
 def run_tf(args, raw_folder, overlay_folder):
 
-    import tensorflow as tf
+    import tflite_runtime.interpreter as tflite
     print("Chosen API: tflite runtime intepreter")
 
     output_dict = dat.create_base_dictionary_seg()
@@ -20,9 +20,13 @@ def run_tf(args, raw_folder, overlay_folder):
     results = []
     inf_times = []
 
-
-    interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None)
-    #interpreter = tflite.Interpreter(model_path=model_dir, experimental_delegates=None, num_threads=2)
+    #delegate_input
+    if args.api == "delegate":
+        armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                          options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+    else:
+        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
 
     interpreter.allocate_tensors()
 
@@ -49,13 +53,19 @@ def run_tf(args, raw_folder, overlay_folder):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
+            else:
+                lat = 0
+                interpreter.invoke()
 
+            if not args.skip_output:
                 output = post.handle_output_deeplab_tf(output, interpreter, original_image, raw_file, overlay_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
-                print(output_dict)
-                df = dat.create_pandas_dataframe(output_dict)
-   
-        time.sleep(args.sleep)     
+            else:
+                output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
+                
+        time.sleep(args.sleep)   
+
+    df = dat.create_pandas_dataframe(output_dict)  
 
     return df
 
@@ -120,17 +130,21 @@ def run_pyarmnn(args, raw_folder, overlay_folder):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
+            else:
+                lat = 0
+                runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
 
+            if not args.skip_output:
                 output = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
-
                 output = post.handle_output_deeplab_pyarmnn(output, original_image, raw_file, overlay_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
-                print(output_dict)
-                df = dat.create_pandas_dataframe(output_dict)
-
+            else:
+                output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
                 
         time.sleep(args.sleep)     
 
+    
+    df = dat.create_pandas_dataframe(output_dict)
     print(df)
     return df
 
@@ -179,15 +193,21 @@ def run_onnx(args, raw_folder, overlay_folder):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
+            else:
+                lat = 0
+                output = session.run(outputs, {input_name:processed_image})[0]
 
+            if not args.skip_output:
                 output = post.handle_output_deeplab_onnx(output, original_image, raw_file, overlay_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
-                print(output_dict)
-                df = dat.create_pandas_dataframe(output_dict)
+            else:
+                output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
+                
 
                 
         time.sleep(args.sleep)     
 
+    df = dat.create_pandas_dataframe(output_dict)
     print(df)
     return df
                 
@@ -229,22 +249,20 @@ def run_pytorch(args, raw_folder, overlay_folder):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-
+            else:
                 output = post.handle_output_deeplab_pytorch(output, original_image, raw_file, overlay_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
-                print(output_dict)
-                df = dat.create_pandas_dataframe(output_dict)
+                
 
                 
         time.sleep(args.sleep)     
 
+    df = dat.create_pandas_dataframe(output_dict)
     print(df)
     return df
-
-
 
 def run_sync_openvino():
     print("todo")
 
-def run_async_openvino():
-    print("todo")
+#def run_async_openvino():
+#    print("todo")

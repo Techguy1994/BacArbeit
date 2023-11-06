@@ -167,7 +167,8 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
             results.append({"label": label[classes[i]],"index": classes[i], "value": scores[i]})
 
         
-    print(output_img.shape)
+    print(file_name)
+
     cv2.imwrite(file_name, output_img)
 
     return results

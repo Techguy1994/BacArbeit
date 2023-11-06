@@ -11,12 +11,18 @@ from PIL import Image
 
 def run_tf(args, output_image_folder):
     
-    import tensorflow as tf
-
+    import tflite_runtime.interpreter as tflite
 
     output_dict = dat.create_base_dictionary_det()
     
-    interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+    #delegate_input
+    if args.api == "delegate":
+        print("delegate")
+        armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                          options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+    else:
+        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
 
     interpreter.allocate_tensors()
 
@@ -40,12 +46,21 @@ def run_tf(args, output_image_folder):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
+            else:
+                interpreter.invoke()
+                lat = 0
+
+            if not args.skip_output:
                 output = post.handle_output_tf_yolo_det(output_details, interpreter, unprocessed_image, args.thres, image_result_file, args.label)
                 output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
-                df = dat.create_pandas_dataframe(output_dict)
-                print("pandas output: ", df)
+            else: 
+                output_dict = dat.store_output_dictionary_det_only_lat(output_dict, image, lat)
+
 
         time.sleep(args.sleep)     
+
+    df = dat.create_pandas_dataframe(output_dict)
+    print("pandas output: ", df)
 
     return df 
 
@@ -109,14 +124,22 @@ def run_pyarmnn(args, output_image_folder):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-
+            else: 
+                lat = 0
+                runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
+            
+            if not args.skip_output:     
                 output = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
                 output = post.handle_output_pyarmnn_yolo_det(output, unprocessed_image, args.thres, image_result_file, args.label)
                 output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
-                df = dat.create_pandas_dataframe(output_dict)
-                print("pandas output: ", df)
-
+            else:
+                output_dict = dat.store_output_dictionary_det_only_lat(output_dict, image, lat)
         time.sleep(args.sleep)  
+
+    df = dat.create_pandas_dataframe(output_dict)
+    print("pandas output: ", df)
+
+        
 
     return df
 
@@ -165,13 +188,23 @@ def run_onnx(args, output_image_folder):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
-
+            else:
+                lat = 0
+                output = session.run(outputs, {input_name: pre.preprocess_onnx_yolov5(image, input_data_type, image_height, image_width)})
+            
+            if not args.skip_output:
                 output = post.handle_output_onnx_yolo_det(output, img_org, args.thres, image_result_file, args.label,(image_height, image_width))
                 output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
-                df = dat.create_pandas_dataframe(output_dict)
-                print("pandas output: ", df)
+            else:
+                output_dict = dat.store_output_dictionary_det_only_lat(output_dict, image, lat)
 
-        time.sleep(args.sleep)     
+            df = dat.create_pandas_dataframe(output_dict)
+            print("pandas output: ", df)
+
+        time.sleep(args.sleep) 
+
+    df = dat.create_pandas_dataframe(output_dict)
+    print("pandas output: ", df)    
 
     return df
 
@@ -195,7 +228,8 @@ def run_pytorch(args, output_image_folder):
             input_image = Image.open(image)
 
             input_tensor = preprocess(input_image)
-            input_batch = input_tensor.unsqueeze(0) 
+            input_batch = input_tensor
+            #input_batch = input_tensor.unsqueeze(0) 
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()
@@ -204,15 +238,98 @@ def run_pytorch(args, output_image_folder):
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
+            else:
+                lat = 0
+                with torch.no_grad():
+                    output = model(input_batch)
 
+            if not args.skip_output:
                 output = post.handle_output_pytorch_yolo_det(output, img_org, args.thres, image_result_file, args.label,(1, 1))
                 output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
-                df = dat.create_pandas_dataframe(output_dict)
-                print("pandas output: ", df)
+            else:
+                output_dict = dat.store_output_dictionary_det_only_lat(output_dict, image, lat)
 
-        time.sleep(args.sleep)     
+        time.sleep(args.sleep)    
+
+    df = dat.create_pandas_dataframe(output_dict)
+    print("pandas output: ", df) 
 
     return df
+
+def run_sync_ov(args, output_image_folder):
+    from openvino.runtime import InferRequest, AsyncInferQueue
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
+    from openvino import Core, Layout, Type
+
+    import logging as log
+    import sys
+
+    print("Chosen API: Sync Openvino")
+    log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
+
+    output_dict = dat.create_base_dictionary_class(args.n_big)
+
+    device_name = "CPU"
+
+    # --------------------------- Step 1. Initialize OpenVINO Runtime Core ------------------------------------------------
+    log.info('Creating OpenVINO Runtime Core')
+    core = Core()
+
+# --------------------------- Step 2. Read a model --------------------------------------------------------------------
+    log.info(f'Reading the model: {args.model}')
+    # (.xml and .bin files) or (.onnx file)
+    model = core.read_model(args.model)
+
+    if len(model.inputs) != 1:
+        log.error('Sample supports only single input topologies')
+        return -1
+
+    if len(model.outputs) != 1:
+        log.error('Sample supports only single output topologies')
+        return -1
+    
+    # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    # Read input images
+    images = [cv2.imread(image_path) for image_path in args.images]
+
+    # Resize images to model input dims
+    _, _, h, w = model.input().shape
+    #_, h, w, _ = model.input().shape
+    print("Model input shape: ",model.input().shape)
+    #h, w = 224, 224
+
+    #resized_images = [cv2.resize(image, (w, h)) for image in images]
+
+    # Add N dimension
+    input_tensors = [np.expand_dims(image, 0) for image in images]
+    print("input tensor shape: ", input_tensors[0].shape)
+
+    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+    ppp = PrePostProcessor(model)
+
+    # 1) Set input tensor information:
+    # - input() provides information about a single model input
+    # - precision of tensor is supposed to be 'u8'
+    # - layout of data is 'NHWC'
+    ppp.input().tensor() \
+        .set_shape(input_tensors[0].shape) \
+        .set_element_type(Type.f32) \
+        .set_layout(Layout('NHWC'))  # noqa: N400
+    
+    # - apply linear resize from tensor spatial dims to model spatial dims
+    ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
+
+    # 2) Here we suppose model has 'NCHW' layout for input
+    ppp.input().model().set_layout(Layout('NHWC'))
+
+    # 3) Set output tensor information:
+    # - precision of tensor is supposed to be 'f32'
+    ppp.output().tensor().set_element_type(Type.f32)
+
+    # 4) Apply preprocessing modifing the original 'model'
+    model = ppp.build()
+
+    print("End")
 
 
 

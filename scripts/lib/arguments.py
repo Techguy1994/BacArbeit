@@ -4,6 +4,7 @@ import sys
 
 class Arguments:
     def __init__(self):
+        print("Hi")
         self.args = self.arguments()
         self.model = d.handle_model_directory(self.args)
         self.images = d.handle_image_directory(self.args)
@@ -14,7 +15,7 @@ class Arguments:
         self.api = self.handle_api()
         self.profiler = self.handle_profiler_selection()
         self.output, self.time = d.handle_output_directory(self.args, self.api, self.type, self.model, self.profiler)
-        print(self.output)
+        #print(self.output)
         self.niter = int(self.args.niter)
         self.thres = float(self.args.threshold)
         self.sleep = int(self.args.sleep)
@@ -22,7 +23,7 @@ class Arguments:
         self.a_sync = self.args.a_sync
         self.skip_output = self.args.skip_output
         self.randomized_input = self.args.randomized_input
-        print(int(self.randomized_input))
+        #print(int(self.randomized_input))
         #handle_other_paramters()
 
     def arguments(self):
@@ -57,7 +58,7 @@ class Arguments:
         parser.add_argument("-thres", "--threshold", help="threshold for object detectio", required=False, default=0.5)
         parser.add_argument("-ho", "--handle_output", help="defines wheter the output is handled", required=False, action="store_true", default="store_false")
         parser.add_argument("-p", "--profiler", help="define which profiler is to be used", required=False, default="perfcounter")
-        parser.add_argument("-big", "--n_big", help=" n biggest results", required=False, default=3)
+        parser.add_argument("-big", "--n_big", help=" n biggest results", required=False, default=5)
         parser.add_argument("-async", "--a_sync", help="in combination with ov inference, handles if it runs in sync or async mode, default is sync", required=False, action="store_true")
         parser.add_argument("-c", "--colormap", help="colormap chosen depending on the data set", required=False)
 
@@ -75,7 +76,7 @@ class Arguments:
 
     def handle_api(self):
         #if self.args.api != "tf" and "pyarmn":
-        if self.args.api not in ["tf", "pyarmnn", "ov", "onnx", "pytorch"]:
+        if self.args.api not in ["tf", "pyarmnn", "ov", "onnx", "pytorch", "delegate"]:
             sys.exit("Error: Api given is not defined or not given all! Please state pyarmnn or tf or ov or onnx or pytorch")
         else: 
             return self.args.api

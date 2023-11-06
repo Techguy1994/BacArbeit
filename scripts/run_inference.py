@@ -2,6 +2,7 @@ import lib.arguments as ag
 import lib.data as dat
 import lib.directories as d
 import os 
+import sys
 
 
 def main():
@@ -28,7 +29,7 @@ def run_classification(args, name_date):
         profiler = cProfile.Profile()
         profiler.enable()
 
-    if args.api == "tf": 
+    if args.api == "tf" or args.api == "delegate": 
         df = cl.run_tf(args)
     if args.api == "pyarmnn":
         df = cl.run_pyarmnn(args)
@@ -54,16 +55,19 @@ def run_classification(args, name_date):
             stats.print_stats()
 
     
-def run_detection(args):
+def run_detection(args, name_date):
+    #print(name_date)
 
-    output_image_folder, name_date = d.create_image_folder_with_current_time_stamp(args.output)
+    output_image_folder, name_date = d.create_image_folder_with_current_time_stamp(args.output, name_date)
+    #print(name_date)
+    #sys.exit()
 
     if args.profiler == "cprofiler":
         import cProfile
         profiler = cProfile.Profile()
         profiler.enable()
 
-    if args.api == "tf": 
+    if args.api == "tf" or args.api == "delegate": 
         df = det.run_tf(args, output_image_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pyarmnn":
@@ -73,26 +77,25 @@ def run_detection(args):
         df = det.run_onnx(args, output_image_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pytorch":
-        print("implement pytorch")
         df = det.run_pytorch(args, output_image_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "ov":
-        print("implement ov")
+        det.run_sync_ov(args, output_image_folder)
 
     
     if args.profiler == "cprofiler":
         profiler.disable()
     
-def run_segmentation(args):
+def run_segmentation(args, name_date):
     if args.profiler == "cprofiler":
         import cProfile
         profiler = cProfile.Profile()
         profiler.enable()
 
-    output_image_folder, name_date = d.create_image_folder_with_current_time_stamp(args.output)
+    output_image_folder, name_date = d.create_image_folder_with_current_time_stamp(args.output, name_date)
     raw_folder, overlay_folder = d.create_sub_folder_for_segmentation(output_image_folder)
 
-    if args.api == "tf":
+    if args.api == "tf" or args.api == "delegate":
         df = seg.run_tf(args, raw_folder, overlay_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pyarmnn":

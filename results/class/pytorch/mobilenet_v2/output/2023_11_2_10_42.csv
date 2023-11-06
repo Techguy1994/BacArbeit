@@ -1,0 +1,2 @@
+,image,inference time,label1,index1,value1,label2,index2,value2,label3,index3,value3
+0,/home/pi/sambashare/BacArbeit/images/test.jpg,0.5465268030000061,Greater Swiss Mountain dog,238,0.05043770372867584,horse cart,603,0.055689916014671326,llama,355,0.21622617542743683

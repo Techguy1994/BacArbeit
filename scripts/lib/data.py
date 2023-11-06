@@ -87,6 +87,34 @@ def store_output_dictionary_only_lat(data, image, time, n_big):
 
     return data
 
+def store_output_dictionary_det_only_lat(data, image, time):
+    data["image"].append(image)
+    data["inference time"].append(time)
+    data["label"].append([])
+    data["index"].append([])
+    data["value"].append([])
+
+
+    #for i in range(len(output)):
+    #    data["label"][-1].append(output[i]["label"])
+    #    data["index"][-1].append(output[i]["index"])
+    #    data["value"][-1].append(output[i]["value"])
+    
+    return data
+
+def store_output_dictionary_seg_only_lat(data, image, time):
+    data["image"].append(image)
+    data["inference time"].append(time)
+    data["label"].append([])
+
+    
+    #for i in range(len(output)):
+    #    print(data["label"][-1])
+    #    print(output[i])
+    #    data["label"][-1].append(output[i])
+
+    return data
+
 
 
 def create_pandas_dataframe(dict):

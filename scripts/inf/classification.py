@@ -11,11 +11,18 @@ from PIL import Image
 import cv2
 
 def run_tf(args):
-    import tensorflow as tf
+    #import tensorflow as tf
+    import tflite_runtime.interpreter as tflite
     
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
-    interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+    #delegate_input
+    if args.api == "delegate":
+        armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                          options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+    else:
+        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
 
     interpreter.allocate_tensors()
 
@@ -187,15 +194,17 @@ def run_onnx(args):
     return df
 
 def run_pytorch(args):
-    print("pytorch")
 
     import torch
     from torchvision import models, transforms
     import sys
+    import lib.load_pytorch_models as pt
     
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
-    func_call = "models." + args.model + "(pretrained=True)"
+    func_call = pt.load_pytorch_model(args.model)
+
+    #func_call = "models." + args.model + "(pretrained=True)"
     #model = func_call
     #print(func_call)
     model = eval(func_call)
@@ -206,23 +215,17 @@ def run_pytorch(args):
 
     preprocess = pre.preprocess_pytorch_mobilenet()
 
-    print("hey")
-
     for i in range(args.niter):
         for image in args.images:
-            print("hey")
             input_image = Image.open(image)
 
             input_tensor = preprocess(input_image)
             input_batch = input_tensor.unsqueeze(0) 
 
             if args.profiler == "perfcounter":
-                print("hey")
                 start_time = perf_counter()
-                print("start")
                 with torch.no_grad():
                     output = model(input_batch)
-                print("end")
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
@@ -233,7 +236,8 @@ def run_pytorch(args):
                 output = post.handle_output_pytorch_mobilenet_class(output, args.label, args.n_big)
                 output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
             else:
-                df = dat.create_pandas_dataframe(output_dict)
+                output_dict = dat.store_output_dictionary_only_lat(output_dict, image, lat, args.n_big)
+            df = dat.create_pandas_dataframe(output_dict)
             
 
         time.sleep(args.sleep)
