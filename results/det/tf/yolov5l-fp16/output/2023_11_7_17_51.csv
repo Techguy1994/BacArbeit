@@ -1,0 +1,3 @@
+,image,inference time,label,index,value
+0,/home/pi/sambashare/BacArbeit/images/000000000285.jpg,6.564665956000681,['21: bear'],[21],[0.7223444]
+1,/home/pi/sambashare/BacArbeit/images/000000000139.jpg,6.36784936299955,"['62: tv', '75: vase', '56: chair', '75: vase', '62: tv', '56: chair', '58: potted plant', '74: clock', '75: vase', '75: vase', '56: chair', '75: vase']","[62, 75, 56, 75, 62, 56, 58, 74, 75, 75, 56, 75]","[0.9231755, 0.8829206, 0.8614053, 0.81142586, 0.7611622, 0.7242634, 0.6950734, 0.67682517, 0.64092076, 0.6016633, 0.5957571, 0.54902935]"

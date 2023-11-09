@@ -227,23 +227,25 @@ def run_pytorch(args, output_image_folder):
             img_org = cv2.imread(image)
             input_image = Image.open(image)
 
-            input_tensor = preprocess(input_image)
-            input_batch = input_tensor
+            #input_tensor = preprocess(input_image)
+            #input_batch = input_tensor
             #input_batch = input_tensor.unsqueeze(0) 
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()
                 with torch.no_grad():
-                    output = model(input_batch)
+                    output = model(input_image)
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
             else:
                 lat = 0
                 with torch.no_grad():
-                    output = model(input_batch)
+                    output = model(input_image)
 
             if not args.skip_output:
+
+                print("output; ", output)
                 output = post.handle_output_pytorch_yolo_det(output, img_org, args.thres, image_result_file, args.label,(1, 1))
                 output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
             else:
@@ -313,14 +315,14 @@ def run_sync_ov(args, output_image_folder):
     # - layout of data is 'NHWC'
     ppp.input().tensor() \
         .set_shape(input_tensors[0].shape) \
-        .set_element_type(Type.f32) \
-        .set_layout(Layout('NHWC'))  # noqa: N400
+        .set_element_type(Type.f32) #\
+    #   .set_layout(Layout('NHWC'))  # noqa: N400
     
     # - apply linear resize from tensor spatial dims to model spatial dims
     ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
 
     # 2) Here we suppose model has 'NCHW' layout for input
-    ppp.input().model().set_layout(Layout('NHWC'))
+    ppp.input().model().set_layout(Layout('NCHW'))
 
     # 3) Set output tensor information:
     # - precision of tensor is supposed to be 'f32'

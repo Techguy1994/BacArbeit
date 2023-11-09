@@ -34,6 +34,7 @@ def create_base_dictionary_det():
         "label": [],
         "index": [],
         "value": [],
+        "boxes": []
     }
 
     return data
@@ -44,12 +45,14 @@ def store_output_dictionary_det(data, image, time, output):
     data["label"].append([])
     data["index"].append([])
     data["value"].append([])
+    data["boxes"].append([])
 
 
     for i in range(len(output)):
         data["label"][-1].append(output[i]["label"])
         data["index"][-1].append(output[i]["index"])
         data["value"][-1].append(output[i]["value"])
+        data["boxes"][-1].append(output[i]["boxes"])
     
     return data
 
