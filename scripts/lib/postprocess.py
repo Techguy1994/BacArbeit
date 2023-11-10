@@ -353,35 +353,77 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
 
     return results
 
-def handle_output_pytorch_yolo_det(output_details, img_org, thres, img_result_file, label, model_shape):
+def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, label, model_shape):
 
     import cv2
+    import sys
+    import numpy as np
 
     results = []
     all_det = []
     nms_det = []
 
 
+    print("output; ", output)
+    print("xyxy: ", output.xyxy[0])
 
-    print(output_details)
-    output_data = output_details[0]
-    print(output_data.shape)
+    output = output.xyxy[0]
+    output = output.numpy()
+    print(output)
+
+    # format xmin, ymin, xmax, ymax, score, index (label)
+
+    for element in output:
+        print(element)
+
+        if ((element[4] > thres) and (element[4] <= 1.0)):
+            print([int(element[0]), int(element[1]), int(element[2]), int(element[3])])
+            all_det.append((int(element[5]), [int(element[0]), int(element[1]), int(element[2]), int(element[3])], element[4]))
+
+    
+    while all_det:
+        element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
+        nms_det.append(all_det.pop(element))
+        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+
+        
+    for det in nms_det:
+        #print(det) 
+        output_img = cv2.rectangle(img_org, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
+        #print("value: ", det[2])
+        #print("index: ", det[0])
+        #print("boxes: ", [det[1][0],det[1][1],det[1][2], det[1][3]])
+        #results.append({"label": label[det[0]]})
+        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
+        #sys.exit()
+
+    cv2.imwrite(img_result_file, output_img)
+
+    return results
+
+    
+
+
+
+    #print(output_details)
+    #output_data = output_details[0]
+    #print(output_data.shape)
     #output_data = output_data[0]
-    print(output_data.shape)
+    #print(output_data.shape)
 
-    boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
-    scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
-    classes = classFilter(output_data[..., 5:]) # get classes
+    #boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
+    #scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
+    #classes = classFilter(output_data[..., 5:]) # get classes
     # Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
-    x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
-    xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
+    #x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
+    #xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
 
-    orig_W, orig_H = img_org.shape[1], img_org.shape[0]
-    print("Boxes shape: ", boxes.shape)
-    print("scores shape: ", scores.shape)
-    print("Classes Len", len(classes))
-    print("Orig: ", img_org.shape)
-    print(orig_H, orig_W)
+    #orig_W, orig_H = img_org.shape[1], img_org.shape[0]
+    #print("Boxes shape: ", boxes.shape)
+    #print("scores shape: ", scores.shape)
+    #print("Classes Len", len(classes))
+    #print("Orig: ", img_org.shape)
+    #print(orig_H, orig_W)
 
     #ratio_H, ratio_W = orig_H/576, orig_W/768
     #print(ratio_H, ratio_W)
@@ -409,6 +451,70 @@ def handle_output_pytorch_yolo_det(output_details, img_org, thres, img_result_fi
 
             all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
 
+    while all_det:
+        element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
+        nms_det.append(all_det.pop(element))
+        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+
+        
+    for det in nms_det:
+        #print(det) 
+        output_img = cv2.rectangle(output_img, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
+        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
+
+    cv2.imwrite(img_result_file, output_img)
+
+    return results
+
+def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, label, model_shape):
+    import cv2 
+
+    results = []
+    all_det = []
+    nms_det = []
+
+    for elem in output_details:
+        output_data = output_details[elem]
+
+    print(output_data)
+    print(output_data.shape)
+    output_data = output_data[0]
+    print(output_data.shape)
+    #output_details = output_details[0]
+    #print(output_details.shape)
+
+    boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
+    scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
+    classes = classFilter(output_data[..., 5:]) # get classes
+    # Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
+    x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
+    xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
+
+    orig_W, orig_H = img_org.shape[1], img_org.shape[0]
+    print("Boxes shape: ", boxes.shape)
+    print("scores shape: ", scores.shape)
+    print("Classes Len", len(classes))
+    print("Orig: ", img_org.shape)
+    print(orig_H, orig_W)
+
+    ratio_H, ratio_W = orig_H/model_shape[0], orig_W/model_shape[1]
+    print(ratio_H, ratio_W)
+
+    output_img = img_org
+
+    for i in range(len(scores)):
+        if ((scores[i] > thres) and (scores[i] <= 1.0)):
+            #print(labels[classes[i]],classes[i], scores[i])
+            #print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
+            xmin, ymin, xmax, ymax = int(xyxy[0][i]*ratio_W), int(xyxy[1][i]*ratio_H), int(xyxy[2][i]*ratio_W), int(xyxy[3][i]*ratio_H)
+            #xmin = int(max(1,(xyxy[0][i] * orig_W)))
+            #ymin = int(max(1,(xyxy[1][i] * orig_H)))
+            #xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
+            #ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
+
+            all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
+
+        
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))

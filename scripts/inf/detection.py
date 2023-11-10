@@ -215,11 +215,13 @@ def run_pytorch(args, output_image_folder):
 
     output_dict = dat.create_base_dictionary_det()
 
-    model = torch.hub.load("ultralytics/yolov5", "yolov5l")
+    model = torch.hub.load("ultralytics/yolov5", "yolov5l", pretrained=True)
 
     model.eval()
 
     preprocess = pre.preprocess_pytorch_yolo()
+
+    print(args.images)
 
     for i in range(args.niter):
         for image in args.images:
@@ -227,14 +229,16 @@ def run_pytorch(args, output_image_folder):
             img_org = cv2.imread(image)
             input_image = Image.open(image)
 
-            #input_tensor = preprocess(input_image)
+            input_tensor = preprocess(input_image)
+            print(input_tensor.shape)
             #input_batch = input_tensor
-            #input_batch = input_tensor.unsqueeze(0) 
+            input_batch = input_tensor.unsqueeze(0) 
+            print(input_batch.shape)
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()
                 with torch.no_grad():
-                    output = model(input_image)
+                    output = model(image)
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
@@ -244,8 +248,6 @@ def run_pytorch(args, output_image_folder):
                     output = model(input_image)
 
             if not args.skip_output:
-
-                print("output; ", output)
                 output = post.handle_output_pytorch_yolo_det(output, img_org, args.thres, image_result_file, args.label,(1, 1))
                 output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
             else:
@@ -269,7 +271,7 @@ def run_sync_ov(args, output_image_folder):
     print("Chosen API: Sync Openvino")
     log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
 
-    output_dict = dat.create_base_dictionary_class(args.n_big)
+    output_dict = dat.create_base_dictionary_det()
 
     device_name = "CPU"
 
@@ -315,8 +317,8 @@ def run_sync_ov(args, output_image_folder):
     # - layout of data is 'NHWC'
     ppp.input().tensor() \
         .set_shape(input_tensors[0].shape) \
-        .set_element_type(Type.f32) #\
-    #   .set_layout(Layout('NHWC'))  # noqa: N400
+        .set_element_type(Type.f32) \
+        .set_layout(Layout('NHWC'))  # noqa: N400
     
     # - apply linear resize from tensor spatial dims to model spatial dims
     ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
@@ -331,7 +333,43 @@ def run_sync_ov(args, output_image_folder):
     # 4) Apply preprocessing modifing the original 'model'
     model = ppp.build()
 
-    print("End")
+    # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
+    log.info('Loading the model to the plugin')
+    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": "4", "NUM_STREAMS": "4"} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
+    compiled_model = core.compile_model(model, device_name, config)
+    #compiled_model = core.compile_model(model, device_name)
+    num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
+    print("optimal number of requests", num_requests)
 
+
+    for i in range(args.niter):
+        for j, input_tensor in enumerate(input_tensors):
+            image_result_file = os.path.join(output_image_folder, args.images[j].split("/")[-1])
+            img_org = cv2.imread(args.images[j])
+            print(args.images[j])
+            image_height, image_width = img_org.shape[0], img_org.shape[1]
+
+            if args.profiler == "perfcounter":
+                start_time = perf_counter()
+                result = compiled_model.infer_new_request({0: input_tensor})
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+            else:
+                lat = 0
+                result = compiled_model.infer_new_request({0: input_tensor})
+            
+            if not args.skip_output:
+                output = post.handle_output_onnx_yolo_det(result, img_org, args.thres, image_result_file, args.label,(image_height, image_width))
+                output_dict = dat.store_output_dictionary_det(output_dict, args.images[j], lat, output)
+            else:
+                output_dict = dat.store_output_dictionary_det_only_lat(output_dict, args.images[j], lat)
+
+        time.sleep(args.sleep) 
+
+    df = dat.create_pandas_dataframe(output_dict)
+    print("pandas output: ", df)    
+
+    return df
 
 
