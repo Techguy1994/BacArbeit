@@ -468,6 +468,7 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
 
 def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, label, model_shape):
     import cv2 
+    import numpy as np
 
     results = []
     all_det = []
@@ -498,6 +499,9 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
     print(orig_H, orig_W)
 
     ratio_H, ratio_W = orig_H/model_shape[0], orig_W/model_shape[1]
+    
+    print("model shape: ", model_shape[0], model_shape[1])
+    print(orig_H, orig_W)
     print(ratio_H, ratio_W)
 
     output_img = img_org

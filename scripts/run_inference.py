@@ -80,7 +80,8 @@ def run_detection(args, name_date):
         df = det.run_pytorch(args, output_image_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "ov":
-        det.run_sync_ov(args, output_image_folder)
+        df = det.run_sync_ov(args, output_image_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
 
     
     if args.profiler == "cprofiler":

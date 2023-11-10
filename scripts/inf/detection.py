@@ -262,7 +262,7 @@ def run_pytorch(args, output_image_folder):
 
 def run_sync_ov(args, output_image_folder):
     from openvino.runtime import InferRequest, AsyncInferQueue
-    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm, ColorFormat
     from openvino import Core, Layout, Type
 
     import logging as log
@@ -302,36 +302,28 @@ def run_sync_ov(args, output_image_folder):
     print("Model input shape: ",model.input().shape)
     #h, w = 224, 224
 
-    #resized_images = [cv2.resize(image, (w, h)) for image in images]
+    resized_images = [cv2.resize(image, (640, 640)) for image in images]
+
+    
 
     # Add N dimension
-    input_tensors = [np.expand_dims(image, 0) for image in images]
+    input_tensors = [np.expand_dims(image, 0) for image in resized_images]
     print("input tensor shape: ", input_tensors[0].shape)
 
     # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+    # Step 4. Inizialize Preprocessing for the model
     ppp = PrePostProcessor(model)
-
-    # 1) Set input tensor information:
-    # - input() provides information about a single model input
-    # - precision of tensor is supposed to be 'u8'
-    # - layout of data is 'NHWC'
-    ppp.input().tensor() \
-        .set_shape(input_tensors[0].shape) \
-        .set_element_type(Type.f32) \
-        .set_layout(Layout('NHWC'))  # noqa: N400
-    
-    # - apply linear resize from tensor spatial dims to model spatial dims
-    ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
-
-    # 2) Here we suppose model has 'NCHW' layout for input
-    ppp.input().model().set_layout(Layout('NCHW'))
-
-    # 3) Set output tensor information:
-    # - precision of tensor is supposed to be 'f32'
+    # Specify input image format
+    ppp.input().tensor().set_element_type(Type.u8).set_layout(Layout("NHWC")).set_color_format(ColorFormat.BGR)
+    #  Specify preprocess pipeline to input image without resizing
+    ppp.input().preprocess().convert_element_type(Type.f32).convert_color(ColorFormat.RGB).scale([255., 255., 255.])
+    # Specify model's input layout
+    ppp.input().model().set_layout(Layout("NCHW"))
+    #  Specify output results format
     ppp.output().tensor().set_element_type(Type.f32)
-
-    # 4) Apply preprocessing modifing the original 'model'
+    # Embed above steps in the graph
     model = ppp.build()
+    compiled_model = core.compile_model(model, "CPU")
 
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
@@ -347,7 +339,7 @@ def run_sync_ov(args, output_image_folder):
             image_result_file = os.path.join(output_image_folder, args.images[j].split("/")[-1])
             img_org = cv2.imread(args.images[j])
             print(args.images[j])
-            image_height, image_width = img_org.shape[0], img_org.shape[1]
+            image_height, image_width = img_org.shape[1], img_org.shape[0]
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()
@@ -360,7 +352,9 @@ def run_sync_ov(args, output_image_folder):
                 result = compiled_model.infer_new_request({0: input_tensor})
             
             if not args.skip_output:
-                output = post.handle_output_onnx_yolo_det(result, img_org, args.thres, image_result_file, args.label,(image_height, image_width))
+                print(result)
+
+                output = post.handle_output_ov_yolo_det(result, img_org, args.thres, image_result_file, args.label,(640, 640))
                 output_dict = dat.store_output_dictionary_det(output_dict, args.images[j], lat, output)
             else:
                 output_dict = dat.store_output_dictionary_det_only_lat(output_dict, args.images[j], lat)
