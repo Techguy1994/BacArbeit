@@ -1,0 +1,683 @@
+         83484 function calls (80258 primitive calls) in 1.221 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.001    0.001    1.221    1.221 classification.py:513(pytorch)
+    216/4    0.005    0.000    0.735    0.184 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1188(_call_impl)
+        1    0.000    0.000    0.728    0.728 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/mobilenetv2.py:173(forward)
+        1    0.000    0.000    0.728    0.728 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/mobilenetv2.py:163(_forward_impl)
+     54/2    0.005    0.000    0.727    0.363 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/container.py:202(forward)
+       17    0.002    0.000    0.704    0.041 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/mobilenetv2.py:60(forward)
+       52    0.001    0.000    0.641    0.012 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/conv.py:462(forward)
+       52    0.001    0.000    0.639    0.012 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/conv.py:454(_conv_forward)
+       52    0.638    0.012    0.638    0.012 {built-in method torch.conv2d}
+        1    0.000    0.000    0.363    0.363 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:462(load)
+        1    0.000    0.000    0.362    0.362 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:546(_load_local)
+        1    0.000    0.000    0.361    0.361 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/_utils.py:130(wrapper)
+        1    0.000    0.000    0.361    0.361 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/_utils.py:171(inner_wrapper)
+        1    0.002    0.002    0.360    0.360 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/mobilenetv2.py:222(mobilenet_v2)
+        1    0.002    0.002    0.248    0.248 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/mobilenetv2.py:68(__init__)
+       53    0.111    0.002    0.111    0.002 {method 'normal_' of 'torch._C._TensorBase' objects}
+        7    0.003    0.000    0.096    0.014 {built-in method builtins.print}
+        1    0.000    0.000    0.092    0.092 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor.py:421(__repr__)
+        1    0.000    0.000    0.092    0.092 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:634(_str)
+        1    0.000    0.000    0.092    0.092 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:367(_str_intern)
+        1    0.000    0.000    0.092    0.092 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:288(_tensor_str)
+       17    0.001    0.000    0.091    0.005 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/mobilenetv2.py:20(__init__)
+       52    0.001    0.000    0.074    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:415(kaiming_normal_)
+        1    0.013    0.013    0.068    0.068 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:100(__init__)
+        1    0.000    0.000    0.068    0.068 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/_api.py:65(get_state_dict)
+        1    0.000    0.000    0.068    0.068 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:667(load_state_dict_from_url)
+        1    0.000    0.000    0.066    0.066 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:653(load)
+       35    0.000    0.000    0.066    0.002 /home/pi/.local/lib/python3.8/site-packages/torchvision/ops/misc.py:144(__init__)
+        1    0.002    0.002    0.066    0.066 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:815(_legacy_load)
+       35    0.001    0.000    0.066    0.002 /home/pi/.local/lib/python3.8/site-packages/torchvision/ops/misc.py:69(__init__)
+       53    0.001    0.000    0.061    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:366(kaiming_uniform_)
+       52    0.001    0.000    0.060    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/conv.py:431(__init__)
+       52    0.002    0.000    0.057    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/conv.py:71(__init__)
+       54    0.056    0.001    0.056    0.001 {method 'uniform_' of 'torch._C._TensorBase' objects}
+       52    0.003    0.000    0.048    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py:137(forward)
+     4569    0.020    0.000    0.045    0.000 {method 'format' of 'str' objects}
+       52    0.001    0.000    0.043    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/functional.py:2419(batch_norm)
+        1    0.000    0.000    0.043    0.043 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1599(load_state_dict)
+    213/1    0.003    0.000    0.042    0.042 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1637(load)
+       52    0.041    0.001    0.041    0.001 {built-in method torch.batch_norm}
+       52    0.001    0.000    0.041    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/conv.py:146(reset_parameters)
+        1    0.000    0.000    0.041    0.041 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:140(normal_)
+        1    0.000    0.000    0.041    0.041 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:17(_no_grad_normal_)
+      314    0.032    0.000    0.032    0.000 {method '_set_from_file' of 'torch._C.StorageBase' objects}
+      213    0.010    0.000    0.032    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1505(_load_from_state_dict)
+       52    0.000    0.000    0.030    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py:122(__init__)
+       52    0.003    0.000    0.030    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py:30(__init__)
+        1    0.003    0.003    0.029    0.029 {method 'load' of '_pickle.Unpickler' objects}
+     1000    0.009    0.000    0.025    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor.py:854(__format__)
+        1    0.000    0.000    0.023    0.023 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:251(_tensor_str_with_formatter)
+        1    0.000    0.000    0.023    0.023 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:208(_vector_str)
+        1    0.002    0.002    0.022    0.022 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:239(<listcomp>)
+        1    0.000    0.000    0.021    0.021 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/linear.py:90(__init__)
+        1    0.000    0.000    0.021    0.021 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/linear.py:103(reset_parameters)
+     1000    0.002    0.000    0.020    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:220(_val_formatter)
+       35    0.000    0.000    0.019    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/activation.py:233(forward)
+       35    0.000    0.000    0.019    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/functional.py:1496(hardtanh)
+     1443    0.008    0.000    0.018    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1272(__setattr__)
+       35    0.018    0.001    0.018    0.001 {built-in method torch._C._nn.hardtanh_}
+     1000    0.006    0.000    0.017    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:176(format)
+        2    0.000    0.000    0.017    0.008 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor.py:906(__iter__)
+        2    0.017    0.008    0.017    0.008 {method 'unbind' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.016    0.016 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3174(open)
+        1    0.000    0.000    0.015    0.015 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:321(preinit)
+     20/6    0.000    0.000    0.015    0.003 <frozen importlib._bootstrap>:211(_call_with_frames_removed)
+     14/6    0.000    0.000    0.015    0.002 <frozen importlib._bootstrap>:1017(_handle_fromlist)
+      9/5    0.000    0.000    0.015    0.003 {built-in method builtins.__import__}
+     10/5    0.000    0.000    0.015    0.003 <frozen importlib._bootstrap>:986(_find_and_load)
+     10/5    0.000    0.000    0.015    0.003 <frozen importlib._bootstrap>:956(_find_and_load_unlocked)
+     10/5    0.000    0.000    0.014    0.003 <frozen importlib._bootstrap>:650(_load_unlocked)
+     11/6    0.000    0.000    0.014    0.002 <frozen importlib._bootstrap_external>:842(exec_module)
+      314    0.001    0.000    0.013    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_utils.py:150(_rebuild_tensor_v2)
+      314    0.013    0.000    0.013    0.000 {method 'copy_' of 'torch._C._TensorBase' objects}
+      314    0.007    0.000    0.013    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:935(persistent_load)
+       52    0.000    0.000    0.012    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py:91(_load_from_state_dict)
+      314    0.002    0.000    0.012    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_utils.py:144(_rebuild_tensor)
+     11/6    0.000    0.000    0.010    0.002 {built-in method builtins.exec}
+9661/8374    0.005    0.000    0.009    0.000 {built-in method builtins.isinstance}
+        1    0.000    0.000    0.009    0.009 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:93(__call__)
+      366    0.008    0.000    0.008    0.000 {built-in method torch.tensor}
+     1005    0.007    0.000    0.007    0.000 {method 'item' of 'torch._C._TensorBase' objects}
+      216    0.006    0.000    0.007    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:309(__init__)
+       52    0.001    0.000    0.007    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py:76(reset_parameters)
+     1000    0.007    0.000    0.007    0.000 {method '__format__' of 'float' objects}
+      212    0.004    0.000    0.007    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1644(<dictcomp>)
+       11    0.000    0.000    0.006    0.001 <frozen importlib._bootstrap_external>:914(get_code)
+     1522    0.005    0.000    0.006    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1256(__getattr__)
+      666    0.002    0.000    0.006    0.000 {built-in method builtins.hasattr}
+        1    0.000    0.000    0.005    0.005 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/linear.py:113(forward)
+        1    0.005    0.005    0.005    0.005 {built-in method torch._C._nn.linear}
+       54    0.001    0.000    0.005    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/container.py:84(__init__)
+      158    0.005    0.000    0.005    0.000 {built-in method torch.empty}
+        1    0.000    0.000    0.005    0.005 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1914(eval)
+    213/1    0.001    0.000    0.005    0.005 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1892(train)
+      104    0.000    0.000    0.005    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:195(ones_)
+      104    0.001    0.000    0.004    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:57(_no_grad_fill_)
+        1    0.000    0.000    0.004    0.004 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:34(<module>)
+        1    0.000    0.000    0.004    0.004 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:338(forward)
+        1    0.000    0.000    0.004    0.004 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py:388(resize)
+     1286    0.003    0.000    0.004    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/parameter.py:8(__instancecheck__)
+        1    0.001    0.001    0.004    0.004 classification.py:134(get_result)
+      633    0.002    0.000    0.004    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/autograd/grad_mode.py:135(__exit__)
+        1    0.000    0.000    0.004    0.004 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional_pil.py:240(resize)
+        1    0.000    0.000    0.004    0.004 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:2089(resize)
+      633    0.002    0.000    0.004    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/autograd/grad_mode.py:131(__enter__)
+     1266    0.003    0.000    0.004    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/autograd/grad_mode.py:227(__init__)
+       11    0.000    0.000    0.004    0.000 <frozen importlib._bootstrap_external>:638(_compile_bytecode)
+      314    0.004    0.000    0.004    0.000 {method 'set_' of 'torch._C._TensorBase' objects}
+    10514    0.004    0.000    0.004    0.000 {method 'startswith' of 'str' objects}
+       11    0.004    0.000    0.004    0.000 {built-in method marshal.loads}
+      210    0.001    0.000    0.004    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:391(register_parameter)
+      158    0.000    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/parameter.py:30(__new__)
+       32    0.001    0.000    0.003    0.000 {built-in method builtins.__build_class__}
+       35    0.000    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/activation.py:265(__init__)
+      156    0.001    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:336(register_buffer)
+      158    0.003    0.000    0.003    0.000 {built-in method _make_subclass}
+       35    0.000    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/activation.py:212(__init__)
+      105    0.000    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:208(zeros_)
+        1    0.003    0.003    0.003    0.003 {method 'resize' of 'ImagingCore' objects}
+      105    0.001    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:62(_no_grad_zero_)
+      193    0.001    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:433(add_module)
+      633    0.002    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/autograd/grad_mode.py:126(__init__)
+      628    0.002    0.000    0.003    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_utils.py:650(_element_size)
+      156    0.003    0.000    0.003    0.000 {method 'fill_' of 'torch._C._TensorBase' objects}
+       52    0.001    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py:68(reset_running_stats)
+      214    0.000    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1820(modules)
+     1037    0.002    0.000    0.002    0.000 {built-in method builtins.max}
+ 1302/214    0.002    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1847(named_modules)
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:127(__call__)
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py:122(to_tensor)
+     1267    0.002    0.000    0.002    0.000 {method 'dim' of 'torch._C._TensorBase' objects}
+      260    0.001    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/utils.py:8(parse)
+      218    0.002    0.000    0.002    0.000 {built-in method torch._C._get_tracing_state}
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:34(<module>)
+      105    0.000    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:356(_calculate_correct_fan)
+4792/4788    0.002    0.000    0.002    0.000 {built-in method builtins.len}
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/PIL/GifImagePlugin.py:27(<module>)
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:262(forward)
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py:337(normalize)
+       10    0.000    0.000    0.002    0.000 <frozen importlib._bootstrap>:890(_find_spec)
+       52    0.002    0.000    0.002    0.000 {built-in method torch.ones}
+        1    0.000    0.000    0.002    0.002 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional_tensor.py:917(normalize)
+        1    0.001    0.001    0.002    0.002 classification.py:136(<listcomp>)
+       10    0.000    0.000    0.002    0.000 <frozen importlib._bootstrap_external>:1399(find_spec)
+      106    0.001    0.000    0.002    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:284(_calculate_fan_in_and_fan_out)
+       10    0.000    0.000    0.002    0.000 <frozen importlib._bootstrap_external>:1367(_get_spec)
+       11    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1034(get_data)
+       10    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:1498(find_spec)
+        1    0.000    0.000    0.001    0.001 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:27(<module>)
+      264    0.001    0.000    0.001    0.000 {built-in method torch._C._log_api_usage_once}
+       52    0.001    0.000    0.001    0.000 {built-in method torch.zeros}
+     4289    0.001    0.000    0.001    0.000 {method 'get' of 'dict' objects}
+        1    0.000    0.000    0.001    0.001 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:41(<module>)
+      425    0.000    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1790(children)
+      209    0.001    0.000    0.001    0.000 {method 'zero_' of 'torch._C._TensorBase' objects}
+      314    0.001    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/storage.py:317(__new__)
+        2    0.000    0.000    0.001    0.001 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:155(load)
+      314    0.001    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/storage.py:384(__init__)
+     1039    0.001    0.000    0.001    0.000 {built-in method torch._C._has_torch_function_unary}
+        3    0.000    0.000    0.001    0.000 /usr/lib/python3.8/enum.py:157(__new__)
+      264    0.000    0.000    0.001    0.000 /usr/lib/python3.8/abc.py:96(__instancecheck__)
+     1899    0.001    0.000    0.001    0.000 {built-in method torch.is_grad_enabled}
+       37    0.001    0.000    0.001    0.000 {built-in method posix.stat}
+        1    0.000    0.000    0.001    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/nn/functional.py:1200(adaptive_avg_pool2d)
+      105    0.001    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:67(calculate_gain)
+      314    0.001    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:213(default_restore_location)
+      425    0.001    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1799(named_children)
+      264    0.000    0.000    0.001    0.000 {built-in method _abc._abc_instancecheck}
+       31    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:135(_path_stat)
+       11    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:549(module_from_spec)
+        1    0.001    0.001    0.001    0.001 {built-in method torch._C._nn.adaptive_avg_pool2d}
+       52    0.001    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/utils.py:23(_reverse_repeat_tuple)
+     1756    0.001    0.000    0.001    0.000 {method 'split' of 'str' objects}
+        1    0.001    0.001    0.001    0.001 {method 'decode' of 'ImagingDecoder' objects}
+       52    0.000    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py:408(_check_input_dim)
+        2    0.001    0.000    0.001    0.000 {method 'readlines' of '_io._IOBase' objects}
+      545    0.001    0.000    0.001    0.000 {built-in method __new__ of type object at 0x8deb80}
+        1    0.000    0.000    0.001    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:174(_get_cache_or_reload)
+       11    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap>:477(_init_module_attrs)
+      322    0.001    0.000    0.001    0.000 {method 'tell' of '_io.BufferedReader' objects}
+       56    0.001    0.000    0.001    0.000 {method 'read' of '_io.BufferedReader' objects}
+        6    0.001    0.000    0.001    0.000 {built-in method io.open}
+        1    0.000    0.000    0.001    0.001 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:83(_import_module)
+       11    0.001    0.000    0.001    0.000 {built-in method io.open_code}
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/re.py:250(compile)
+        2    0.000    0.000    0.001    0.000 {built-in method _warnings.warn}
+       48    0.000    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/utils.py:538(_log_api_usage_once)
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/re.py:289(_compile)
+       54    0.000    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/container.py:194(__iter__)
+     1003    0.001    0.000    0.001    0.000 {method 'strip' of 'str' objects}
+        1    0.001    0.001    0.001    0.001 {method 'div' of 'torch._C._TensorBase' objects}
+        1    0.001    0.001    0.001    0.001 {built-in method torch.isfinite}
+      628    0.000    0.000    0.001    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:1031(_maybe_decode_ascii)
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/warnings.py:96(_showwarnmsg)
+        1    0.000    0.000    0.001    0.001 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:370(forward)
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/warnings.py:20(_showwarnmsg_impl)
+        1    0.000    0.000    0.001    0.001 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py:553(center_crop)
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/sre_compile.py:759(compile)
+       22    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:354(cache_from_source)
+     1266    0.001    0.000    0.001    0.000 {built-in method torch._C._set_grad_enabled}
+     55/5    0.000    0.000    0.001    0.000 /usr/lib/python3.8/abc.py:100(__subclasscheck__)
+     55/5    0.000    0.000    0.001    0.000 {built-in method _abc._abc_subclasscheck}
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/warnings.py:117(_formatwarnmsg)
+        2    0.000    0.000    0.001    0.000 /usr/lib/python3.8/warnings.py:35(_formatwarnmsg_impl)
+        1    0.000    0.000    0.000    0.000 {built-in method torch.masked_select}
+        1    0.000    0.000    0.000    0.000 {built-in method numpy.array}
+     1286    0.000    0.000    0.000    0.000 {function _ParameterMeta.__instancecheck__ at 0xffff79484dc0}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:244(_check_repo_is_trusted)
+       22    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:376(cached)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/linecache.py:15(getline)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/linecache.py:37(getlines)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:244(<listcomp>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:643(_is_legacy_zip_format)
+        4    0.000    0.000    0.000    0.000 {method 'to' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method torch.topk}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/linecache.py:82(updatecache)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/zipfile.py:198(is_zipfile)
+      213    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1543(<dictcomp>)
+      314    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/parameter.py:152(is_lazy)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:484(_get_cached)
+        1    0.000    0.000    0.000    0.000 {method 'clone' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3242(_open_core)
+      214    0.000    0.000    0.000    0.000 {method 'size' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 {method 'sub_' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/functional.py:1811(softmax)
+      337    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
+       62    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:121(_path_join)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:687(__array_interface__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py:528(crop)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:821(jpeg_factory)
+       52    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/backends/__init__.py:31(__get__)
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:326(get_dir)
+      314    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/overrides.py:1733(is_tensor_like)
+     1067    0.000    0.000    0.000    0.000 {method 'items' of 'collections.OrderedDict' objects}
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/abc.py:84(__new__)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/zipfile.py:190(_check_zipfile)
+      289    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'softmax' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method torch.ceil}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/zipfile.py:257(_EndRecData)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:147(__enter__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional_pil.py:225(crop)
+      260    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/utils.py:29(<genexpr>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:729(tobytes)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:1210(crop)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:88(__init__)
+      628    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/storage.py:455(untyped)
+        1    0.000    0.000    0.000    0.000 {method 'contiguous' of 'torch._C._TensorBase' objects}
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1075(path_stats)
+      177    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1273(remove_from)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:937(parse)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:30(<module>)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:154(_path_isfile)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:1236(_crop)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:200(<setcomp>)
+        1    0.000    0.000    0.000    0.000 {method 'div_' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 {method 'min' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:430(ImageFileDirectory_v2)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:689(spec_from_file_location)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:351(_open)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:145(_path_is_mode_type)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:598(_code)
+       23    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:127(_path_split)
+        1    0.000    0.000    0.000    0.000 {method 'crop' of 'ImagingCore' objects}
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:114(_get_torch_home)
+      213    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/module.py:1541(<dictcomp>)
+        1    0.000    0.000    0.000    0.000 {method 'reshape' of 'torch._C._TensorBase' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:435(_parse_sub)
+        5    0.000    0.000    0.000    0.000 /usr/lib/python3.8/genericpath.py:16(exists)
+      480    0.000    0.000    0.000    0.000 {method 'values' of 'collections.OrderedDict' objects}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1493(_get_spec)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:241(<listcomp>)
+      705    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/dropout.py:58(forward)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:870(legacy_load)
+      649    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_jit_internal.py:1082(is_scripting)
+        1    0.000    0.000    0.000    0.000 {built-in method torch.flatten}
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py:61(get_dimensions)
+      317    0.000    0.000    0.000    0.000 {built-in method math.sqrt}
+       20    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:75(__setitem__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PpmImagePlugin.py:18(<module>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/functional.py:1235(dropout)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:1554(open)
+        4    0.000    0.000    0.000    0.000 {built-in method _pickle.load}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:493(_parse)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:157(_get_module_lock)
+       56    0.000    0.000    0.000    0.000 {built-in method builtins.iter}
+      425    0.000    0.000    0.000    0.000 {method 'add' of 'set' objects}
+      107    0.000    0.000    0.000    0.000 {built-in method torch._C._has_torch_function_variadic}
+        1    0.000    0.000    0.000    0.000 {method 'any' of 'torch._C._TensorBase' objects}
+       23    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:417(__setattr__)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/os.py:198(makedirs)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:1645(taropen)
+        3    0.000    0.000    0.000    0.000 {method 'view' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:1443(__init__)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:143(__prepare__)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:2018(getLogger)
+       11    0.000    0.000    0.000    0.000 /usr/lib/python3.8/os.py:766(getenv)
+       62    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:123(<listcomp>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:317(__init__)
+      314    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:157(_cpu_deserialize)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/urllib/parse.py:369(urlparse)
+       66    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:389(parent)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional_pil.py:24(get_dimensions)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:1284(getLogger)
+        1    0.000    0.000    0.000    0.000 {method 'tolist' of 'torch._C._TensorBase' objects}
+       17    0.000    0.000    0.000    0.000 /usr/lib/python3.8/os.py:670(__getitem__)
+        1    0.000    0.000    0.000    0.000 {method 'ne' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tokenize.py:388(open)
+        3    0.000    0.000    0.000    0.000 {method 'encode' of 'ImagingEncoder' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method torch.dropout}
+       12    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:71(join)
+       11    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:657(get)
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:94(tensor_totype)
+        2    0.000    0.000    0.000    0.000 {built-in method torch.as_tensor}
+      5/1    0.000    0.000    0.000    0.000 {built-in method builtins.next}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/os.py:280(walk)
+      314    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/storage.py:23(__init__)
+       52    0.000    0.000    0.000    0.000 {built-in method torch._C._get_cudnn_enabled}
+       52    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/batchnorm.py:60(<dictcomp>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:365(__init__)
+        8    0.000    0.000    0.000    0.000 /usr/lib/python3.8/codecs.py:319(decode)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:553(_classify_pyc)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/urllib/parse.py:420(urlsplit)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:122(uniform_)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/_api.py:71(__getattr__)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:228(expanduser)
+      123    0.000    0.000    0.000    0.000 {method 'lower' of 'str' objects}
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:1312(getbands)
+        9    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:686(_register_basic)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:536(_compile_info)
+      4/2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:71(_compile)
+        1    0.000    0.000    0.000    0.000 {method 'max' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/init.py:12(_no_grad_uniform_)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:151(__exit__)
+       49    0.000    0.000    0.000    0.000 {built-in method builtins.setattr}
+        4    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:822(find_class)
+        4    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageMode.py:36(getmode)
+        3    0.000    0.000    0.000    0.000 {built-in method _abc._abc_init}
+      241    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method torch.from_numpy}
+        1    0.000    0.000    0.000    0.000 /home/pi/.cache/torch/hub/pytorch_vision_v0.10.0/hubconf.py:2(<module>)
+        1    0.000    0.000    0.000    0.000 {method 'unsqueeze' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:292(load_prepare)
+        3    0.000    0.000    0.000    0.000 {method 'write' of '_io.TextIOWrapper' objects}
+        1    0.000    0.000    0.000    0.000 {method 'permute' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:2297(next)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:103(release)
+       33    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:79(_unpack_uint32)
+        9    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/_utils.py:76(_make_divisible)
+        1    0.000    0.000    0.000    0.000 {built-in method PIL._imaging.new}
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:579(_find_new_)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:586(_validate_timestamp_pyc)
+      119    0.000    0.000    0.000    0.000 {method 'rpartition' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:255(__init__)
+      314    0.000    0.000    0.000    0.000 /usr/lib/python3.8/typing.py:1149(cast)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:78(acquire)
+      214    0.000    0.000    0.000    0.000 {method 'keys' of 'dict' objects}
+      114    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:260(<genexpr>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:308(_load_entry_from_hubconf)
+       72    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:222(_verbose_message)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/GifImagePlugin.py:39(LoadingStrategy)
+      156    0.000    0.000    0.000    0.000 {method 'discard' of 'set' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/typing.py:768(__instancecheck__)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/dataclasses.py:1022(fields)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:1099(fromtarfile)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:1806(_setup_size)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:268(_open_file_like)
+        6    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:532(_get_mixins_)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:543(_new)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/dropout.py:13(__init__)
+        2    0.000    0.000    0.000    0.000 {method 'close' of '_io.BufferedReader' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_bootlocale.py:33(getpreferredencoding)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/utils.py:32(_list_with_default)
+       25    0.000    0.000    0.000    0.000 {built-in method builtins.issubclass}
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:66(_is_zipfile)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:1065(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method posix.mkdir}
+        8    0.000    0.000    0.000    0.000 {built-in method _codecs.utf_8_decode}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:99(Disposal)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/typing.py:771(__subclasscheck__)
+       46    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:129(<genexpr>)
+       11    0.000    0.000    0.000    0.000 {built-in method _imp._fix_co_filename}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:1036(frombuf)
+       19    0.000    0.000    0.000    0.000 {built-in method builtins.round}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:243(DQT)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:250(__init__)
+        1    0.000    0.000    0.000    0.000 {method 'join' of 'bytes' objects}
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:669(decorator)
+        1    0.000    0.000    0.000    0.000 {method 'abs' of 'torch._C._TensorBase' objects}
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/storage.py:872(_get_dtype_from_pickle_storage_type)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:58(__init__)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tokenize.py:295(detect_encoding)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:176(cb)
+        8    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/jit/_trace.py:1017(is_tracing)
+      150    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method torch._is_functional_tensor}
+       17    0.000    0.000    0.000    0.000 /usr/lib/python3.8/os.py:748(encode)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:303(IFDRational)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:299(_check_dependencies)
+       12    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:516(_check_name_wrapper)
+        1    0.000    0.000    0.000    0.000 {method 'rfind' of 'bytes' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:417(_getencoder)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageSequence.py:19(<module>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:404(load_read)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:253(__exit__)
+        5    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:276(_optimize_charset)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:1335(_fixupParents)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/storage.py:274(_storage_type_to_dtype_map)
+        7    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3392(register_open)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:251(<genexpr>)
+        4    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3452(register_extensions)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:61(APP)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:107(_load_attr_from_module)
+       20    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:22(_is_dunder)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:393(_getdecoder)
+       30    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+       20    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:33(_is_sunder)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:831(is_package)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegPresets.py:1(<module>)
+       15    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3441(register_extension)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:88(__init__)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:664(__contains__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:120(Blend)
+      4/2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:174(getwidth)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:716(__format__)
+        6    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:543(_find_data_type)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:372(abspath)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:938(__and__)
+       30    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:867(__exit__)
+       30    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:863(__enter__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:332(_add_suffixes)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:172(nti)
+       11    0.000    0.000    0.000    0.000 {method 'seek' of '_io.BufferedReader' objects}
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:175(_path_isabs)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:522(_check_for_existing_members)
+       34    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageMode.py:25(__init__)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:56(Skip)
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:512(__init__)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:1404(__init__)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:800(find_spec)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/codecs.py:309(__init__)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:35(_new_module)
+        2    0.000    0.000    0.000    0.000 {built-in method _locale.nl_langinfo}
+        1    0.000    0.000    0.000    0.000 {built-in method math.floor}
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.dir}
+       23    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:164(__getitem__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/autograd/forward_ad.py:113(unpack_dual)
+       21    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/_binary.py:80(i16be)
+       11    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:254(get)
+        1    0.000    0.000    0.000    0.000 {built-in method PIL._imaging.raw_encoder}
+        1    0.000    0.000    0.000    0.000 {built-in method PIL._imaging.jpeg_decoder}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1330(_path_importer_cache)
+       26    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:193(SOF)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:835(load)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:62(BmpImageFile)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:342(__init__)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:334(normpath)
+       13    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:233(__next)
+        2    0.000    0.000    0.000    0.000 {function _legacy_load.<locals>.UnpicklerWrapper.find_class at 0xffff69b01e50}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:55(_dib_accept)
+       18    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:41(_get_sep)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:218(_acquireLock)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:224(__init__)
+       50    0.000    0.000    0.000    0.000 {built-in method _imp.acquire_lock}
+       33    0.000    0.000    0.000    0.000 {built-in method from_bytes}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageChops.py:18(<module>)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tokenize.py:319(read_or_stop)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:487(_getmp)
+       22    0.000    0.000    0.000    0.000 {built-in method _struct.unpack_from}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:1872(AppendingTiffWriter)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/storage.py:247(_dtype_to_storage_type_map)
+        8    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:12(_is_descriptor)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_utils.py:174(_validate_loaded_sparse_tensors)
+        9    0.000    0.000    0.000    0.000 {built-in method _struct.calcsize}
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:263(<listcomp>)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:313(__call__)
+        5    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:249(_compile_charset)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:68(__init__)
+        8    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:555(_safe_read)
+        8    0.000    0.000    0.000    0.000 {built-in method torch._C._is_tracing}
+       44    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method posix.scandir}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:248(_conv_type_shape)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:512(_getmp)
+       26    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:388(_delegate)
+        1    0.000    0.000    0.000    0.000 {method 'readline' of '_io.BufferedReader' objects}
+       50    0.000    0.000    0.000    0.000 {built-in method _imp.release_lock}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:76(__init__)
+        1    0.000    0.000    0.000    0.000 <string>:1(__new__)
+       54    0.000    0.000    0.000    0.000 {built-in method posix.fspath}
+       23    0.000    0.000    0.000    0.000 {method 'get' of 'mappingproxy' objects}
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:370(__getattr__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:229(<listcomp>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:303(<listcomp>)
+        4    0.000    0.000    0.000    0.000 {built-in method builtins.any}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:360(PngStream)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/urllib/parse.py:394(_splitnetloc)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:100(split)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/_binary.py:60(i32le)
+       27    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:392(__subclasshook__)
+       11    0.000    0.000    0.000    0.000 {built-in method builtins.min}
+        6    0.000    0.000    0.000    0.000 /usr/lib/python3.8/os.py:752(decode)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:1059(TiffImageFile)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:320(_should_read_directly)
+        7    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3418(register_save)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:294(_check_module_exists)
+       20    0.000    0.000    0.000    0.000 {built-in method _thread.get_ident}
+        4    0.000    0.000    0.000    0.000 {method 'numel' of 'torch._C._TensorBase' objects}
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:143(__init__)
+       17    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:162(ChunkStream)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_VF.py:26(__getattr__)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1004(__init__)
+       20    0.000    0.000    0.000    0.000 {built-in method _thread.allocate_lock}
+       10    0.000    0.000    0.000    0.000 {built-in method _imp.is_frozen}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/warnings.py:403(__init__)
+       16    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+        8    0.000    0.000    0.000    0.000 /usr/lib/python3.8/dataclasses.py:1037(<genexpr>)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/codecs.py:260(__init__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/GifImagePlugin.py:63(GifImageFile)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:960(ImageFileDirectory_v1)
+       26    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:336(_check_seekable)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/types.py:171(__get__)
+        7    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3407(register_mime)
+        9    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:172(append)
+        5    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:72(_check_methods)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py:124(__init__)
+       17    0.000    0.000    0.000    0.000 {method 'encode' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method torch._C._functorch.is_functorch_wrapped_tensor}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:723(PngImageFile)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1627(_get_supported_file_loaders)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tokenize.py:325(find_cookie)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:423(_simple)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/_util.py:5(is_path)
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:525(__getattr__)
+        3    0.000    0.000    0.000    0.000 {built-in method torch.get_default_dtype}
+       15    0.000    0.000    0.000    0.000 {method 'items' of 'mappingproxy' objects}
+        2    0.000    0.000    0.000    0.000 {method 'acquire' of '_thread.RLock' objects}
+        7    0.000    0.000    0.000    0.000 {method 'find' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:227(_releaseLock)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:355(_escape)
+       16    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:539(size)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/urllib/parse.py:113(_coerce_args)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional_pil.py:16(_is_pil_image)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:164(nts)
+        8    0.000    0.000    0.000    0.000 {method 'decode' of 'bytes' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:252(__subclasshook__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional_tensor.py:13(_assert_image_tensor)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py:363(_compute_resized_output_size)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/nn/modules/utils.py:39(<listcomp>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/hub.py:122(_parse_repo_info)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:701(__str__)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:461(_get_literal_prefix)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:595(isstring)
+        9    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:223(<genexpr>)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:776(__init__)
+        8    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:160(__len__)
+        4    0.000    0.000    0.000    0.000 {method 'pixel_access' of 'ImagingCore' objects}
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:631(__new__)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:735(__hash__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:346(JpegImageFile)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:138(<dictcomp>)
+        2    0.000    0.000    0.000    0.000 {built-in method _sre.compile}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/importlib/util.py:73(find_spec)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:312(_is_compressed_file)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional_tensor.py:9(_is_tensor_a_torch_image)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:140(basename)
+        3    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:175(<dictcomp>)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3153(_decompression_bomb_check)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:492(_get_charset_prefix)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/posixpath.py:60(isabs)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:286(tell)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/storage.py:276(<dictcomp>)
+        1    0.000    0.000    0.000    0.000 {built-in method torch._C._get_default_device}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:673(PyDecoder)
+        7    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:302(__subclasshook__)
+        2    0.000    0.000    0.000    0.000 {method 'match' of 're.Pattern' objects}
+       12    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1029(get_filename)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:111(__init__)
+        5    0.000    0.000    0.000    0.000 {method 'find' of 'bytearray' objects}
+        1    0.000    0.000    0.000    0.000 {method '_is_zerotensor' of 'torch._C._TensorBase' objects}
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3429(register_save_all)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:397(has_location)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:1230(append)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:725(find_spec)
+        3    0.000    0.000    0.000    0.000 {method 'setdefault' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'sort' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:85(ImageFile)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:68(_relax_case)
+       11    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:839(create_module)
+        1    0.000    0.000    0.000    0.000 {method 'count' of 'bytes' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:921(fix_flags)
+        2    0.000    0.000    0.000    0.000 {method 'has_names' of 'torch._C._TensorBase' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/logging/__init__.py:193(_checkLevel)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:51(_accept)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py:112(_is_numpy)
+        2    0.000    0.000    0.000    0.000 {method 'copy' of 'dict' objects}
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:81(groups)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:276(PngInfo)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:358(Parser)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/_api.py:54(verify)
+        1    0.000    0.000    0.000    0.000 {method 'setimage' of 'ImagingEncoder' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:239(__init__)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:680(decorator)
+        1    0.000    0.000    0.000    0.000 {method 'remove' of 'list' objects}
+        6    0.000    0.000    0.000    0.000 {built-in method builtins.vars}
+        1    0.000    0.000    0.000    0.000 {method 'setimage' of 'ImagingDecoder' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:271(__subclasshook__)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:249(match)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/_collections_abc.py:349(__subclasshook__)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:820(UnpicklerWrapper)
+        3    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:3473(register_decoder)
+        2    0.000    0.000    0.000    0.000 {method 'release' of '_thread.RLock' objects}
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:531(width)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/Image.py:535(height)
+        3    0.000    0.000    0.000    0.000 {method 'mro' of 'type' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PpmImagePlugin.py:149(PpmPlainDecoder)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:722(PyEncoder)
+        1    0.000    0.000    0.000    0.000 {method 'is_neg' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:254(iTXt)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:679(_register_writer)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:272(_accept)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:601(PyCodec)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageSequence.py:19(Iterator)
+        5    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/TiffImagePlugin.py:668(_register_loader)
+        1    0.000    0.000    0.000    0.000 {method 'startswith' of 'bytes' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/enum.py:753(value)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PpmImagePlugin.py:53(PpmImageFile)
+        1    0.000    0.000    0.000    0.000 {method 'is_floating_point' of 'torch._C._TensorBase' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:354(_check_dill_version)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:233(_is_path)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_compile.py:453(_get_iscased)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torchvision/models/_utils.py:235(_ovewrite_named_param)
+        2    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/JpegImagePlugin.py:337(_accept)
+        2    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'rsplit' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/_tensor_str.py:173(width)
+        1    0.000    0.000    0.000    0.000 {method 'setter' of 'property' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:328(StubImageFile)
+        1    0.000    0.000    0.000    0.000 {method 'insert' of 'list' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/urllib/parse.py:464(<genexpr>)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:288(BmpRleDecoder)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:1043(_get_restore_location)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/urllib/parse.py:402(_checknetloc)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/GifImagePlugin.py:54(_accept)
+        1    0.000    0.000    0.000    0.000 {built-in method _imp.extension_suffixes}
+        1    0.000    0.000    0.000    0.000 {method '__format__' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/sre_parse.py:168(__setitem__)
+        1    0.000    0.000    0.000    0.000 {method 'isalpha' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'find' of 'bytes' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.8/tarfile.py:2384(_check)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/BmpImagePlugin.py:362(DibImageFile)
+        1    0.000    0.000    0.000    0.000 {method 'cleanup' of 'ImagingDecoder' objects}
+        3    0.000    0.000    0.000    0.000 {built-in method builtins.ord}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:1100(_fdat)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:232(<lambda>)
+        1    0.000    0.000    0.000    0.000 {method 'fileno' of '_io.BufferedReader' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PngImagePlugin.py:1089(_idat)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.divmod}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/PpmImagePlugin.py:279(PpmDecoder)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.hash}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:590(PyCodecState)
+        3    0.000    0.000    0.000    0.000 {method 'is_dir' of 'posix.DirEntry' objects}
+        1    0.000    0.000    0.000    0.000 {method 'clear' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:300(load_end)
+        2    0.000    0.000    0.000    0.000 {method 'isascii' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.abs}
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.callable}
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/PIL/ImageFile.py:75(_tilesort)
+        2    0.000    0.000    0.000    0.000 /usr/lib/python3.8/urllib/parse.py:102(_noop)
+        1    0.000    0.000    0.000    0.000 /home/pi/.local/lib/python3.8/site-packages/torch/serialization.py:242(__enter__)
+        1    0.000    0.000    0.000    0.000 {method 'keys' of 'collections.OrderedDict' objects}
+
+

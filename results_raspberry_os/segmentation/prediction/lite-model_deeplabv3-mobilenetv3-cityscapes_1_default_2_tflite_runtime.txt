@@ -1,0 +1,30 @@
+['dog.jpg', array(['background', 'bicycle', 'bird', 'car', 'cat', 'chair',
+       'diningtable', 'horse', 'sofa'], dtype='<U11')]
+['image_3_thumb.jpg', array(['background', 'bicycle', 'cat', 'chair', 'diningtable', 'horse',
+       'motorbike', 'person'], dtype='<U11')]
+['image_4_thumb.jpg', array(['background', 'aeroplane', 'bicycle', 'boat', 'car', 'chair',
+       'cow', 'diningtable', 'horse', 'pottedplant'], dtype='<U11')]
+['zebra.jpg', array(['background', 'bicycle', 'bird', 'boat', 'bottle', 'cat', 'chair',
+       'diningtable', 'motorbike'], dtype='<U11')]
+['cat_2.jpg', array(['background', 'aeroplane', 'bicycle', 'bird', 'bottle', 'cat',
+       'cow', 'diningtable', 'dog', 'horse', 'motorbike'], dtype='<U11')]
+['image_1_thumb.jpg', array(['background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle',
+       'cat', 'chair', 'diningtable', 'dog', 'horse', 'sheep'],
+      dtype='<U11')]
+['bottle_wine_glass.jpg', array(['background', 'aeroplane', 'bicycle', 'bottle', 'cat', 'chair',
+       'cow', 'diningtable', 'horse', 'motorbike', 'person',
+       'pottedplant'], dtype='<U11')]
+['airplane.jpg', array(['background', 'aeroplane', 'bicycle', 'bird', 'bottle', 'bus',
+       'car', 'diningtable', 'horse', 'motorbike', 'pottedplant', 'sheep'],
+      dtype='<U11')]
+['cat.jpg', array(['background', 'aeroplane', 'bicycle', 'bird', 'cow', 'diningtable',
+       'horse', 'motorbike'], dtype='<U11')]
+['zidane.jpg', array(['background', 'bicycle', 'bird', 'boat', 'bottle', 'car', 'cat',
+       'chair', 'cow', 'diningtable', 'horse', 'motorbike', 'person',
+       'sheep', 'sofa'], dtype='<U11')]
+['image_2_thumb.jpg', array(['bicycle', 'bottle', 'diningtable', 'motorbike'], dtype='<U11')]
+['cake.jpg', array(['background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle',
+       'bus', 'cat', 'cow', 'diningtable', 'dog', 'horse', 'motorbike',
+       'person', 'sheep', 'sofa'], dtype='<U11')]
+['test.jpg', array(['background', 'bicycle', 'bird', 'car', 'cat', 'chair',
+       'diningtable', 'horse', 'motorbike', 'sofa'], dtype='<U11')]

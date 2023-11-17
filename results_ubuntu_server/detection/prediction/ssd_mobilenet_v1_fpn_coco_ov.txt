@@ -1,0 +1,1 @@
+[{'object': 'cat', 'index': 17, 'accuracy': 0.7174247}]
