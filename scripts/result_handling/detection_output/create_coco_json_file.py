@@ -22,7 +22,7 @@ def main():
 
     #label_dict = coco["names"]
 
-    df = pd.read_csv("2023_11_8_12_50.csv")
+    df = pd.read_csv("2023_11_13_19_29.csv")
     print(df)
 
     dict_result = df.to_dict()
@@ -33,15 +33,14 @@ def main():
 
 
     for key in dict_result["image"]:
-        print(key)
-        #print(key, image)
-
 
         #image_id
         image_name = dict_result["image"][key].split("/")[-1]
         image_name = image_name.split(".jpg")[0]
-        image_id = int(image_name.split("0")[-1])
-        print(image_id)
+        print(image_name)
+        #print(image_name.split("0"))
+        print(image_name.lstrip("0"))
+        image_id = int(image_name.lstrip("0"))
         
 
         category_id = ast.literal_eval(dict_result["index"][key])

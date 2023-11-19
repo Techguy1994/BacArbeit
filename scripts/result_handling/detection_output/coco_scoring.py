@@ -6,8 +6,7 @@ import skimage.io as io
 import pylab
 from os.path import exists
 
-file_exists = exists("annotations/instances_val2014.json")
-print(file_exists)
+
 pylab.rcParams['figure.figsize'] = (10.0, 8.0)
 
 
@@ -17,8 +16,8 @@ prefix = 'person_keypoints' if annType=='keypoints' else 'instances'
 print('Running demo for *%s* results.'%(annType))
 
 #initialize COCO ground truth api
-dataDir='../'
-dataType='val2014'
+#dataDir='../'
+#dataType='val2014'
 #annFile = '%s/annotations/%s_%s.json'%(dataDir,prefix,dataType)
 annFile = "instances_val2017.json"
 cocoGt=COCO(annFile)
@@ -39,4 +38,4 @@ cocoEval = COCOeval(cocoGt,cocoDt,annType)
 cocoEval.params.imgIds  = imgIds
 cocoEval.evaluate()
 cocoEval.accumulate()
-#cocoEval.summarize()
+cocoEval.summarize()
