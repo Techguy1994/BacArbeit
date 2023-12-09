@@ -1,0 +1,3 @@
+,image,inference time,label
+0,/home/pi/sambashare/BacArbeit/images/2007_000032.jpg,1.0437133089999406,"['tench', 'goldfish', 'robin']"
+1,/home/pi/sambashare/BacArbeit/images/2007_000039.jpg,1.2711852689990337,"['tench', 'water ouzel']"

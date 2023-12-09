@@ -43,7 +43,7 @@ def handle_image_directory(args):
     if args.image_folder: 
         if os.path.exists(args.image_folder):
             for img in os.listdir(args.image_folder):
-                if ".jpg" in img or ".JPEG" in img and "._" not in img:
+                if ".jpg" in img or ".JPEG" in img or ".png" in img and "._" not in img:
                     image_list.append(os.path.join(args.image_folder, img))
         else:
             sys.exit("Error: The image folder path given does not exit! Please enter a vaild path or give the path name")
@@ -54,7 +54,7 @@ def handle_image_directory(args):
         general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
         general_image_dir = os.path.join(general_dir, "images")
         for img in os.listdir(general_image_dir):
-                if ".jpg" in img or ".JPEG" in img and "._" not in img:
+                if ".jpg" in img or ".JPEG" in img or ".png" in img and "._" not in img:
                     image_list.append(os.path.join(general_image_dir, img))   
     else:
         sys.exit("Error: No image option chosen as input. You can either give the image with -img , image folder path with -imgp or choose the default image folder with -imgd!")

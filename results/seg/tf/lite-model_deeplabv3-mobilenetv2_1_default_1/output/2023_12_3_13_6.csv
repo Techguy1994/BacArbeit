@@ -1,0 +1,4 @@
+,image,inference time,label
+0,/home/pi/sambashare/BacArbeit/images/deeplab1.png,1.518592576001538,"['background', 'dog', 'horse', 'person', 'sheep']"
+1,/home/pi/sambashare/BacArbeit/images/2007_000032.jpg,1.545920060001663,"['background', 'aeroplane', 'car', 'person']"
+2,/home/pi/sambashare/BacArbeit/images/2007_000039.jpg,1.4457170120003866,"['background', 'tv']"

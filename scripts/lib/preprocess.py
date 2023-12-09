@@ -92,26 +92,16 @@ def preprocess_pytorch_yolo():
 
     return preprocess
 
-def preprocess_tf_deeplab(image, height, width, input_type, channels=3):
+def preprocess_tf_deeplab(image, input_shape, input_type):
     import cv2
     import numpy as np
-    #image = Image.open(image_path)
-    #image = image.resize((height, width), Image.LANCZOS)
-    #image_data = np.asarray(image).astype(input_type)
-    #for channel in range(image_data.shape[0]):
-    #    image_data[channel, :, :] = image_data[channel, :, :]*127.5 - 1
-    #image_data = np.expand_dims(image_data, 0)
-    #print(image_data.shape)
-    #quit()
-    #return image, image_data
-    
 
     image = cv2.imread(image)
-    image = cv2.resize(image, (width, height))
-    image_data = cv2.normalize(image.astype(input_type), None, -1.0, 1.0, cv2.NORM_MINMAX)
+    image = cv2.resize(image, (input_shape[1], input_shape[2]))
+    image_data = cv2.normalize(image.astype(input_type), None, 0, 1.0, cv2.NORM_MINMAX)
     image_data = np.expand_dims(image_data, 0)
 
-    return image, image_data
+    return image_data
 
 def preprocess_onnx_deeplab(image, input_type, image_height, image_width):
     import cv2
@@ -135,14 +125,12 @@ def preprocess_pytorch_seg():
     return preprocess
 
 def preprocess_pytorch_deeplab(image, preprocess):
+
+    from torchvision import transforms
+
     from PIL import Image
     input_image = Image.open(image)
     input_image = input_image.convert("RGB")
-
-    #img = 'https://ultralytics.com/images/zidane.jpg'
-
-    #input_image = input_image.resize((64,64))
-
 
     input_tensor = preprocess(input_image)
     input_batch = input_tensor.unsqueeze(0)

@@ -567,6 +567,90 @@ def handle_output_deeplab_tf(output_details, interpreter, image, raw_file, overl
 
     return result
 
+def handle_output_deeplab_tf_alt(output_details, interpreter, image, raw_file, overlay_file, colormap, label):
+    import numpy as np
+    import cv2
+    import sys
+
+    print("start post")
+
+    width = image.shape[1]
+    height = image.shape[0]
+
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+
+    output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
+
+    unique_labels = np.unique(output_classes)
+    print(unique_labels)
+    label = np.asarray(label)
+    results = label[unique_labels]
+
+
+    output_classes_rgb = cv2.cvtColor(output_classes, cv2.COLOR_GRAY2RGB)
+    #print(colormap.shape)
+    #print(colormap)
+    for i in range(21):
+        print(colormap[i])
+
+    print("-------")
+    
+    for i in range(colormap.shape[0]):
+        left = colormap[i][0]
+        right = colormap[i][2]
+
+        colormap[i][2] = left
+        colormap[i][0] = right
+
+    #print(colormap.shape)
+    #print(colormap)
+ 
+    for i in range(21):
+        print(colormap[i])
+
+    print(colormap[20])
+    
+
+    #colormap = np.expand_dims(colormap, 0)
+
+    print(output_classes_rgb.shape)
+    print(output_classes.shape)
+    print(output_classes)
+    #for i in range(output_classes):
+    #    print()
+
+    #output_img = cv2.LUT(output_classes_rgb, colormap)
+
+    output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
+    print(output_image.shape)
+    print(output_image)
+
+    print(output_image[0][0][0])
+    print(output_image[0][0][2])
+
+    output_image[0][0][0] = 255
+    print("test", output_image[0][0][0])
+
+    print(colormap[output_classes[0][0]])
+    print("color test: ", colormap[output_classes[0][0]][2])
+
+    for i in range(output_classes.shape[0]):
+        for j in range(output_classes.shape[1]):
+            output_image[i][j][0] = colormap[output_classes[i][j]][0]
+            output_image[i][j][1] = colormap[output_classes[i][j]][1]
+            output_image[i][j][2] = colormap[output_classes[i][j]][2]
+
+
+    resized_image = cv2.resize(output_image, (width,height), interpolation = cv2.INTER_AREA)
+   
+
+    overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
+
+    cv2.imwrite(overlay_file, overlay_image)
+    cv2.imwrite(raw_file, resized_image)
+
+    return results
+
 def handle_output_deeplab_pyarmnn(output_data, image, raw_file, overlay_file, colormap, label):
     import cv2
     import numpy as np
@@ -598,6 +682,7 @@ def handle_output_deeplab_pyarmnn(output_data, image, raw_file, overlay_file, co
     #print("segmap after argmax (labels)", seg_map.shape)
 
     result, out_image, out_mask = vis_segmentation_cv2(image, seg_map, label, colormap)
+    print(result.shape)
     #print(img_result_file)
     #results.append(result)
     #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])

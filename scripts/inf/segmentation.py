@@ -45,8 +45,8 @@ def run_tf(args, raw_folder, overlay_folder):
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
 
             if args.profiler == "perfcounter":
-                image, processed_image = pre.preprocess_tf_deeplab(image, input_shape[1], input_shape[2], input_type)
-                interpreter.set_tensor(input_details[0]['index'], processed_image)
+                preprocessed_image = pre.preprocess_tf_deeplab(image, input_shape, input_type)
+                interpreter.set_tensor(input_details[0]['index'], preprocessed_image)
 
                 start_time = perf_counter()
                 interpreter.invoke()
@@ -58,7 +58,7 @@ def run_tf(args, raw_folder, overlay_folder):
                 interpreter.invoke()
 
             if not args.skip_output:
-                output = post.handle_output_deeplab_tf(output, interpreter, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output = post.handle_output_deeplab_tf_alt(output_details, interpreter, original_image, raw_file, overlay_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
             else:
                 output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
@@ -240,8 +240,10 @@ def run_pytorch(args, raw_folder, overlay_folder):
             raw_file = os.path.join(raw_folder, image.split("/")[-1])
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
 
+            input_batch = pre.preprocess_pytorch_deeplab(image, preprocess)
+
             if args.profiler == "perfcounter":
-                input_batch = pre.preprocess_pytorch_deeplab(image, preprocess)
+                
 
                 start_time = perf_counter()
                 with torch.no_grad():
@@ -250,8 +252,14 @@ def run_pytorch(args, raw_folder, overlay_folder):
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
             else:
+                with torch.no_grad():
+                    output = model(input_batch)['out'][0]
+
+            if not args.skip_output:
                 output = post.handle_output_deeplab_pytorch(output, original_image, raw_file, overlay_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
+            else:
+                output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
                 
 
                 
