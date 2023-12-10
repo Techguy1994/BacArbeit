@@ -1,0 +1,4 @@
+,image,inference time,label
+0,/home/pi/sambashare/BacArbeit/images/2007_000033.jpg,1.7268356529966695,"['background', 'aeroplane']"
+1,/home/pi/sambashare/BacArbeit/images/2007_000039.jpg,1.470098309997411,"['background', 'tv']"
+2,/home/pi/sambashare/BacArbeit/images/2007_000123.jpg,1.4334047060037847,"['background', 'train']"

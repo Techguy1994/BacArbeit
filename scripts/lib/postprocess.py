@@ -590,60 +590,70 @@ def handle_output_deeplab_tf_alt(output_details, interpreter, image, raw_file, o
     output_classes_rgb = cv2.cvtColor(output_classes, cv2.COLOR_GRAY2RGB)
     #print(colormap.shape)
     #print(colormap)
-    for i in range(21):
-        print(colormap[i])
+    #for i in range(21):
+    #    print(colormap[i])
 
-    print("-------")
+    #print("-------")
+    #print(colormap[19])
     
+    """
     for i in range(colormap.shape[0]):
-        left = colormap[i][0]
-        right = colormap[i][2]
+        R = colormap[i][0]
+        G = colormap [i][1]
+        B = colormap[i][2]
 
-        colormap[i][2] = left
-        colormap[i][0] = right
-
+        colormap[i][0] = B
+        colormap[i][1] = R
+        colormap[i][2] = G
+    """
+    
     #print(colormap.shape)
     #print(colormap)
  
-    for i in range(21):
-        print(colormap[i])
+    #for i in range(21):
+    #    print(colormap[i])
 
-    print(colormap[20])
+    #print(colormap[19])
     
 
     #colormap = np.expand_dims(colormap, 0)
 
-    print(output_classes_rgb.shape)
-    print(output_classes.shape)
-    print(output_classes)
+    #print(output_classes_rgb.shape)
+    #print(output_classes.shape)
+    #print(output_classes)
     #for i in range(output_classes):
     #    print()
 
     #output_img = cv2.LUT(output_classes_rgb, colormap)
+    #resized_image = cv2.resize(output_img, (width,height), interpolation = cv2.INTER_AREA)
+    #overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
+    #cv2.imwrite(raw_file, resized_image)
+    #cv2.imwrite(overlay_file, overlay_image)
+
+    #return results
+
 
     output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
-    print(output_image.shape)
-    print(output_image)
+    #print(output_image.shape)
+    #print(output_image)
 
-    print(output_image[0][0][0])
-    print(output_image[0][0][2])
+    #print(output_image[0][0][0])
+    #print(output_image[0][0][2])
 
-    output_image[0][0][0] = 255
-    print("test", output_image[0][0][0])
+    #output_image[0][0][0] = 255
+    #print("test", output_image[0][0][0])
 
-    print(colormap[output_classes[0][0]])
-    print("color test: ", colormap[output_classes[0][0]][2])
+    #print(colormap[output_classes[0][0]])
+    #print("color test: ", colormap[output_classes[0][0]][2])
 
     for i in range(output_classes.shape[0]):
         for j in range(output_classes.shape[1]):
-            output_image[i][j][0] = colormap[output_classes[i][j]][0]
+            output_image[i][j][0] = colormap[output_classes[i][j]][2]
             output_image[i][j][1] = colormap[output_classes[i][j]][1]
-            output_image[i][j][2] = colormap[output_classes[i][j]][2]
+            output_image[i][j][2] = colormap[output_classes[i][j]][0]
 
 
     resized_image = cv2.resize(output_image, (width,height), interpolation = cv2.INTER_AREA)
-   
-
     overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
 
     cv2.imwrite(overlay_file, overlay_image)

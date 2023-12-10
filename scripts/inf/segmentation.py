@@ -27,6 +27,8 @@ def run_tf(args, raw_folder, overlay_folder):
         interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
     else:
         interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+        #interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None)
+
 
     interpreter.allocate_tensors()
 
