@@ -10,7 +10,7 @@ import sys
 import numpy as np
 from PIL import Image
 
-def run_tf(args, raw_folder, overlay_folder):
+def run_tf(args, raw_folder, overlay_folder, index_folder):
 
     import tflite_runtime.interpreter as tflite
     print("Chosen API: tflite runtime intepreter")
@@ -43,8 +43,15 @@ def run_tf(args, raw_folder, overlay_folder):
     for i in range(args.niter):
         for image in args.images:
             original_image = cv2.imread(image)
-            raw_file = os.path.join(raw_folder, image.split("/")[-1])
+            raw_file = image.split("/")[-1]
+            raw_file = raw_file.split(".")[0] + ".png"
+            raw_file = os.path.join(raw_folder, raw_file)
+
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
+
+            index_file = image.split("/")[-1]
+            index_file = index_file.split(".")[0] + ".png"
+            index_file = os.path.join(index_folder, index_file)
 
             if args.profiler == "perfcounter":
                 preprocessed_image = pre.preprocess_tf_deeplab(image, input_shape, input_type)
@@ -60,18 +67,18 @@ def run_tf(args, raw_folder, overlay_folder):
                 interpreter.invoke()
 
             if not args.skip_output:
-                output = post.handle_output_deeplab_tf_alt(output_details, interpreter, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output = post.handle_output_deeplab_tf_alt(output_details, interpreter, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
             else:
                 output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
                 
-        time.sleep(args.sleep)   
+        time.sleep(args.sleep)  
 
     df = dat.create_pandas_dataframe(output_dict)  
 
     return df
 
-def run_pyarmnn(args, raw_folder, overlay_folder):
+def run_pyarmnn(args, raw_folder, overlay_folder, index_folder):
     import pyarmnn as ann
     import csv
 
@@ -100,6 +107,8 @@ def run_pyarmnn(args, raw_folder, overlay_folder):
     width, height = input_tensor_info.GetShape()[1], input_tensor_info.GetShape()[2]
     print(f"tensor id: {input_tensor_id},tensor info: {input_tensor_info}")
 
+    input_shape = (0, width, height)
+
 
     # Get output binding information for an output layer by using the layer name.
     output_names = parser.GetSubgraphOutputTensorNames(graph_id)
@@ -122,10 +131,13 @@ def run_pyarmnn(args, raw_folder, overlay_folder):
             original_image = cv2.imread(image)
             raw_file = os.path.join(raw_folder, image.split("/")[-1])
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
+            index_file = os.path.join(index_folder, image.split("/")[-1])
+
+
+            processed_image = pre.preprocess_tf_deeplab(image, input_shape, data_type)
+            input_tensors = ann.make_input_tensors([input_binding_info], [processed_image])
 
             if args.profiler == "perfcounter":
-                image, processed_image = pre.preprocess_tf_deeplab(image, height, width, data_type)
-                input_tensors = ann.make_input_tensors([input_binding_info], [processed_image])
 
                 start_time = perf_counter()
                 runtime.EnqueueWorkload(0, input_tensors, output_tensors) # inference call
@@ -138,7 +150,7 @@ def run_pyarmnn(args, raw_folder, overlay_folder):
 
             if not args.skip_output:
                 output = ann.workload_tensors_to_ndarray(output_tensors) # gather inference results into dict
-                output = post.handle_output_deeplab_pyarmnn(output, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output = post.handle_output_deeplab_pyarmnn(output, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
             else:
                 output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
@@ -151,7 +163,7 @@ def run_pyarmnn(args, raw_folder, overlay_folder):
     return df
 
 
-def run_onnx(args, raw_folder, overlay_folder):
+def run_onnx(args, raw_folder, overlay_folder, index_folder):
     print("Chosen API: Onnx runtime")
 
     import onnxruntime
@@ -186,9 +198,11 @@ def run_onnx(args, raw_folder, overlay_folder):
             original_image = cv2.imread(image)
             raw_file = os.path.join(raw_folder, image.split("/")[-1])
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
+            index_file = os.path.join(index_folder, image.split("/")[-1])
+
+            processed_image = pre.preprocess_onnx_deeplab(image , input_data_type, image_height, image_width)
 
             if args.profiler == "perfcounter":
-                processed_image = pre.preprocess_onnx_deeplab(original_image, input_data_type, image_height, image_width)
 
                 start_time = perf_counter()
                 output = session.run(outputs, {input_name:processed_image})[0]
@@ -200,7 +214,7 @@ def run_onnx(args, raw_folder, overlay_folder):
                 output = session.run(outputs, {input_name:processed_image})[0]
 
             if not args.skip_output:
-                output = post.handle_output_deeplab_onnx(output, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output = post.handle_output_deeplab_onnx(output, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
             else:
                 output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
@@ -215,7 +229,7 @@ def run_onnx(args, raw_folder, overlay_folder):
                 
                 
 
-def run_pytorch(args, raw_folder, overlay_folder):
+def run_pytorch(args, raw_folder, overlay_folder, index_folder):
     import torch
     from torchvision import models, transforms
 
@@ -241,12 +255,12 @@ def run_pytorch(args, raw_folder, overlay_folder):
             original_image = cv2.imread(image)
             raw_file = os.path.join(raw_folder, image.split("/")[-1])
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
+            index_file = os.path.join(index_folder, image.split("/")[-1])
 
             input_batch = pre.preprocess_pytorch_deeplab(image, preprocess)
 
             if args.profiler == "perfcounter":
                 
-
                 start_time = perf_counter()
                 with torch.no_grad():
                     output = model(input_batch)['out'][0]
@@ -258,7 +272,7 @@ def run_pytorch(args, raw_folder, overlay_folder):
                     output = model(input_batch)['out'][0]
 
             if not args.skip_output:
-                output = post.handle_output_deeplab_pytorch(output, original_image, raw_file, overlay_file, args.colormap, args.label)
+                output = post.handle_output_deeplab_pytorch(output, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
             else:
                 output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
@@ -271,8 +285,148 @@ def run_pytorch(args, raw_folder, overlay_folder):
     print(df)
     return df
 
-def run_sync_openvino():
-    print("todo")
+def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
+    from openvino.runtime import InferRequest, AsyncInferQueue
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm, ColorFormat
+    from openvino import Core, Layout, Type
+
+    import logging as log
+    import sys
+
+    print("Chosen API: Sync Openvino")
+    log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
+
+    output_dict = dat.create_base_dictionary_seg()
+
+    device_name = "CPU"
+
+    # --------------------------- Step 1. Initialize OpenVINO Runtime Core ------------------------------------------------
+    log.info('Creating OpenVINO Runtime Core')
+    core = Core()
+
+# --------------------------- Step 2. Read a model --------------------------------------------------------------------
+    log.info(f'Reading the model: {args.model}')
+    # (.xml and .bin files) or (.onnx file)
+    model = core.read_model(args.model)
+
+    if len(model.inputs) != 1:
+        log.error('Sample supports only single input topologies')
+        return -1
+
+    if len(model.outputs) != 1:
+        log.error('Sample supports only single output topologies')
+        return -1
+    
+    # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    images = [cv2.imread(image_path) for image_path in args.images]
+    _, h, w, _ = model.input().shape
+    #print(model.input().shape)
+    resized_images = [cv2.resize(img, (w,h)) for img in images]
+    bgr_images = [cv2.cvtColor(img, cv2.COLOR_RGB2BGR) for img in resized_images]
+    input_tensors = [np.expand_dims(img, 0) for img in bgr_images]
+    print("input tensor shape: ", input_tensors[0].shape)
+    
+    # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    # Read input images
+    #images = [cv2.imread(image_path) for image_path in args.images]
+
+    # Resize images to model input dims
+    #_, _, h, w = model.input().shape
+    #_, h, w, _ = model.input().shape
+    #print("Model input shape: ",model.input().shape)
+    #h, w = 224, 224
+
+    #resized_images = [cv2.resize(image, (513, 513)) for image in images]
+
+    # Add N dimension
+    #input_tensors = [np.expand_dims(image, 0) for image in resized_images]
+    
+
+    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+    # Step 4. Inizialize Preprocessing for the model
+    #ppp = PrePostProcessor(model)
+    # Specify input image format
+    #ppp.input().tensor().set_element_type(Type.u8).set_layout(Layout("NHWC")).set_color_format(ColorFormat.RGB)
+    #  Specify preprocess pipeline to input image without resizing
+    #ppp.input().preprocess().convert_element_type(Type.f32).convert_color(ColorFormat.RGB).scale([255., 255., 255.])
+    # Specify model's input layout
+    #ppp.input().model().set_layout(Layout("NHWC"))
+    #  Specify output results format
+    #ppp.output().tensor().set_element_type(Type.f32)
+    # Embed above steps in the graph
+    #model = ppp.build()
+    #compiled_model = core.compile_model(model, "CPU")
+
+    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
+    print("Preprocess")
+    ppp = PrePostProcessor(model)
+    
+    ppp.input().tensor() \
+        .set_element_type(Type.u8) \
+        .set_layout(Layout('NHWC'))  # noqa: ECE001, N400
+
+    # 2) Adding explicit preprocessing steps:
+    # - apply linear resize from tensor spatial dims to model spatial dims
+    ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
+
+    # 3) Here we suppose model has 'NCHW' layout for input
+    #ppp.input().model().set_layout(Layout('NCHW'))
+    ppp.input().model().set_layout(Layout('NHWC'))
+
+    # 4) Set output tensor information:
+    # - precision of tensor is supposed to be 'f32'
+    ppp.output().tensor().set_element_type(Type.f32)
+
+    # 5) Apply preprocessing modifying the original 'model'
+    model = ppp.build()
+
+# --------------------------- Step 5. Loading model to the device -----------------------------------------------------
+    #log.info('Loading the model to the plugin')
+    #compiled_model = core.compile_model(model, device_name)
+
+    # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
+    log.info('Loading the model to the plugin')
+    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": "4", "NUM_STREAMS": "4"} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
+    compiled_model = core.compile_model(model, device_name, config)
+    #compiled_model = core.compile_model(model, device_name)
+    num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
+    print("optimal number of requests", num_requests)
+
+    for i in range(args.niter):
+        for j, input_tensor in enumerate(input_tensors):
+            raw_file = os.path.join(raw_folder, args.images[j].split("/")[-1])
+            overlay_file = os.path.join(overlay_folder, args.images[j].split("/")[-1])
+            index_file = os.path.join(index_folder, args.images[j].split("/")[-1])
+            img_org = cv2.imread(args.images[j])
+            print(args.images[j])
+            #image_height, image_width = img_org.shape[1], img_org.shape[0]
+            
+            if args.profiler == "perfcounter":
+                start_time = perf_counter()
+                result = compiled_model.infer_new_request({0: input_tensor})
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+            else:
+                lat = 0
+                result = compiled_model.infer_new_request({0: input_tensor})
+            
+            if not args.skip_output:
+                print(result)
+
+                output = post.handle_output_deeplab_ov(result, img_org, raw_file, overlay_file, index_file, args.colormap, args.label)
+                output_dict = dat.store_output_dictionary_seg(output_dict, args.images[j], lat, output)
+            else:
+                output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, args.images[j], lat)
+
+        time.sleep(args.sleep) 
+
+
+    df = dat.create_pandas_dataframe(output_dict)
+    print("pandas output: ", df)    
+
+    return df
+    
 
 #def run_async_openvino():
 #    print("todo")

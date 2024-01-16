@@ -567,84 +567,29 @@ def handle_output_deeplab_tf(output_details, interpreter, image, raw_file, overl
 
     return result
 
-def handle_output_deeplab_tf_alt(output_details, interpreter, image, raw_file, overlay_file, colormap, label):
+def handle_output_deeplab_tf_alt(output_details, interpreter, image, raw_file, overlay_file, index_file, colormap, label):
     import numpy as np
     import cv2
     import sys
-
-    print("start post")
 
     width = image.shape[1]
     height = image.shape[0]
 
     output_data = interpreter.get_tensor(output_details[0]['index'])
+    print(output_data.shape)
 
     output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
 
+    print("outputclasses shape: ", output_classes.shape)
+    
+
     unique_labels = np.unique(output_classes)
-    print(unique_labels)
     label = np.asarray(label)
     results = label[unique_labels]
 
-
-    output_classes_rgb = cv2.cvtColor(output_classes, cv2.COLOR_GRAY2RGB)
-    #print(colormap.shape)
-    #print(colormap)
-    #for i in range(21):
-    #    print(colormap[i])
-
-    #print("-------")
-    #print(colormap[19])
-    
-    """
-    for i in range(colormap.shape[0]):
-        R = colormap[i][0]
-        G = colormap [i][1]
-        B = colormap[i][2]
-
-        colormap[i][0] = B
-        colormap[i][1] = R
-        colormap[i][2] = G
-    """
-    
-    #print(colormap.shape)
-    #print(colormap)
- 
-    #for i in range(21):
-    #    print(colormap[i])
-
-    #print(colormap[19])
-    
-
-    #colormap = np.expand_dims(colormap, 0)
-
-    #print(output_classes_rgb.shape)
-    #print(output_classes.shape)
-    #print(output_classes)
-    #for i in range(output_classes):
-    #    print()
-
-    #output_img = cv2.LUT(output_classes_rgb, colormap)
-    #resized_image = cv2.resize(output_img, (width,height), interpolation = cv2.INTER_AREA)
-    #overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
-    #cv2.imwrite(raw_file, resized_image)
-    #cv2.imwrite(overlay_file, overlay_image)
-
-    #return results
-
-
     output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
-    #print(output_image.shape)
-    #print(output_image)
 
-    #print(output_image[0][0][0])
-    #print(output_image[0][0][2])
-
-    #output_image[0][0][0] = 255
-    #print("test", output_image[0][0][0])
-
-    #print(colormap[output_classes[0][0]])
-    #print("color test: ", colormap[output_classes[0][0]][2])
+    #colormap given in RGB but apparently BGR needed
 
     for i in range(output_classes.shape[0]):
         for j in range(output_classes.shape[1]):
@@ -654,14 +599,54 @@ def handle_output_deeplab_tf_alt(output_details, interpreter, image, raw_file, o
 
 
     resized_image = cv2.resize(output_image, (width,height), interpolation = cv2.INTER_AREA)
+    index_image = cv2.resize(output_classes, (width, height), interpolation = cv2.INTER_AREA)
     overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
 
     cv2.imwrite(overlay_file, overlay_image)
     cv2.imwrite(raw_file, resized_image)
+    cv2.imwrite(index_file, index_image)
 
     return results
 
-def handle_output_deeplab_pyarmnn(output_data, image, raw_file, overlay_file, colormap, label):
+def handle_output_deeplab_pyarmnn(output_data, image, raw_file, overlay_file, index_file, colormap, label):
+    import cv2
+    import numpy as np
+
+    width = image.shape[1]
+    height = image.shape[0]
+
+    output_data = output_data[0]
+
+    output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
+
+    print(output_classes.shape)
+
+    unique_labels = np.unique(output_classes)
+    label = np.asarray(label)
+    results = label[unique_labels]
+
+    output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
+
+    #colormap given in RGB but apparently BGR needed
+
+    for i in range(output_classes.shape[0]):
+        for j in range(output_classes.shape[1]):
+            output_image[i][j][0] = colormap[output_classes[i][j]][2]
+            output_image[i][j][1] = colormap[output_classes[i][j]][1]
+            output_image[i][j][2] = colormap[output_classes[i][j]][0]
+
+
+    resized_image = cv2.resize(output_image, (width,height), interpolation = cv2.INTER_AREA)
+    index_image = cv2.resize(output_classes, (width, height), interpolation = cv2.INTER_AREA)
+    overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
+
+    cv2.imwrite(overlay_file, overlay_image)
+    cv2.imwrite(raw_file, resized_image)
+    cv2.imwrite(index_file, index_image)
+
+    return results
+
+def handle_output_deeplab_pyarmnn_old(output_data, image, raw_file, overlay_file, colormap, label):
     import cv2
     import numpy as np
 
@@ -703,7 +688,44 @@ def handle_output_deeplab_pyarmnn(output_data, image, raw_file, overlay_file, co
 
     return result
 
-def handle_output_deeplab_onnx(output_data, origanal_image, raw_file, overlay_file, colormap, label):
+def handle_output_deeplab_onnx(output_data, image, raw_file, overlay_file, index_file, colormap, label):
+    import numpy as np
+    import cv2
+    import sys
+
+    width = image.shape[1]
+    height = image.shape[0]
+
+    output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
+
+    print(output_classes.shape)
+
+    unique_labels = np.unique(output_classes)
+    label = np.asarray(label)
+    results = label[unique_labels]
+
+    output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
+
+    #colormap given in RGB but apparently BGR needed
+
+    for i in range(output_classes.shape[0]):
+        for j in range(output_classes.shape[1]):
+            output_image[i][j][0] = colormap[output_classes[i][j]][2]
+            output_image[i][j][1] = colormap[output_classes[i][j]][1]
+            output_image[i][j][2] = colormap[output_classes[i][j]][0]
+
+
+    resized_image = cv2.resize(output_image, (width,height), interpolation = cv2.INTER_AREA)
+    index_image = cv2.resize(output_classes, (width, height), interpolation = cv2.INTER_AREA)
+    overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
+
+    cv2.imwrite(overlay_file, overlay_image)
+    cv2.imwrite(raw_file, resized_image)
+    cv2.imwrite(index_file, index_image)
+
+    return results
+
+def handle_output_deeplab_onnx_old(output_data, origanal_image, raw_file, overlay_file, colormap, label):
     import numpy as np
     import cv2
 
@@ -730,7 +752,47 @@ def handle_output_deeplab_onnx(output_data, origanal_image, raw_file, overlay_fi
 
     return result
 
-def handle_output_deeplab_pytorch(output_data, image, raw_file, overlay_file, colormap, label):
+def handle_output_deeplab_pytorch(output_data, image, raw_file, overlay_file, index_file, colormap, label):
+    import numpy as np
+    import cv2
+    import sys
+
+    width = image.shape[1]
+    height = image.shape[0]
+
+    output_data = output_data.numpy()
+    print(output_data.shape)
+
+    output_classes = np.uint8(np.argmax(output_data, axis=0))
+
+    print(output_classes.shape)
+
+    unique_labels = np.unique(output_classes)
+    label = np.asarray(label)
+    results = label[unique_labels]
+
+    output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
+
+    #colormap given in RGB but apparently BGR needed
+
+    for i in range(output_classes.shape[0]):
+        for j in range(output_classes.shape[1]):
+            output_image[i][j][0] = colormap[output_classes[i][j]][2]
+            output_image[i][j][1] = colormap[output_classes[i][j]][1]
+            output_image[i][j][2] = colormap[output_classes[i][j]][0]
+
+
+    resized_image = cv2.resize(output_image, (width,height), interpolation = cv2.INTER_AREA)
+    index_image = cv2.resize(output_classes, (width, height), interpolation = cv2.INTER_AREA)
+    overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
+
+    cv2.imwrite(overlay_file, overlay_image)
+    cv2.imwrite(raw_file, resized_image)
+    cv2.imwrite(index_file, index_image)
+
+    return results
+
+def handle_output_deeplab_pytorch_old(output_data, image, raw_file, overlay_file, colormap, label):
     import numpy as np
     import cv2
 
@@ -773,6 +835,56 @@ def handle_output_deeplab_pytorch(output_data, image, raw_file, overlay_file, co
     cv2.imwrite(raw_file, out_mask)
 
     return result
+
+def handle_output_deeplab_ov(output_data, image, raw_file, overlay_file, index_file, colormap, label):
+    import numpy as np
+    import cv2
+    import sys
+
+    width = image.shape[1]
+    height = image.shape[0]
+
+    #output_data = output_data.values()
+
+    #predictions = next(iter(output_data.values()))
+
+    for element in output_data:
+        output = output_data[element][0]
+        
+
+    output_classes = np.uint8(np.array(output, dtype="int"))
+
+
+    print("out shape", output_classes.shape)
+
+    unique_labels = np.unique(output_classes)
+    print(unique_labels)
+    label = np.asarray(label)
+    print(label)
+    results = label[unique_labels]
+    print(results)
+
+    output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
+    print(output_image.shape)
+
+    #colormap given in RGB but apparently BGR needed
+
+    for i in range(output_classes.shape[0]):
+        for j in range(output_classes.shape[1]):
+            output_image[i][j][0] = colormap[output_classes[i][j]][2]
+            output_image[i][j][1] = colormap[output_classes[i][j]][1]
+            output_image[i][j][2] = colormap[output_classes[i][j]][0]
+
+
+    resized_image = cv2.resize(output_image, (width,height), interpolation = cv2.INTER_AREA)
+    index_image = cv2.resize(output_classes, (width, height), interpolation = cv2.INTER_AREA)
+    overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
+
+    cv2.imwrite(overlay_file, overlay_image)
+    cv2.imwrite(raw_file, resized_image)
+    cv2.imwrite(index_file, index_image)
+
+    return results
 
 
 def softmax(x):

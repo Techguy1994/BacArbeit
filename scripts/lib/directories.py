@@ -84,9 +84,6 @@ def create_random_input(count):
 
     return image_list
 
-
-
-
 def handle_label_directory(args):
     #print(args)
     if args.labels:
@@ -154,13 +151,16 @@ def create_image_folder_with_current_time_stamp(output_folder, folder_name_date)
 def create_sub_folder_for_segmentation(output_folder):
     raw_folder = os.path.join(output_folder, "raw")
     overlay_folder = os.path.join(output_folder, "overlay")
+    index_folder = os.path.join(output_folder, "index")
 
     if os.makedirs(raw_folder):
         sys.exit("Error creating raw folder")
     if os.makedirs(overlay_folder):
         sys.exit("Error creating overlay folder")
+    if os.makedirs(index_folder):
+        sys.exit("Error creatinfg index folder")
 
-    return raw_folder, overlay_folder
+    return raw_folder, overlay_folder, index_folder
 
 def create_name_date():
     from datetime import datetime

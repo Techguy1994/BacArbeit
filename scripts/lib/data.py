@@ -121,6 +121,7 @@ def store_output_dictionary_seg_only_lat(data, image, time):
 
 
 def create_pandas_dataframe(dict):
+    print(dict)
     df = pd.DataFrame(dict)
     return df
 

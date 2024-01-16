@@ -94,20 +94,24 @@ def run_segmentation(args, name_date):
         profiler.enable()
 
     output_image_folder, name_date = d.create_image_folder_with_current_time_stamp(args.output, name_date)
-    raw_folder, overlay_folder = d.create_sub_folder_for_segmentation(output_image_folder)
+    raw_folder, overlay_folder, index_folder = d.create_sub_folder_for_segmentation(output_image_folder)
 
     if args.api == "tf" or args.api == "delegate":
-        df = seg.run_tf(args, raw_folder, overlay_folder)
+        df = seg.run_tf(args, raw_folder, overlay_folder, index_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pyarmnn":
-        df = seg.run_pyarmnn(args, raw_folder, overlay_folder)
+        df = seg.run_pyarmnn(args, raw_folder, overlay_folder, index_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "onnx":
-        df = seg.run_onnx(args, raw_folder, overlay_folder)
+        df = seg.run_onnx(args, raw_folder, overlay_folder, index_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pytorch":
-        df = seg.run_pytorch(args, raw_folder, overlay_folder)
+        df = seg.run_pytorch(args, raw_folder, overlay_folder, index_folder)
         dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
+    if args.api == "ov":
+        df = seg.run_sync_openvino(args, raw_folder, overlay_folder, index_folder)
+        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
+
 
 
 

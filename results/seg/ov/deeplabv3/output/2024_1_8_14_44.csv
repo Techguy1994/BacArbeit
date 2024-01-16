@@ -1,0 +1,8 @@
+,image,inference time,label
+0,/home/pi/sambashare/BacArbeit/images/2008_000016.jpg,3.807596376998845,"['background', 'tv']"
+1,/home/pi/sambashare/BacArbeit/images/2008_000009.jpg,3.7181970920009917,"['background', 'cow', 'horse']"
+2,/home/pi/sambashare/BacArbeit/images/2008_000073.jpg,3.7117124119995424,"['background', 'cat', 'cow', 'dog']"
+3,/home/pi/sambashare/BacArbeit/images/2008_000075.jpg,3.7192850110004656,"['background', 'bus']"
+4,/home/pi/sambashare/BacArbeit/images/2008_000120.jpg,3.7185157669991895,"['background', 'boat']"
+5,/home/pi/sambashare/BacArbeit/images/2008_000080.jpg,3.708958032000737,"['background', 'dog']"
+6,/home/pi/sambashare/BacArbeit/images/2008_000107.jpg,3.7128701280016685,"['background', 'chair']"
