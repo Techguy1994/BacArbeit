@@ -1,4 +1,7 @@
 
+from telnetlib import WILL
+
+
 def handle_output_tf(output_data, output_details, label, n_big):
     import numpy as np
     results = []
@@ -173,6 +176,77 @@ def handle_output_tf_yolo_det_old(output_details, intepreter, original_image, th
 
     return results
 
+def handle_output_tf_yolo_det_old_2(output_details, intepreter, original_image, thres, file_name, label):
+    import numpy as np
+    import cv2
+    import sys
+
+    print(thres)
+
+    results = []
+    output_data = []
+    all_det = []
+    nms_det = []
+
+
+    for det in output_details:
+        output_data.append(intepreter.get_tensor(det['index']))
+
+
+
+    output_data = output_data[0][0]
+    #print(output_data.shape)
+
+    boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
+    scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
+    classes = classFilter(output_data[..., 5:]) # get classes
+    # Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
+    x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
+
+    xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
+    coco_xywh = [x,y,w,h]
+
+    orig_W, orig_H = original_image.shape[1], original_image.shape[0]
+    #print("Boxes shape: ", boxes.shape)
+    #print("scores shape: ", scores.shape)
+    #print("Classes Len", len(classes))
+    #print("Orig: ", original_image.shape)
+    #print(orig_H, orig_W)
+
+    output_img = original_image
+    #print(thres)
+    for i in range(len(scores)):
+        if ((scores[i] > thres) and (scores[i] <= 1.0)):
+            #print(label[classes[i]],classes[i], scores[i])
+            xmin = max(1,(xyxy[0][i] * orig_W))
+            ymin = max(1,(xyxy[1][i] * orig_H))
+            xmax = min(orig_W,(xyxy[2][i] * orig_W))
+            ymax = min(orig_H,(xyxy[3][i] * orig_H))
+
+            all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
+
+    #print("start of iou")
+    #print(all_det)
+
+    while all_det:
+        element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
+        nms_det.append(all_det.pop(element))
+        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+    #print("")
+    #rint(nms_det)
+
+    #print(nms_det[0], nms_det[1])
+    
+
+    for det in nms_det:
+        #print(det) 
+        output_img = cv2.rectangle(output_img, (int(det[1][0]), int(det[1][1])), (int(det[1][2]), int(det[1][3])), (10, 255, 0), 2)
+        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
+
+    cv2.imwrite(file_name, output_img)
+
+    return results
+
 def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres, file_name, label):
     import numpy as np
     import cv2
@@ -192,15 +266,16 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
 
 
     output_data = output_data[0][0]
-    print(output_data.shape)
+    #print(output_data.shape)
 
     boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
     scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
     classes = classFilter(output_data[..., 5:]) # get classes
     # Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
     x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
-    #xywh = [x,y,w,h]
+
     xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
+    coco_xywh = [x- w/2,y-h/2,w,h]
 
     orig_W, orig_H = original_image.shape[1], original_image.shape[0]
     #print("Boxes shape: ", boxes.shape)
@@ -210,16 +285,20 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
     #print(orig_H, orig_W)
 
     output_img = original_image
-    print(thres)
+    #print(thres)
     for i in range(len(scores)):
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
-            print(label[classes[i]],classes[i], scores[i])
-            xmin = int(max(1,(xyxy[0][i] * orig_W)))
-            ymin = int(max(1,(xyxy[1][i] * orig_H)))
-            xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
-            ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
+            #print(label[classes[i]],classes[i], scores[i])
+            #xmin = max(1,(xyxy[0][i] * orig_W))
+            #ymin = max(1,(xyxy[1][i] * orig_H))
+            #xmax = min(orig_W,(xyxy[2][i] * orig_W))
+            #ymax = min(orig_H,(xyxy[3][i] * orig_H))
+            xl = coco_xywh[0][i]
+            yl = coco_xywh[1][i]
+            wl = coco_xywh[2][i]
+            hl = coco_xywh[3][i]
 
-            all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
+            all_det.append((classes[i],[xl, yl, wl, hl], scores[i]))
 
     #print("start of iou")
     #print(all_det)
@@ -227,7 +306,7 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
-        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1], orig_W, orig_H) <= 0.4), [det for det in all_det])]
     #print("")
     #rint(nms_det)
 
@@ -235,8 +314,24 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
     
 
     for det in nms_det:
+
+        x1 = det[1][0] 
+        y1 = det[1][1] 
+        w1 = det[1][2]
+        h1 = det[1][3]
+
+        x_min_org = x1
+        y_min_org = y1
+        x_max_org = x1 + w1
+        y_max_org = y1 + h1
+
+        xmin = max(1,(x_min_org * orig_W))
+        ymin = max(1,(y_min_org * orig_H))
+        xmax = min(orig_W,(x_max_org * orig_W))
+        ymax = min(orig_H,(y_max_org * orig_H))
+
         #print(det) 
-        output_img = cv2.rectangle(output_img, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
+        output_img = cv2.rectangle(output_img, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (10, 255, 0), 2)
         results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
 
     cv2.imwrite(file_name, output_img)
@@ -967,7 +1062,8 @@ def label_to_color_image(label, colormap):
 
     return colormap[label]
 
-def iou(box1, box2):
+def iou(box1_org, box2_org, orig_W, orig_H):
+    import sys
     """
     Calculates the intersection-over-union (IoU) value for two bounding boxes.
 
@@ -979,8 +1075,44 @@ def iou(box1, box2):
     Returns:
         Calculated intersection-over-union (IoU) value for two bounding boxes.
     """
-    print(box1)
-    print(box2)
+    #print(box1)
+    #print(box2)
+
+
+    x1 = box1_org[0] 
+    y1 = box1_org[1] 
+    w1 = box1_org[2]
+    h1 = box1_org[3]
+
+    x_min_org = x1
+    y_min_org = y1
+    x_max_org = x1 + w1
+    y_max_org = y1 + h1
+
+    xmin = max(1,(x_min_org * orig_W))
+    ymin = max(1,(y_min_org * orig_H))
+    xmax = min(orig_W,(x_max_org * orig_W))
+    ymax = min(orig_H,(y_max_org * orig_H))
+
+    box1 = [xmin, ymin, xmax, ymax]
+
+    x1 = box2_org[0] 
+    y1 = box2_org[1] 
+    w1 = box2_org[2]
+    h1 = box2_org[3]
+
+    x_min_org = x1
+    y_min_org = y1
+    x_max_org = x1 + w1
+    y_max_org = y1 + h1
+
+    xmin = max(1,(x_min_org * orig_W))
+    ymin = max(1,(y_min_org * orig_H))
+    xmax = min(orig_W,(x_max_org * orig_W))
+    ymax = min(orig_H,(y_max_org * orig_H))
+
+    box2 = [xmin, ymin, xmax, ymax]
+
     area_box1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
     area_box2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
 

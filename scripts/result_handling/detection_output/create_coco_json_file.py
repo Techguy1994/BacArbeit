@@ -22,7 +22,7 @@ def main():
 
     #label_dict = coco["names"]
 
-    df = pd.read_csv("2023_11_13_19_29.csv")
+    df = pd.read_csv("2024_1_25_21_32.csv")
     print(df)
 
     dict_result = df.to_dict()

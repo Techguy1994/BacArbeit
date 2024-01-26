@@ -129,9 +129,15 @@ def run_pyarmnn(args, raw_folder, overlay_folder, index_folder):
     for i in range(args.niter):
         for image in args.images:
             original_image = cv2.imread(image)
-            raw_file = os.path.join(raw_folder, image.split("/")[-1])
+            raw_file = image.split("/")[-1]
+            raw_file = raw_file.split(".")[0] + ".png"
+            raw_file = os.path.join(raw_folder, raw_file)
+
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
-            index_file = os.path.join(index_folder, image.split("/")[-1])
+
+            index_file = image.split("/")[-1]
+            index_file = index_file.split(".")[0] + ".png"
+            index_file = os.path.join(index_folder, index_file)
 
 
             processed_image = pre.preprocess_tf_deeplab(image, input_shape, data_type)
@@ -196,9 +202,15 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
     for i in range(args.niter):
         for image in args.images:
             original_image = cv2.imread(image)
-            raw_file = os.path.join(raw_folder, image.split("/")[-1])
+            raw_file = image.split("/")[-1]
+            raw_file = raw_file.split(".")[0] + ".png"
+            raw_file = os.path.join(raw_folder, raw_file)
+
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
-            index_file = os.path.join(index_folder, image.split("/")[-1])
+
+            index_file = image.split("/")[-1]
+            index_file = index_file.split(".")[0] + ".png"
+            index_file = os.path.join(index_folder, index_file)
 
             processed_image = pre.preprocess_onnx_deeplab(image , input_data_type, image_height, image_width)
 
@@ -253,9 +265,15 @@ def run_pytorch(args, raw_folder, overlay_folder, index_folder):
     for i in range(args.niter):
         for image in args.images:
             original_image = cv2.imread(image)
-            raw_file = os.path.join(raw_folder, image.split("/")[-1])
+            raw_file = image.split("/")[-1]
+            raw_file = raw_file.split(".")[0] + ".png"
+            raw_file = os.path.join(raw_folder, raw_file)
+
             overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
-            index_file = os.path.join(index_folder, image.split("/")[-1])
+
+            index_file = image.split("/")[-1]
+            index_file = index_file.split(".")[0] + ".png"
+            index_file = os.path.join(index_folder, index_file)
 
             input_batch = pre.preprocess_pytorch_deeplab(image, preprocess)
 
@@ -394,9 +412,17 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
 
     for i in range(args.niter):
         for j, input_tensor in enumerate(input_tensors):
-            raw_file = os.path.join(raw_folder, args.images[j].split("/")[-1])
+            raw_file = args.images[j].split("/")[-1]
+            print(raw_file)
+            raw_file = raw_file.split(".")[0] + ".png"
+            raw_file = os.path.join(raw_folder, raw_file)
+
             overlay_file = os.path.join(overlay_folder, args.images[j].split("/")[-1])
-            index_file = os.path.join(index_folder, args.images[j].split("/")[-1])
+
+            index_file = args.images[j].split("/")[-1]
+            index_file = index_file.split(".")[0] + ".png"
+            index_file = os.path.join(index_folder, index_file)
+            
             img_org = cv2.imread(args.images[j])
             print(args.images[j])
             #image_height, image_width = img_org.shape[1], img_org.shape[0]
