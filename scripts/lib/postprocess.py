@@ -330,9 +330,16 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
         xmax = min(orig_W,(x_max_org * orig_W))
         ymax = min(orig_H,(y_max_org * orig_H))
 
+        x_orig = round(x1 * orig_H, 2)
+        y_orig = round(y1 * orig_H, 2)
+        w_orig = round(w1 * orig_W, 2)
+        h_orig = round(h1 * orig_H, 2)
+
+        bbox = [x_orig, y_orig, w_orig, h_orig]
+
         #print(det) 
         output_img = cv2.rectangle(output_img, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (10, 255, 0), 2)
-        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
+        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": bbox})
 
     cv2.imwrite(file_name, output_img)
 
