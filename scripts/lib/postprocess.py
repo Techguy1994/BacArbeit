@@ -1,5 +1,4 @@
 
-from telnetlib import WILL
 
 
 def handle_output_tf(output_data, output_details, label, n_big):
@@ -486,7 +485,7 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
-        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+        all_det = [*filter(lambda x: (iou_pytorch(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
 
         
     for det in nms_det:
@@ -494,75 +493,19 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
         output_img = cv2.rectangle(img_org, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
         #print("value: ", det[2])
         #print("index: ", det[0])
-        #print("boxes: ", [det[1][0],det[1][1],det[1][2], det[1][3]])
+        print("boxes: ", [det[1][0],det[1][1],det[1][2], det[1][3]])
         #results.append({"label": label[det[0]]})
-        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
-        #sys.exit()
 
-    cv2.imwrite(img_result_file, output_img)
-
-    return results
-
-    
-
+        #convert to x,y,w,h
+        x_left = det[1][0]
+        y_left = det[1][1]
+        w = det[1][2] - det[1][0]
+        h = det[1][3] - det[1][1]
+        print(x_left, y_left, w ,h)
 
 
-    #print(output_details)
-    #output_data = output_details[0]
-    #print(output_data.shape)
-    #output_data = output_data[0]
-    #print(output_data.shape)
-
-    #boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
-    #scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
-    #classes = classFilter(output_data[..., 5:]) # get classes
-    # Convert nx4 boxes from [x, y, w, h] to [x1, y1, x2, y2] where xy1=top-left, xy2=bottom-right
-    #x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
-    #xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
-
-    #orig_W, orig_H = img_org.shape[1], img_org.shape[0]
-    #print("Boxes shape: ", boxes.shape)
-    #print("scores shape: ", scores.shape)
-    #print("Classes Len", len(classes))
-    #print("Orig: ", img_org.shape)
-    #print(orig_H, orig_W)
-
-    #ratio_H, ratio_W = orig_H/576, orig_W/768
-    #print(ratio_H, ratio_W)
-
-    output_img = img_org
-
-    for i in range(len(scores)):
-        if ((scores[i] > thres) and (scores[i] <= 1.0)):
-            print(label[classes[i]],classes[i], scores[i])
-            print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
-
-            xmin, ymin, xmax, ymax = int(xyxy[0][i]), int(xyxy[1][i]), int(xyxy[2][i]), int(xyxy[3][i])
-            #sys.exit()
-            #xmin = int(max(1,(xyxy[0][i] * orig_W)))
-            #ymin = int(max(1,(xyxy[1][i] * orig_H)))
-            #xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
-            #ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
-
-            #print(xmin, xmax, ymin, ymax)
-
-            #output_img = cv2.rectangle(output_img, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
-            #cv2.imwrite("test.jpg", output_img)
-            #sys.exit()
-            #results.append({"label": label[classes[i]],"index": classes[i], "value": scores[i]})
-
-            all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
-
-    while all_det:
-        element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
-        nms_det.append(all_det.pop(element))
-        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
-
-        
-    for det in nms_det:
-        #print(det) 
-        output_img = cv2.rectangle(output_img, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
-        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
+        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [x_left,y_left,w, h]})
+        sys.exit()
 
     cv2.imwrite(img_result_file, output_img)
 
@@ -1120,6 +1063,29 @@ def iou(box1_org, box2_org, orig_W, orig_H):
 
     box2 = [xmin, ymin, xmax, ymax]
 
+    area_box1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
+    area_box2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
+
+    if area_box1 <= 0 or area_box2 <= 0:
+        iou_value = 0
+    else:
+        y_min_intersection = max(box1[1], box2[1])
+        x_min_intersection = max(box1[0], box2[0])
+        y_max_intersection = min(box1[3], box2[3])
+        x_max_intersection = min(box1[2], box2[2])
+
+        area_intersection = max(0, y_max_intersection - y_min_intersection) *\
+                            max(0, x_max_intersection - x_min_intersection)
+        area_union = area_box1 + area_box2 - area_intersection
+
+        try:
+            iou_value = area_intersection / area_union
+        except ZeroDivisionError:
+            iou_value = 0
+
+    return iou_value
+
+def iou_pytorch(box1, box2):
     area_box1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
     area_box2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
 
