@@ -22,8 +22,8 @@ def main():
 
     #label_dict = coco["names"]
 
-    df = pd.read_csv("2024_1_25_21_32.csv")
-    print(df)
+    df = pd.read_csv("2024_2_5_11_59.csv")
+    #print(df)
 
     dict_result = df.to_dict()
     #print(dict_result)
@@ -37,9 +37,9 @@ def main():
         #image_id
         image_name = dict_result["image"][key].split("/")[-1]
         image_name = image_name.split(".jpg")[0]
-        print(image_name)
+        #print(image_name)
         #print(image_name.split("0"))
-        print(image_name.lstrip("0"))
+        #print(image_name.lstrip("0"))
         image_id = int(image_name.lstrip("0"))
         
 

@@ -40,7 +40,7 @@ def handle_image_directory(args):
         image_list = create_random_input(args.randomized_input)
         return image_list
 
-    if args.image_folder: 
+    if args.image_folder:
         if os.path.exists(args.image_folder):
             for img in os.listdir(args.image_folder):
                 if ".jpg" in img or ".JPEG" in img or ".png" in img and "._" not in img:

@@ -10,13 +10,13 @@ import json
 
 def convert_categroy_id_to_coco(category_id_name, ann_categories):
 
-        print(category_id_name)
+        #print(category_id_name)
 
         index = category_id_name.split(" ")[0]
-        print(index)
+        #print(index)
         category_id_name = category_id_name.split(index + " ")[-1]
 
-        print(category_id_name)
+        #print(category_id_name)
 
         for item in ann_categories:
              if category_id_name == item["name"]:
@@ -30,7 +30,7 @@ def main():
 
 
 
-    df = pd.read_csv("2023_11_13_19_29.csv")
+    df = pd.read_csv("2024_2_5_17_59.csv")
 
 
     dict_result = df.to_dict()
@@ -59,13 +59,13 @@ def main():
         for i in range(len(score)):
 
             category_id = convert_categroy_id_to_coco(category_id_name[i], ann_categories)
-            print("cat: ", category_id)
+            #print("cat: ", category_id)
 
-            print(score[i])
+            #print(score[i])
             json_list.append({"image_id": image_id, "category_id": category_id, "bbox": [float(bbox[i][0]), float(bbox[i][1]), float(bbox[i][2]), float(bbox[i][3])], "score": round(score[i],3)})
 
 
-        with open('data.json', 'w') as f:
+        with open('data_full_010_045.json', 'w') as f:
             json.dump(json_list, f)
 
 

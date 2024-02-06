@@ -477,7 +477,7 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
     for element in output:
         print(element)
 
-        if ((element[4] > thres) and (element[4] <= 1.0)):
+        if ((element[4] > 0.1) and (element[4] <= 1.0)):
             print([int(element[0]), int(element[1]), int(element[2]), int(element[3])])
             all_det.append((int(element[5]), [int(element[0]), int(element[1]), int(element[2]), int(element[3])], element[4]))
 
@@ -485,7 +485,7 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
-        all_det = [*filter(lambda x: (iou_pytorch(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+        all_det = [*filter(lambda x: (iou_pytorch(x[1], nms_det[-1][1]) <= 0.45), [det for det in all_det])]
 
         
     for det in nms_det:
@@ -493,7 +493,7 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
         output_img = cv2.rectangle(img_org, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
         #print("value: ", det[2])
         #print("index: ", det[0])
-        print("boxes: ", [det[1][0],det[1][1],det[1][2], det[1][3]])
+        #print("boxes: ", [det[1][0],det[1][1],det[1][2], det[1][3]])
         #results.append({"label": label[det[0]]})
 
         #convert to x,y,w,h
@@ -501,13 +501,15 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
         y_left = det[1][1]
         w = det[1][2] - det[1][0]
         h = det[1][3] - det[1][1]
-        print(x_left, y_left, w ,h)
+        #print(x_left, y_left, w ,h)
 
 
         results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [x_left,y_left,w, h]})
-        sys.exit()
 
-    cv2.imwrite(img_result_file, output_img)
+    print(results)
+    print(img_result_file)
+    if results:
+        cv2.imwrite(img_result_file, output_img)
 
     return results
 
@@ -567,7 +569,7 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
-        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.45), [det for det in all_det])]
 
         
     for det in nms_det:

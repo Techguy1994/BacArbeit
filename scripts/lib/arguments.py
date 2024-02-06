@@ -55,7 +55,7 @@ class Arguments:
         #other arguments 
         parser.add_argument("-s", "--sleep", help="when number of iterations defines time gap", required=False, default=0)
         parser.add_argument("-ni", "--niter", help="number of iterations", required=False, default=1)
-        parser.add_argument("-thres", "--threshold", help="threshold for object detectio", required=False, default=0.5)
+        parser.add_argument("-thres", "--threshold", help="threshold for object detectio", required=False, default=0.25)
         parser.add_argument("-ho", "--handle_output", help="defines wheter the output is handled", required=False, action="store_true", default="store_false")
         parser.add_argument("-p", "--profiler", help="define which profiler is to be used", required=False, default="perfcounter")
         parser.add_argument("-big", "--n_big", help=" n biggest results", required=False, default=5)
