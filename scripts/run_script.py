@@ -113,11 +113,26 @@ def handle_arguments():
 
     if number == 433:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "det", "-m", "yolov5l", "-imgp", "/home/pi/sambashare/BacArbeit/coco_test_images/",  "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
+
+
+
+    if number == 440:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "det", "-m", "yolov5l-fp16.tflite", "-imgp", "/Users/marounel-chayeb/sambashare/BacArbeit/coco_test_images/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
+    if number == 442:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "det", "-m", "yolov5l.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/coco_test_images/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
     if number == 443:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "det", "-m", "yolov5l", "-imgp", "/Users/marounel-chayeb/BacArbeit/coco_test_images",  "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
+    if number == 444:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "det", "-m", "yolov5l.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/coco_test_images/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
 
+
+    if number == 452:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "det", "-m", "yolov5l.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
     if number == 453:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "det", "-m", "yolov5l", "-imgp", "/Users/marounel-chayeb/BacArbeit/cocoval2017",  "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
+    if number == 454:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "det", "-m", "yolov5l.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
+
 
     # segmentation
     if number == 800:

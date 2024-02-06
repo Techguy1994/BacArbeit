@@ -30,7 +30,7 @@ def main():
 
 
 
-    df = pd.read_csv("2024_2_5_17_59.csv")
+    df = pd.read_csv("2024_2_6_13_20_ov.csv")
 
 
     dict_result = df.to_dict()
@@ -65,7 +65,7 @@ def main():
             json_list.append({"image_id": image_id, "category_id": category_id, "bbox": [float(bbox[i][0]), float(bbox[i][1]), float(bbox[i][2]), float(bbox[i][3])], "score": round(score[i],3)})
 
 
-        with open('data_full_010_045.json', 'w') as f:
+        with open('data_full_025_045_ov.json', 'w') as f:
             json.dump(json_list, f)
 
 

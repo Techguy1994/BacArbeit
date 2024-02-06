@@ -175,7 +175,7 @@ def handle_output_tf_yolo_det_old(output_details, intepreter, original_image, th
 
     return results
 
-def handle_output_tf_yolo_det_old_2(output_details, intepreter, original_image, thres, file_name, label):
+def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres, file_name, label):
     import numpy as np
     import cv2
     import sys
@@ -203,7 +203,6 @@ def handle_output_tf_yolo_det_old_2(output_details, intepreter, original_image, 
     x, y, w, h = boxes[..., 0], boxes[..., 1], boxes[..., 2], boxes[..., 3] #xywh
 
     xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
-    coco_xywh = [x,y,w,h]
 
     orig_W, orig_H = original_image.shape[1], original_image.shape[0]
     #print("Boxes shape: ", boxes.shape)
@@ -230,7 +229,7 @@ def handle_output_tf_yolo_det_old_2(output_details, intepreter, original_image, 
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
-        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.45), [det for det in all_det])]
     #print("")
     #rint(nms_det)
 
@@ -246,7 +245,7 @@ def handle_output_tf_yolo_det_old_2(output_details, intepreter, original_image, 
 
     return results
 
-def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres, file_name, label):
+def handle_output_tf_yolo_det_alt(output_details, intepreter, original_image, thres, file_name, label):
     import numpy as np
     import cv2
     import sys
@@ -424,7 +423,7 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
             #print(labels[classes[i]],classes[i], scores[i])
             #print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
-            xmin, ymin, xmax, ymax = int(xyxy[0][i]*ratio_W), int(xyxy[1][i]*ratio_H), int(xyxy[2][i]*ratio_W), int(xyxy[3][i]*ratio_H)
+            xmin, ymin, xmax, ymax = xyxy[0][i]*ratio_W, xyxy[1][i]*ratio_H, xyxy[2][i]*ratio_W, xyxy[3][i]*ratio_H
 
             all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
             #xmin = int(max(1,(xyxy[0][i] * orig_W)))
@@ -442,13 +441,19 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
-        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.4), [det for det in all_det])]
+        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.45), [det for det in all_det])]
 
         
     for det in nms_det:
         #print(det) 
-        output_img = cv2.rectangle(output_img, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
-        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
+        output_img = cv2.rectangle(output_img, (int(det[1][0]),int(det[1][1])), (int(det[1][2]), int(det[1][3])), (10, 255, 0), 2)
+
+        x_left = round(det[1][0], 2)
+        y_left = round(det[1][1], 2)
+        w = round(det[1][2] - det[1][0], 2)
+        h = round(det[1][3] - det[1][1], 2)
+
+        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [x_left,y_left, w, h]})
 
     cv2.imwrite(img_result_file, output_img)
 
@@ -477,30 +482,30 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
     for element in output:
         print(element)
 
-        if ((element[4] > 0.1) and (element[4] <= 1.0)):
-            print([int(element[0]), int(element[1]), int(element[2]), int(element[3])])
-            all_det.append((int(element[5]), [int(element[0]), int(element[1]), int(element[2]), int(element[3])], element[4]))
+        if ((element[4] > thres) and (element[4] <= 1.0)):
+            print([element[0], int(element[1]), int(element[2]), int(element[3])])
+            all_det.append((int(element[5]), [element[0], element[1], element[2], element[3]], element[4]))
 
     
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
-        all_det = [*filter(lambda x: (iou_pytorch(x[1], nms_det[-1][1]) <= 0.45), [det for det in all_det])]
+        all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.45), [det for det in all_det])]
 
         
     for det in nms_det:
         #print(det) 
-        output_img = cv2.rectangle(img_org, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
+        output_img = cv2.rectangle(img_org, (int(det[1][0]),int(det[1][1])), (int(det[1][2]), int(det[1][3])), (10, 255, 0), 2)
         #print("value: ", det[2])
         #print("index: ", det[0])
         #print("boxes: ", [det[1][0],det[1][1],det[1][2], det[1][3]])
         #results.append({"label": label[det[0]]})
 
         #convert to x,y,w,h
-        x_left = det[1][0]
-        y_left = det[1][1]
-        w = det[1][2] - det[1][0]
-        h = det[1][3] - det[1][1]
+        x_left = round(det[1][0], 2)
+        y_left = round(det[1][1], 2)
+        w = round(det[1][2] - det[1][0], 2)
+        h = round(det[1][3] - det[1][1], 2)
         #print(x_left, y_left, w ,h)
 
 
@@ -557,7 +562,7 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
             #print(labels[classes[i]],classes[i], scores[i])
             #print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
-            xmin, ymin, xmax, ymax = int(xyxy[0][i]*ratio_W), int(xyxy[1][i]*ratio_H), int(xyxy[2][i]*ratio_W), int(xyxy[3][i]*ratio_H)
+            xmin, ymin, xmax, ymax = xyxy[0][i]*ratio_W, xyxy[1][i]*ratio_H, xyxy[2][i]*ratio_W, xyxy[3][i]*ratio_H
             #xmin = int(max(1,(xyxy[0][i] * orig_W)))
             #ymin = int(max(1,(xyxy[1][i] * orig_H)))
             #xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
@@ -574,8 +579,14 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
         
     for det in nms_det:
         #print(det) 
-        output_img = cv2.rectangle(output_img, (det[1][0],det[1][1]), (det[1][2], det[1][3]), (10, 255, 0), 2)
-        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
+
+        x_left = round(det[1][0], 2)
+        y_left = round(det[1][1], 2)
+        w = round(det[1][2] - det[1][0], 2)
+        h = round(det[1][3] - det[1][1], 2)
+
+        output_img = cv2.rectangle(output_img, (int(det[1][0]),int(det[1][1])), (int(det[1][2]), int(det[1][3])), (10, 255, 0), 2)
+        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [x_left,y_left, w, h]})
 
     cv2.imwrite(img_result_file, output_img)
 
@@ -1014,7 +1025,7 @@ def label_to_color_image(label, colormap):
 
     return colormap[label]
 
-def iou(box1_org, box2_org, orig_W, orig_H):
+def iou_old(box1_org, box2_org, orig_W, orig_H):
     import sys
     """
     Calculates the intersection-over-union (IoU) value for two bounding boxes.
@@ -1087,7 +1098,7 @@ def iou(box1_org, box2_org, orig_W, orig_H):
 
     return iou_value
 
-def iou_pytorch(box1, box2):
+def iou(box1, box2):
     area_box1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
     area_box2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
 
