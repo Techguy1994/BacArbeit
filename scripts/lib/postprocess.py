@@ -237,9 +237,14 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
     
 
     for det in nms_det:
-        #print(det) 
+
+        x_left = round(det[1][0], 2)
+        y_left = round(det[1][1], 2)
+        w = round(det[1][2] - det[1][0], 2)
+        h = round(det[1][3] - det[1][1], 2)
+  
         output_img = cv2.rectangle(output_img, (int(det[1][0]), int(det[1][1])), (int(det[1][2]), int(det[1][3])), (10, 255, 0), 2)
-        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [det[1][0],det[1][1],det[1][2], det[1][3]]})
+        results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [x_left, y_left, w, h]})
 
     cv2.imwrite(file_name, output_img)
 
