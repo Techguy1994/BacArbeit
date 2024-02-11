@@ -9,7 +9,6 @@ def main():
 
 def handle_arguments():
     number = int(sys.argv[1])
-    print(number)
 
     #classification 1, 00 tf, 20 pyarmnn, 40 onnx, 60 pytorch, 80 openvino
     if number == 100:

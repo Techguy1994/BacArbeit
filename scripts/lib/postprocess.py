@@ -534,10 +534,10 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
     for elem in output_details:
         output_data = output_details[elem]
 
-    print(output_data)
-    print(output_data.shape)
+    #print(output_data)
+    #print(output_data.shape)
     output_data = output_data[0]
-    print(output_data.shape)
+    #print(output_data.shape)
     #output_details = output_details[0]
     #print(output_details.shape)
 
@@ -549,17 +549,17 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
     xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
 
     orig_W, orig_H = img_org.shape[1], img_org.shape[0]
-    print("Boxes shape: ", boxes.shape)
-    print("scores shape: ", scores.shape)
-    print("Classes Len", len(classes))
-    print("Orig: ", img_org.shape)
-    print(orig_H, orig_W)
+    #print("Boxes shape: ", boxes.shape)
+    #print("scores shape: ", scores.shape)
+    #print("Classes Len", len(classes))
+    #print("Orig: ", img_org.shape)
+    #print(orig_H, orig_W)
 
     ratio_H, ratio_W = orig_H/model_shape[0], orig_W/model_shape[1]
     
-    print("model shape: ", model_shape[0], model_shape[1])
-    print(orig_H, orig_W)
-    print(ratio_H, ratio_W)
+    #print("model shape: ", model_shape[0], model_shape[1])
+    #print(orig_H, orig_W)
+    #print(ratio_H, ratio_W)
 
     output_img = img_org
 
@@ -567,11 +567,11 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
             #print(labels[classes[i]],classes[i], scores[i])
             #print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
-            xmin, ymin, xmax, ymax = xyxy[0][i]*ratio_W, xyxy[1][i]*ratio_H, xyxy[2][i]*ratio_W, xyxy[3][i]*ratio_H
-            #xmin = int(max(1,(xyxy[0][i] * orig_W)))
-            #ymin = int(max(1,(xyxy[1][i] * orig_H)))
-            #xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
-            #ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
+            #xmin, ymin, xmax, ymax = xyxy[0][i]*ratio_W, xyxy[1][i]*ratio_H, xyxy[2][i]*ratio_W, xyxy[3][i]*ratio_H
+            xmin = int(max(1,(xyxy[0][i] * orig_W)))
+            ymin = int(max(1,(xyxy[1][i] * orig_H)))
+            xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
+            ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
 
             all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
 
@@ -639,11 +639,11 @@ def handle_output_deeplab_tf_alt(output_details, interpreter, image, raw_file, o
     height = image.shape[0]
 
     output_data = interpreter.get_tensor(output_details[0]['index'])
-    print(output_data.shape)
+    #print(output_data.shape)
 
     output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
 
-    print("outputclasses shape: ", output_classes.shape)
+    #print("outputclasses shape: ", output_classes.shape)
     
 
     unique_labels = np.unique(output_classes)
@@ -682,7 +682,7 @@ def handle_output_deeplab_pyarmnn(output_data, image, raw_file, overlay_file, in
 
     output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
 
-    print(output_classes.shape)
+    #print(output_classes.shape)
 
     unique_labels = np.unique(output_classes)
     label = np.asarray(label)
@@ -761,7 +761,7 @@ def handle_output_deeplab_onnx(output_data, image, raw_file, overlay_file, index
 
     output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
 
-    print(output_classes.shape)
+    #print(output_classes.shape)
 
     unique_labels = np.unique(output_classes)
     label = np.asarray(label)
@@ -824,11 +824,11 @@ def handle_output_deeplab_pytorch(output_data, image, raw_file, overlay_file, in
     height = image.shape[0]
 
     output_data = output_data.numpy()
-    print(output_data.shape)
+    #print(output_data.shape)
 
     output_classes = np.uint8(np.argmax(output_data, axis=0))
 
-    print(output_classes.shape)
+    #print(output_classes.shape)
 
     unique_labels = np.unique(output_classes)
     label = np.asarray(label)

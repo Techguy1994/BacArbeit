@@ -30,7 +30,7 @@ def main():
 
 
 
-    df = pd.read_csv("2024_2_7_0_15_tf.csv")
+    df = pd.read_csv("2024_2_10_22_30_ov_alt.csv")
 
 
     dict_result = df.to_dict()
@@ -59,13 +59,14 @@ def main():
         for i in range(len(score)):
 
             category_id = convert_categroy_id_to_coco(category_id_name[i], ann_categories)
+            print(i)
             #print("cat: ", category_id)
 
             #print(score[i])
             json_list.append({"image_id": image_id, "category_id": category_id, "bbox": [float(bbox[i][0]), float(bbox[i][1]), float(bbox[i][2]), float(bbox[i][3])], "score": round(score[i],3)})
 
 
-        with open('data_full_025_045_tf.json', 'w') as f:
+        with open('data_full_025_045_ov_alt.json', 'w') as f:
             json.dump(json_list, f)
 
 
