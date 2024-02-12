@@ -10,3 +10,7 @@
 *.DS_Store
 *._.DS_Store
 *.json
+results/
+results_raspberry_os/
+results_ubuntu_server/
+scripts/tests/
