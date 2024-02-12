@@ -428,13 +428,15 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
             #print(labels[classes[i]],classes[i], scores[i])
             #print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
-            xmin, ymin, xmax, ymax = xyxy[0][i]*ratio_W, xyxy[1][i]*ratio_H, xyxy[2][i]*ratio_W, xyxy[3][i]*ratio_H
+            #xmin, ymin, xmax, ymax = xyxy[0][i]*ratio_W, xyxy[1][i]*ratio_H, xyxy[2][i]*ratio_W, xyxy[3][i]*ratio_H
+
+            xmin = int(max(1,(xyxy[0][i] * orig_W)))
+            ymin = int(max(1,(xyxy[1][i] * orig_H)))
+            xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
+            ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
 
             all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
-            #xmin = int(max(1,(xyxy[0][i] * orig_W)))
-            #ymin = int(max(1,(xyxy[1][i] * orig_H)))
-            #xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
-            #ymax = int(min(orig_H,(xyxy[3][i] * orig_H)))
+
 
             #print(xmin, xmax, ymin, ymax)
 
