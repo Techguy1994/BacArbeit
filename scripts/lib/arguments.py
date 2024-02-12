@@ -4,7 +4,6 @@ import sys
 
 class Arguments:
     def __init__(self):
-        print("Hi")
         self.args = self.arguments()
         self.model = d.handle_model_directory(self.args)
         self.images = d.handle_image_directory(self.args)

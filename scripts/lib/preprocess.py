@@ -59,21 +59,15 @@ def preprocess_tflite_yolov5(image_path, height, width, data_type):
 
     return image_data, orig_img
 
-def preprocess_onnx_yolov5(image_path, input_type, height, width):
+def preprocess_onnx_yolov5(image_data, input_type, height, width):
     import numpy as np
     import cv2
-    image_data = cv2.imread(image_path)
-    #orig_img = image_data
+
     image_data = cv2.resize(image_data, (height, width))
-    #resized_img = image_data
-    #if input_type is np.float32:
-    #    print("float model")
-    print("before: ", image_data.shape)
     image_data = image_data.transpose([2, 0, 1])
-    print("after: ", image_data.shape)
-    image_data = np.float32(image_data / 255)
+    #image_data = np.float32(image_data)
+    image_data = np.float32(image_data/255)
     image_data = np.expand_dims(image_data, axis=0)
-    print(image_data.shape)
 
     return image_data
 

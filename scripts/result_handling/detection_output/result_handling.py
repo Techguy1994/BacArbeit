@@ -29,7 +29,7 @@ def handle_arguments():
     parser.add_argument("-s", "--skip_json_creation", required=False, action="store_true")
     args = parser.parse_args()
 
-    return args.type, args.model_name, args.result_file, args.skip
+    return args.type, args.model_name, args.result_file, args.skip_json_creation
 
 def get_current_general_directory(type, result_file, model_name):
 
@@ -86,7 +86,7 @@ def get_json_file(csv_file, json_name):
     ann_categories = ann["categories"]
 
     for key in dict_result["image"]:
-        print(key)
+        #print(key)
 
         image_name = dict_result["image"][key].split("/")[-1]
         image_name = image_name.split(".jpg")[0]
@@ -110,7 +110,7 @@ def get_json_file(csv_file, json_name):
         with open('temp.json', 'w') as f:
             json.dump(json_list, f)
     
-def coco_scoring():
+def coco_scoring(json_name):
     annType = ['segm','bbox','keypoints']
     annType = annType[1]      #specify type here
     print('Running demo for *%s* results.'%(annType))
