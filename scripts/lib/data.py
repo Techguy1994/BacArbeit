@@ -70,11 +70,11 @@ def store_output_dictionary_seg(data, image, time, output):
     data["inference time"].append(time)
     data["label"].append([])
 
-    print(output)
+    #print(output)
     
     for i in range(len(output)):
-        print(data["label"][-1])
-        print(output[i])
+        #print(data["label"][-1])
+        #print(output[i])
         data["label"][-1].append(output[i])
 
     return data
@@ -121,7 +121,7 @@ def store_output_dictionary_seg_only_lat(data, image, time):
 
 
 def create_pandas_dataframe(dict):
-    print(dict)
+    #print(dict)
     df = pd.DataFrame(dict)
     return df
 

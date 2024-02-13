@@ -10,19 +10,30 @@ import numpy as np
 from PIL import Image
 
 def run_tf(args, output_image_folder):
-    
-    import tflite_runtime.interpreter as tflite
+
+    try:
+        import tflite_runtime.interpreter as tflite
+
+        #delegate_input
+        if args.api == "delegate":
+            print("delegate")
+            armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+        else:
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+    except:
+        import tensorflow as tf
+
+        if args.api == "delegate":
+            print("delegate")
+            armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+        else:
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
 
     output_dict = dat.create_base_dictionary_det()
-    
-    #delegate_input
-    if args.api == "delegate":
-        print("delegate")
-        armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
-                                          options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
-    else:
-        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
 
     interpreter.allocate_tensors()
 
@@ -60,7 +71,7 @@ def run_tf(args, output_image_folder):
         time.sleep(args.sleep)     
 
     df = dat.create_pandas_dataframe(output_dict)
-    print("pandas output: ", df)
+    #print("pandas output: ", df)
 
     return df 
 
@@ -144,11 +155,11 @@ def run_pyarmnn(args, output_image_folder):
     return df
 
 
+
 def run_onnx(args, output_image_folder):
     print("Chosen API: Onnx runtime")
 
     import onnxruntime
-    import json
 
     output_dict = dat.create_base_dictionary_det()
 
@@ -156,16 +167,16 @@ def run_onnx(args, output_image_folder):
     providers = ['CPUExecutionProvider']
 
     session = onnxruntime.InferenceSession(args.model, options, providers=providers)
-    print(session.get_providers())
+    #print(session.get_providers())
 
     input_name = session.get_inputs()[0].name
     outputs = []
     #print(session.get_outputs()[0].name, session.get_outputs()[1].name, session.get_outputs()[2].name, session.get_outputs()[3].name)
-    #outputs = [session.get_outputs()[0].name, session.get_outputs()[1].name, session.get_outputs()[2].name, session.get_outputs()[3].name]
+
     for ses in session.get_outputs():
         outputs.append(ses.name)
     #outputs = [session.get_outputs()[0].name]
-    print(outputs)
+    #print(outputs)
     #output_name = session.get_outputs()[0].name
     #print(output_name)
 
@@ -184,13 +195,13 @@ def run_onnx(args, output_image_folder):
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()
-                output = session.run(outputs, {input_name: pre.preprocess_onnx_yolov5(image, input_data_type, image_height, image_width)})
+                output = session.run(outputs, {input_name: pre.preprocess_onnx_yolov5(img_org, input_data_type, image_height, image_width)})
                 end_time = perf_counter()
                 lat = end_time - start_time
                 print("time in ms: ", lat*1000)
             else:
                 lat = 0
-                output = session.run(outputs, {input_name: pre.preprocess_onnx_yolov5(image, input_data_type, image_height, image_width)})
+                output = session.run(outputs, {input_name: pre.preprocess_onnx_yolov5(img_org, input_data_type, image_height, image_width)})
             
             if not args.skip_output:
                 output = post.handle_output_onnx_yolo_det(output, img_org, args.thres, image_result_file, args.label,(image_height, image_width))
@@ -199,12 +210,12 @@ def run_onnx(args, output_image_folder):
                 output_dict = dat.store_output_dictionary_det_only_lat(output_dict, image, lat)
 
             df = dat.create_pandas_dataframe(output_dict)
-            print("pandas output: ", df)
+            #print("pandas output: ", df)
 
         time.sleep(args.sleep) 
 
     df = dat.create_pandas_dataframe(output_dict)
-    print("pandas output: ", df)    
+    #print("pandas output: ", df)    
 
     return df
 
@@ -221,7 +232,7 @@ def run_pytorch(args, output_image_folder):
 
     preprocess = pre.preprocess_pytorch_yolo()
 
-    print(args.images)
+    #print(args.images)
 
     for i in range(args.niter):
         for image in args.images:
@@ -229,11 +240,11 @@ def run_pytorch(args, output_image_folder):
             img_org = cv2.imread(image)
             input_image = Image.open(image)
 
-            input_tensor = preprocess(input_image)
-            print(input_tensor.shape)
+            #input_tensor = preprocess(input_image)
+            #print(input_tensor.shape)
             #input_batch = input_tensor
-            input_batch = input_tensor.unsqueeze(0) 
-            print(input_batch.shape)
+            #input_batch = input_tensor.unsqueeze(0) 
+            #print(input_batch.shape)
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()
@@ -256,7 +267,7 @@ def run_pytorch(args, output_image_folder):
         time.sleep(args.sleep)    
 
     df = dat.create_pandas_dataframe(output_dict)
-    print("pandas output: ", df) 
+    #print("pandas output: ", df) 
 
     return df
 
@@ -338,7 +349,7 @@ def run_sync_ov(args, output_image_folder):
         for j, input_tensor in enumerate(input_tensors):
             image_result_file = os.path.join(output_image_folder, args.images[j].split("/")[-1])
             img_org = cv2.imread(args.images[j])
-            print(args.images[j])
+            #print(args.images[j])
             image_height, image_width = img_org.shape[1], img_org.shape[0]
 
             if args.profiler == "perfcounter":
@@ -352,7 +363,6 @@ def run_sync_ov(args, output_image_folder):
                 result = compiled_model.infer_new_request({0: input_tensor})
             
             if not args.skip_output:
-                print(result)
 
                 output = post.handle_output_ov_yolo_det(result, img_org, args.thres, image_result_file, args.label,(640, 640))
                 output_dict = dat.store_output_dictionary_det(output_dict, args.images[j], lat, output)
@@ -362,7 +372,7 @@ def run_sync_ov(args, output_image_folder):
         time.sleep(args.sleep) 
 
     df = dat.create_pandas_dataframe(output_dict)
-    print("pandas output: ", df)    
+    #print("pandas output: ", df)    
 
     return df
 

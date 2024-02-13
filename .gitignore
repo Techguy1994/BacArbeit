@@ -10,3 +10,14 @@
 *.DS_Store
 *._.DS_Store
 *.json
+results/
+ubuntu_server_install
+ubuntu_server_installation
+results_raspberry_os/
+results_ubuntu_server/
+other/
+pascal_voc_2012/
+randomized_iamges/
+archive_imgs/
+coco_test_images/
+cocoval2017/
