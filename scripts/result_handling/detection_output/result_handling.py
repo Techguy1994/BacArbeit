@@ -107,7 +107,7 @@ def get_json_file(csv_file, json_name):
             #print(score[i])
             json_list.append({"image_id": image_id, "category_id": category_id, "bbox": [float(bbox[i][0]), float(bbox[i][1]), float(bbox[i][2]), float(bbox[i][3])], "score": round(score[i],3)})
 
-        with open('temp.json', 'w') as f:
+        with open(json_name, 'w') as f:
             json.dump(json_list, f)
     
 def coco_scoring(json_name):
@@ -116,7 +116,7 @@ def coco_scoring(json_name):
     print('Running demo for *%s* results.'%(annType))
 
     annFile = "instances_val2017.json"
-    resFile = "temp.json"
+    resFile = json_name
 
     #initialize COCO ground truth api
 
