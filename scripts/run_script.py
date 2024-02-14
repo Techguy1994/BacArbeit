@@ -8,7 +8,12 @@ def main():
     
 
 def handle_arguments():
-    number = int(sys.argv[1])
+    parser = argparse.ArgumentParser(description='Raspberry Pi 4 Inference Module for Classification')
+
+        #basic settings
+    parser.add_argument("-n", '--n', help='inference API: pyarmnn, tf, ov, onnx, pytorch', required=True) #which api to use
+    args = parser.parse_args()
+    number = int(args.n)
 
     #classification 1, 00 tf, 20 pyarmnn, 40 onnx, 60 pytorch, 80 openvino
     if number == 100:
@@ -153,6 +158,9 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "det", "-m", "yolov5n.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
     if number == 523:
         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "det", "-m", "yolov5s.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
+
+    if number == 550:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "det", "-m", "yolov5l", "-imgp", "/Users/marounel-chayeb/BacArbeit/cocoval2017",  "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25"], shell=False)
 
 
     # segmentation

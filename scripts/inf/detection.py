@@ -225,8 +225,14 @@ def run_pytorch(args, output_image_folder):
     from torchvision import models, transforms
 
     output_dict = dat.create_base_dictionary_det()
-
-    model = torch.hub.load("ultralytics/yolov5", "yolov5l", pretrained=True)
+    if args.model == "yolov5l":
+        model = torch.hub.load("ultralytics/yolov5", "yolov5l", pretrained=True)
+    elif args.model == "yolov5m":
+        model = torch.hub.load("ultralytics/yolov5", "yolov5m", pretrained=True)
+    elif args.model == "yolov5n":
+        model = torch.hub.load("ultralytics/yolov5", "yolov5n", pretrained=True)
+    elif args.model == "yolov5s":
+        model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
 
     model.eval()
 
