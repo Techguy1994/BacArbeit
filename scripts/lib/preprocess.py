@@ -132,7 +132,29 @@ def preprocess_pytorch_deeplab(image, preprocess):
     input_batch = input_tensor.unsqueeze(0)
     return input_batch
 
-def preprocess_ov_yolo():
-    pass
+def preprocess_ov_yolo(shape, image):
+    import cv2
+    import numpy as np
+
+        # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    # Read input images
+    #images = [cv2.imread(image_path) for image_path in args.images]
+
+    # Resize images to model input dims
+    _, _, h, w = shape
+    #_, h, w, _ = model.input().shape
+    #print("Model input shape: ",model.input().shape)
+    #h, w = 224, 224
+
+    #resized_images = [cv2.resize(image, (w, h)) for image in images]
+    resized_image = cv2.resize(image, (w, h))
+
+    # Add N dimension
+    #input_tensors = [np.expand_dims(image, 0) for image in resized_images]
+    input_tensor = np.expand_dims(resized_image, 0)
+    #print("input tensor shape: ", input_tensors[0].shape)
+
+    return input_tensor
+
 
 

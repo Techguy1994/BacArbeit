@@ -310,24 +310,24 @@ def run_sync_ov(args, output_image_folder):
         return -1
     
 
-    
     # --------------------------- Step 3. Set up input --------------------------------------------------------------------
     # Read input images
-    images = [cv2.imread(image_path) for image_path in args.images]
+    #images = [cv2.imread(image_path) for image_path in args.images]
 
     # Resize images to model input dims
-    _, _, h, w = model.input().shape
+    shape = model.input().shape
     #_, h, w, _ = model.input().shape
     print("Model input shape: ",model.input().shape)
     #h, w = 224, 224
 
-    resized_images = [cv2.resize(image, (w, h)) for image in images]
+    #resized_images = [cv2.resize(image, (w, h)) for image in images]
 
     
 
     # Add N dimension
-    input_tensors = [np.expand_dims(image, 0) for image in resized_images]
-    print("input tensor shape: ", input_tensors[0].shape)
+    #input_tensors = [np.expand_dims(image, 0) for image in resized_images]
+    #print("input tensor shape: ", input_tensors[0].shape)
+    
 
     # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
     # Step 4. Inizialize Preprocessing for the model
@@ -354,11 +354,15 @@ def run_sync_ov(args, output_image_folder):
 
 
     for i in range(args.niter):
-        for j, input_tensor in enumerate(input_tensors):
-            image_result_file = os.path.join(output_image_folder, args.images[j].split("/")[-1])
-            img_org = cv2.imread(args.images[j])
-            #print(args.images[j])
+        for image in args.images:
+            
+            
+            image_result_file = os.path.join(output_image_folder, image.split("/")[-1])
+            img_org = cv2.imread(image)
+            
             image_height, image_width = img_org.shape[1], img_org.shape[0]
+            input_tensor = pre.preprocess_ov_yolo(shape, img_org)
+
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()
@@ -373,7 +377,7 @@ def run_sync_ov(args, output_image_folder):
             if not args.skip_output:
 
                 output = post.handle_output_ov_yolo_det(result, img_org, args.thres, image_result_file, args.label,(640, 640))
-                output_dict = dat.store_output_dictionary_det(output_dict, args.images[j], lat, output)
+                output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
             else:
                 output_dict = dat.store_output_dictionary_det_only_lat(output_dict, args.images[j], lat)
 
