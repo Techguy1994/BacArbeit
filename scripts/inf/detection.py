@@ -309,6 +309,8 @@ def run_sync_ov(args, output_image_folder):
         log.error('Sample supports only single output topologies')
         return -1
     
+
+    
     # --------------------------- Step 3. Set up input --------------------------------------------------------------------
     # Read input images
     images = [cv2.imread(image_path) for image_path in args.images]
@@ -319,7 +321,7 @@ def run_sync_ov(args, output_image_folder):
     print("Model input shape: ",model.input().shape)
     #h, w = 224, 224
 
-    resized_images = [cv2.resize(image, (640, 640)) for image in images]
+    resized_images = [cv2.resize(image, (w, h)) for image in images]
 
     
 

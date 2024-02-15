@@ -132,4 +132,7 @@ def preprocess_pytorch_deeplab(image, preprocess):
     input_batch = input_tensor.unsqueeze(0)
     return input_batch
 
+def preprocess_ov_yolo():
+    pass
+
 
