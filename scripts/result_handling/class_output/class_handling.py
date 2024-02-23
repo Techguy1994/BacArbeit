@@ -9,11 +9,11 @@ def main():
     import csv
     import xml.etree.cElementTree as ET
     
-    with open('2023_11_5_21_22.csv') as csv_file:
+    with open('2024_2_16_16_33.csv') as csv_file:
         csv_reader = csv.reader(csv_file)
 
         
-        number_of_images = 5
+        number_of_images = 50000
         acc_5 = 0
         acc_1 = 0
 

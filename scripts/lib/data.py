@@ -19,7 +19,6 @@ def store_output_dictionary_class(data, image, time, output, n_big):
     data["image"].append(image)
     data["inference time"].append(time)
 
-
     for i in range(n_big):
         data["label" + str(i+1)].append(output[i]["label"])
         data["index" + str(i+1)].append(output[i]["index"])

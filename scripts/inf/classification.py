@@ -12,17 +12,29 @@ import cv2
 
 def run_tf(args):
     #import tensorflow as tf
-    import tflite_runtime.interpreter as tflite
-    
-    output_dict = dat.create_base_dictionary_class(args.n_big)
+    try:
+        import tflite_runtime.interpreter as tflite
 
-    #delegate_input
-    if args.api == "delegate":
-        armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
-                                          options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
-    else:
-        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+        #delegate_input
+        if args.api == "delegate":
+            print("delegate")
+            armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+        else:
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+    except:
+        import tensorflow as tf
+
+        if args.api == "delegate":
+            print("delegate")
+            armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+        else:
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+
+    output_dict = dat.create_base_dictionary_class(args.n_big)
 
     interpreter.allocate_tensors()
 
@@ -36,6 +48,7 @@ def run_tf(args):
 
     for i in range(args.niter):
         for image in args.images:
+            print(image)
             processed_image = pre.preprocess_tflite_moobilenet(image, input_shape[1], input_shape[2], input_type)
             interpreter.set_tensor(input_details[0]['index'], processed_image)
 
@@ -169,6 +182,7 @@ def run_onnx(args):
 
     for i in range(args.niter):
         for image in args.images:
+            print(image)
             processed_image = pre.preprocess_onnx_mobilenet(image, image_height, image_width, input_data_type)
 
             if args.profiler == "perfcounter":
@@ -202,12 +216,17 @@ def run_pytorch(args):
     
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
-    func_call = pt.load_pytorch_model(args.model)
+    if args.model == "mobilenet_v2":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
+    elif args.model == "mobilenet_v3_large":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_large', pretrained=True)
+
+    #func_call = pt.load_pytorch_model(args.model)
 
     #func_call = "models." + args.model + "(pretrained=True)"
     #model = func_call
     #print(func_call)
-    model = eval(func_call)
+    #model = eval(func_call)
 
     #model = models.mobilenet_v2(pretrained=True)
 
@@ -218,6 +237,11 @@ def run_pytorch(args):
     for i in range(args.niter):
         for image in args.images:
             input_image = Image.open(image)
+            print(len(np.shape(np.asarray(input_image).astype(float))))
+
+            if len(np.shape(np.asarray(input_image).astype(np.float32))) == 2:
+                print("found")
+                input_image = input_image.convert("RGB")
 
             input_tensor = preprocess(input_image)
             input_batch = input_tensor.unsqueeze(0) 
@@ -279,18 +303,18 @@ def run_sync_ov(args):
     
     # --------------------------- Step 3. Set up input --------------------------------------------------------------------
     # Read input images
-    images = [cv2.imread(image_path) for image_path in args.images]
+    #images = [cv2.imread(image_path) for image_path in args.images]
 
     # Resize images to model input dims
-    _, _, h, w = model.input().shape
+    shape = model.input().shape
     #_, h, w, _ = model.input().shape
     print(model.input().shape)
     #h, w = 224, 224
 
-    resized_images = [cv2.resize(image, (w, h)) for image in images]
+    #resized_images = [cv2.resize(image, (w, h)) for image in images]
 
     # Add N dimension
-    input_tensors = [np.expand_dims(image, 0) for image in resized_images]
+    #input_tensors = [np.expand_dims(image, 0) for image in resized_images]
 
     # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
     ppp = PrePostProcessor(model)
@@ -325,26 +349,29 @@ def run_sync_ov(args):
     print("optimal number of requests", num_requests)
 
     for i in range(args.niter):
-        for j, input_tensor in enumerate(input_tensors):
-            for image in images:
-                if args.profiler == "perfcounter":
-                    start_time = perf_counter()
-                    result = compiled_model.infer_new_request({0: input_tensor})
-                    end_time = perf_counter()
-                    lat = end_time - start_time
-                    print("time in ms: ", lat*1000)
-                    
-                    df = dat.create_pandas_dataframe(output_dict)
-                else:
-                    result = compiled_model.infer_new_request({0: input_tensor})
+        for image in args.images:
+            img_org = cv2.imread(image)
+            input_tensor = pre.preprocess_ov_mobilenet(shape, img_org)
 
-                if not args.skip_output:
-                    output = post.handle_output_openvino_moiblenet_class(result, args.label, args.n_big)
-                    output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
-                else:
-                    output_dict = dat.store_output_dictionary_only_lat(output_dict, image, lat, args.n_big)
-
+            if args.profiler == "perfcounter":
+                start_time = perf_counter()
+                result = compiled_model.infer_new_request({0: input_tensor})
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+                
                 df = dat.create_pandas_dataframe(output_dict)
+            else:
+                result = compiled_model.infer_new_request({0: input_tensor})
+
+            if not args.skip_output:
+                output = post.handle_output_openvino_moiblenet_class(result, args.label, args.n_big)
+                #print(output)
+                output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+            else:
+                output_dict = dat.store_output_dictionary_only_lat(output_dict, image, lat, args.n_big)
+
+            df = dat.create_pandas_dataframe(output_dict)
 
         time.sleep(args.sleep)
 

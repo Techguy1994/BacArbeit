@@ -4,8 +4,29 @@ def preprocess_tflite_moobilenet(image_path, height, width, data_type):
     import numpy as np
 
     image = Image.open(image_path)
+    
     image = image.resize((width, height), Image.LANCZOS)
+    #image = image.convert("RGB")
+    #image_data = np.asarray(image).astype(data_type)
+    #print(len(np.shape(image_data)))
+    #print(np.shape(image_data))
+
+    if len(np.shape(np.asarray(image).astype(data_type))) == 2:
+        image = image.convert("RGB")
+    
     image_data = np.asarray(image).astype(data_type)
+
+    
+    #print(len(np.shape(image_data)))
+    #print(np.shape(image_data))
+
+    #print(image_data.flags)
+    #image_data = np.atleast_3d(image)
+    #image_data.setflags(write=1)
+    
+    #print(np.shape(image_data))
+    #print(image_data.flags)
+
     if data_type is np.float32:
         for channel in range(image_data.shape[0]):
             image_data[channel, :, :] = (image_data[channel, :, :] / 127.5) - 1
@@ -23,7 +44,20 @@ def preprocess_onnx_mobilenet(image_path, height, width, data_type):
 
     image = Image.open(image_path)
     image = image.resize((width, height), Image.LANCZOS)
+    #image_data = np.asarray(image).astype(type)
+
+    #print(len(np.shape(image_data)))
+    #print(np.shape(image_data))
+
+    if len(np.shape(np.asarray(image).astype(type))) == 2:
+        #image_data = np.expand_dims(image_data, 2)
+        image = image.convert("RGB")
+
     image_data = np.asarray(image).astype(type)
+
+    
+    #print(len(np.shape(image_data)))
+
     image_data = image_data.transpose([2, 0, 1]) # transpose to CHW
     mean = np.array([0.079, 0.05, 0]) + 0.406
     std = np.array([0.005, 0, 0.001]) + 0.224
@@ -152,6 +186,32 @@ def preprocess_ov_yolo(shape, image):
     # Add N dimension
     #input_tensors = [np.expand_dims(image, 0) for image in resized_images]
     input_tensor = np.expand_dims(resized_image, 0)
+    #print("input tensor shape: ", input_tensors[0].shape)
+
+    return input_tensor
+
+def preprocess_ov_mobilenet(shape, image):
+    import cv2
+    import numpy as np
+
+        # --------------------------- Step 3. Set up input --------------------------------------------------------------------
+    # Read input images
+    #images = [cv2.imread(image_path) for image_path in args.images]
+
+    # Resize images to model input dims
+    _, _, h, w = shape
+    #_, h, w, _ = model.input().shape
+    #print("Model input shape: ",model.input().shape)
+    #h, w = 224, 224
+
+    #resized_images = [cv2.resize(image, (w, h)) for image in images]
+    resized_image = cv2.resize(image, (w, h))
+
+    # Add N dimension
+    #input_tensors = [np.expand_dims(image, 0) for image in resized_images]
+    input_tensor = np.expand_dims(resized_image, 0)
+
+    print(input_tensor.shape)
     #print("input tensor shape: ", input_tensors[0].shape)
 
     return input_tensor
