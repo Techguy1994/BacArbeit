@@ -16,4 +16,5 @@ results_ubuntu_server/
 scripts/tests/
 final_results/
 ILSVRC_test_images/
-ILSVRC_val
+ILSVRC_val/
+ILSVRC_val_5000/
