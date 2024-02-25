@@ -110,9 +110,9 @@ def handle_arguments():
     if number == 207:
         subprocess.call(["python3", "run_inference.py", "-api", "pyarmnn", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_uint8_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_5000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
     if number == 208:
-        subprocess.call(["python3", "run_inference.py", "-api", "pyarmnn", "-t", "class", "-m", "lite-model_mobilenet_v3_small_100_224_fp32_1.tflite", "-imgp", "/home/pi/BacArbeit/sambashare/ILSVRC_val_5000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "pyarmnn", "-t", "class", "-m", "lite-model_mobilenet_v3_small_100_224_fp32_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_5000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
     if number == 209:
-        subprocess.call(["python3", "run_inference.py", "-api", "pyarmnn", "-t", "class", "-m", "lite-model_mobilenet_v3_small_100_224_uint8_1.tflite", "-imgp","/home/pi/BacArbeit/sambashare/ILSVRC_val_5000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "pyarmnn", "-t", "class", "-m", "lite-model_mobilenet_v3_small_100_224_uint8_1.tflite", "-imgp","/home/pi/sambashare/BacArbeit//ILSVRC_val_5000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
     if number == 210:
         subprocess.call(["python3", "run_inference.py", "-api", "pyarmnn", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgp","/home/pi/sambashare/BacArbeit/ILSVRC_val_5000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
     if number == 211:
