@@ -1,6 +1,0 @@
-,image,inference time,label
-0,/home/pi/sambashare/BacArbeit/images/2007_000061.jpg,1.5122031140053878,"['background', 'boat']"
-1,/home/pi/sambashare/BacArbeit/images/2007_000033.jpg,1.4255130120000103,"['background', 'aeroplane']"
-2,/home/pi/sambashare/BacArbeit/images/2007_000129.jpg,1.4440460409969091,"['background', 'bicycle', 'person']"
-3,/home/pi/sambashare/BacArbeit/images/2007_000123.jpg,1.437489944997651,"['background', 'train']"
-4,/home/pi/sambashare/BacArbeit/images/2007_000042.jpg,1.4537857220057049,"['background', 'train']"
