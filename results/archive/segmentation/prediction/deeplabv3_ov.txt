@@ -1,2 +1,0 @@
-['test.jpg', [array(['background', 'horse', 'person'], dtype='<U11')]]
-
