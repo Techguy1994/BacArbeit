@@ -1,4 +1,0 @@
-,image,inference time,label
-0,/home/pi/sambashare/BacArbeit/images/deeplab1.png,9.060468473999208,"['tench', 'house finch', 'robin', 'jay']"
-1,/home/pi/sambashare/BacArbeit/images/2007_000032.jpg,0.9881832169994595,"['tench', 'goldfish', 'robin']"
-2,/home/pi/sambashare/BacArbeit/images/2007_000039.jpg,1.2615516500009107,"['tench', 'water ouzel']"
