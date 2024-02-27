@@ -1,8 +1,0 @@
-[{'object': 'sorrel', 'Index': 340, 'Accuracy': 0.9984084963798523}]
-[{'object': 'Siamese cat', 'Index': 285, 'Accuracy': 0.4121977686882019}]
-[{'object': 'burrito', 'Index': 966, 'Accuracy': 0.6321656703948975}]
-[{'object': 'aircraft carrier', 'Index': 404, 'Accuracy': 0.4469678997993469}]
-[{'object': 'Siamese cat', 'Index': 285, 'Accuracy': 0.641973614692688}]
-[{'object': 'submarine', 'Index': 834, 'Accuracy': 0.06667627394199371}]
-[{'object': 'carbonara', 'Index': 960, 'Accuracy': 0.2847810983657837}]
-[{'object': 'ski mask', 'Index': 797, 'Accuracy': 0.09946157038211823}]
