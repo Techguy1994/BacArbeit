@@ -220,7 +220,12 @@ def run_pytorch(args):
         model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
     elif args.model == "mobilenet_v3_large":
         model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_large', pretrained=True)
-
+    elif args.model == "mobilenet_v3_small":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_small', pretrained=True)
+    elif args.model == "mobilenet_v3_large_q":
+        model = models.quantization.mobilenet_v3_large(pretrained=True)
+    elif args.model == "mobilenet_v2_q":
+        model = models.quantization.mobilenet_v2(pretrained=True)
     #func_call = pt.load_pytorch_model(args.model)
 
     #func_call = "models." + args.model + "(pretrained=True)"
