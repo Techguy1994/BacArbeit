@@ -336,7 +336,8 @@ def run_sync_ov(args):
     ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
 
     # 2) Here we suppose model has 'NCHW' layout for input
-    ppp.input().model().set_layout(Layout('NCHW'))
+    #ppp.input().model().set_layout(Layout('NCHW'))
+    ppp.input().model().set_layout(Layout('NHWC'))
 
     # 3) Set output tensor information:
     # - precision of tensor is supposed to be 'f32'

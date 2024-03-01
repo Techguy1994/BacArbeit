@@ -194,15 +194,18 @@ def preprocess_ov_mobilenet(shape, image):
     import cv2
     import numpy as np
 
+    #print("---")
+    #print(shape)
         # --------------------------- Step 3. Set up input --------------------------------------------------------------------
     # Read input images
     #images = [cv2.imread(image_path) for image_path in args.images]
 
     # Resize images to model input dims
-    _, _, h, w = shape
+    _, h, w, _ = shape
     #_, h, w, _ = model.input().shape
     #print("Model input shape: ",model.input().shape)
     #h, w = 224, 224
+    #print(h,w)
 
     #resized_images = [cv2.resize(image, (w, h)) for image in images]
     resized_image = cv2.resize(image, (w, h))
@@ -211,7 +214,7 @@ def preprocess_ov_mobilenet(shape, image):
     #input_tensors = [np.expand_dims(image, 0) for image in resized_images]
     input_tensor = np.expand_dims(resized_image, 0)
 
-    print(input_tensor.shape)
+    #print("shape of tensor: ", input_tensor.shape)
     #print("input tensor shape: ", input_tensors[0].shape)
 
     return input_tensor
