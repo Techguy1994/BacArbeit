@@ -119,6 +119,7 @@ def handle_output_openvino_moiblenet_class(output_data, label, n_big):
         val = probs[entry] / out_normalization_factor
         #result[entry] = [val*100]
         #print("\tpos {} : {:.2f}%".format(entry, val*100))
+        print(entry, val)
         results.append({"label": label[entry], "index": entry, "value": val})
         
     return results
