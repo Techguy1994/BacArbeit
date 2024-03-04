@@ -124,13 +124,17 @@ def create_pandas_dataframe(dict):
     df = pd.DataFrame(dict)
     return df
 
-def store_pandas_data_frame_as_csv(df, output, name_date):
-    file_name = name_date + ".csv"
+def store_pandas_data_frame_as_csv(df, output, name_date, type, model_name, api):
+    model_name = model_name.split("/")[-1]
+    file_name = model_name + "_" + api + "_" + type + "_" + name_date + ".csv"
     location = os.path.join(output, "output", file_name)
+    print(location)
     df.to_csv(location)
 
-def store_pandas_data_frame_as_csv_det_seg(df, output, name_date):
-    location = os.path.join(output, "output", name_date + ".csv")
+def store_pandas_data_frame_as_csv_det_seg(df, output, name_date, type, model_name, api):
+    model_name = model_name.split("/")[-1]
+    file_name = model_name + "_" + api + "_" + type + "_" + name_date + ".csv"
+    location = os.path.join(output, "output", file_name)
     df.to_csv(location)
 
 

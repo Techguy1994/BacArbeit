@@ -181,6 +181,8 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_test_images/", "-l", "imagenet_classes.txt", "-opd", "-ni", "1"], shell=False)
     if number == 394:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP32.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
+    if number == 395:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP32.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_test_images/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
 
     # object detection
     if number == 400:

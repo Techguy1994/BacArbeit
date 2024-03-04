@@ -9,6 +9,11 @@ def main():
     args = ag.Arguments()
 
     name_date = d.create_name_date()
+    #print(args.model.split("/")[-1])
+
+    print(args.model, args.api, args.type)
+
+    #sys.exit()
 
     if args.type == "class":
         global cl
@@ -45,7 +50,7 @@ def run_classification(args, name_date):
             df = cl.run_sync_ov(args)
 
     print(df)
-    dat.store_pandas_data_frame_as_csv(df, args.output, name_date)
+    dat.store_pandas_data_frame_as_csv(df, args.output, name_date, args.type, args.model, args.api)
 
     if args.profiler == "cprofiler":
         profiler.disable()
@@ -69,20 +74,16 @@ def run_detection(args, name_date):
 
     if args.api == "tf" or args.api == "delegate": 
         df = det.run_tf(args, output_image_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pyarmnn":
         df = det.run_pyarmnn(args, output_image_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "onnx":
         df = det.run_onnx(args, output_image_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pytorch":
         df = det.run_pytorch(args, output_image_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "ov":
         df = det.run_sync_ov(args, output_image_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
 
+    dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date, args.type, args.model, args.api)
     
     if args.profiler == "cprofiler":
         profiler.disable()
@@ -98,19 +99,17 @@ def run_segmentation(args, name_date):
 
     if args.api == "tf" or args.api == "delegate":
         df = seg.run_tf(args, raw_folder, overlay_folder, index_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
+        
     if args.api == "pyarmnn":
         df = seg.run_pyarmnn(args, raw_folder, overlay_folder, index_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "onnx":
         df = seg.run_onnx(args, raw_folder, overlay_folder, index_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "pytorch":
         df = seg.run_pytorch(args, raw_folder, overlay_folder, index_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
     if args.api == "ov":
         df = seg.run_sync_openvino(args, raw_folder, overlay_folder, index_folder)
-        dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date)
+    
+    dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date, args.type, args.model, args.api)
 
 
 

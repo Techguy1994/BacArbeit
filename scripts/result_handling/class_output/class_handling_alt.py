@@ -124,13 +124,12 @@ def get_current_general_directory(type, result_file, model_name):
 
         for model in all_models:
             if model_name == model:
+
                 results_dir = os.path.join(results_dir, model, "output")
+
 
         all_results_file = os.listdir(results_dir)
         all_results_file_paths = []
-        #print(all_results_file)
-        #list_of_files = sorted( filter( lambda x: os.path.isfile(os.path.join(results_dir, x)), os.listdir(results_dir)))
-        #print(list_of_files)
                 
         for file in all_results_file:
             if "_Store" in file:
