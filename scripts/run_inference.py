@@ -50,7 +50,7 @@ def run_classification(args, name_date):
             df = cl.run_sync_ov(args)
 
     print(df)
-    dat.store_pandas_data_frame_as_csv(df, args.output, name_date, args.type, args.model, args.api)
+    dat.store_pandas_data_frame_as_csv(df, args.output, name_date, args.type, args.model, args.api, args.skip_output)
 
     if args.profiler == "cprofiler":
         profiler.disable()
@@ -83,7 +83,7 @@ def run_detection(args, name_date):
     if args.api == "ov":
         df = det.run_sync_ov(args, output_image_folder)
 
-    dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date, args.type, args.model, args.api)
+    dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date, args.type, args.model, args.api, args.skip_output)
     
     if args.profiler == "cprofiler":
         profiler.disable()
@@ -109,7 +109,7 @@ def run_segmentation(args, name_date):
     if args.api == "ov":
         df = seg.run_sync_openvino(args, raw_folder, overlay_folder, index_folder)
     
-    dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date, args.type, args.model, args.api)
+    dat.store_pandas_data_frame_as_csv_det_seg(df, args.output, name_date, args.type, args.model, args.api, args.skip_output)
 
 
 
