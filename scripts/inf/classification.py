@@ -18,7 +18,8 @@ def run_tf(args):
         #delegate_input
         if args.api == "delegate":
             print("delegate")
-            armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+            #/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate
+            armnn_delegate = tflite.load_delegate(library="home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegatelibarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
             interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
         else:
@@ -28,7 +29,7 @@ def run_tf(args):
 
         if args.api == "delegate":
             print("delegate")
-            armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+            armnn_delegate = tf.lite.experimental.load_delegate(library="home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegatelibarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
             interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
         else:
