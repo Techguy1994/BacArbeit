@@ -154,7 +154,10 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP32.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1"], shell=False)
     if number == 227:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1"], shell=False)
-    
+
+    if number == 250:
+        subprocess.call(["python3", "run_inference.py", "-api", "pyarmnn", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgd", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000"], shell=False)
+
 
     
 
@@ -184,7 +187,7 @@ def handle_arguments():
     if number == 395:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP32.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_test_images/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
     if number == 396:
-        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP32.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_test_images/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "10", "-so"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP32.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_test_images/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "100", "-so"], shell=False)
 
     # object detection
     if number == 400:
