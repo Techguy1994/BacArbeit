@@ -294,6 +294,13 @@ def run_sync_ov(args):
     log.info('Creating OpenVINO Runtime Core')
     core = Core()
 
+    #print(args.model)
+
+    #if "FP32" in args.model:
+    #    float32 = True
+    #elif "FP16" in args.model
+    #sys.exit()
+
 # --------------------------- Step 2. Read a model --------------------------------------------------------------------
     log.info(f'Reading the model: {args.model}')
     # (.xml and .bin files) or (.onnx file)

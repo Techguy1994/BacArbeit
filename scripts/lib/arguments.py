@@ -22,6 +22,7 @@ class Arguments:
         self.a_sync = self.args.a_sync
         self.skip_output = self.args.skip_output
         self.randomized_input = self.args.randomized_input
+        self.num_threads = self.args.number_threads
         #print(int(self.randomized_input))
         #handle_other_paramters()
 
@@ -63,6 +64,8 @@ class Arguments:
 
         parser.add_argument("-so", "--skip_output", help="if provided this skips the output handling", action="store_true")
         parser.add_argument("-ri", "--randomized_input", help="randomizes inputs for the input, give a of the number of the input", required=False)
+
+        parser.add_argument("-num_thr", "--number_threads", help="set number of threads", required=False, default=1)
 
         return parser.parse_args()
     
