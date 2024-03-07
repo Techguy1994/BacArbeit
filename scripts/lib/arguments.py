@@ -22,7 +22,7 @@ class Arguments:
         self.a_sync = self.args.a_sync
         self.skip_output = self.args.skip_output
         self.randomized_input = self.args.randomized_input
-        self.num_threads = self.args.number_threads
+        self.num_threads = int(self.args.number_threads)
         #print(int(self.randomized_input))
         #handle_other_paramters()
 
