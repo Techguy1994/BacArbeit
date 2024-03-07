@@ -164,9 +164,7 @@ def run_onnx(args):
 
     #, 'XNNPACKExecutionProvider'
     providers = ['CPUExecutionProvider']
-
-    print("optimize")
-    options.intra_op_num_threads = 4
+    options.intra_op_num_threads = args.num_threads
     options.execution_mode = onnxruntime.ExecutionMode.ORT_SEQUENTIAL
     #options.inter_op_num_threads = 4
     #macht keinen Unterschied in meinen Tests (MobilenetV2)
