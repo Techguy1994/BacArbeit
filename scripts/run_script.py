@@ -180,17 +180,17 @@ def handle_arguments():
     if number == 260:
         subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "1"], shell=False)
     if number == 261:
-        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "2"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "2"], shell=False)
     if number == 262:
-        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "3"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "3"], shell=False)
     if number == 263:
-        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "4"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "4"], shell=False)
     if number == 264:
-        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "1"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "1"], shell=False)
     if number == 265:
-        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "2"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "2"], shell=False)
     if number == 266:
-        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "3"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "3"], shell=False)
     if number == 267:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-num_thr", "4"], shell=False)
 
