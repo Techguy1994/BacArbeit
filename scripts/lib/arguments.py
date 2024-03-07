@@ -23,6 +23,7 @@ class Arguments:
         self.skip_output = self.args.skip_output
         self.randomized_input = self.args.randomized_input
         self.num_threads = int(self.args.number_threads)
+        self.os = self.args.os
         #print(int(self.randomized_input))
         #handle_other_paramters()
 
@@ -66,6 +67,8 @@ class Arguments:
         parser.add_argument("-ri", "--randomized_input", help="randomizes inputs for the input, give a of the number of the input", required=False)
 
         parser.add_argument("-num_thr", "--number_threads", help="set number of threads", required=False, default=1)
+        parser.add_argument("-os", "--os", help="set number of threads", required=False, default="Linux")
+
 
         return parser.parse_args()
     
