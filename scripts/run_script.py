@@ -207,9 +207,9 @@ def handle_arguments():
     if number == 283:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-small-1.0-224-tf_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1"], shell=False)
     if number == 284:
-        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-small-1.0-224-tf_FP32.xml", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-large-1.0-224-tf_FP32.xml", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri"], shell=False)
     if number == 285:
-        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-small-1.0-224-tf_FP16.xml", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-large-1.0-224-tf_FP16.xml", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri"], shell=False)
 
     
 
