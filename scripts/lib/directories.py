@@ -62,7 +62,6 @@ def handle_image_directory(args):
     return image_list
 
 def create_random_input(count):
-    print("fucntion")
 
     import numpy as np
     from PIL import Image
@@ -76,7 +75,6 @@ def create_random_input(count):
 
     for i in range(int(count)):
         output = np.random.randint(255, size=(500, 500, 3), dtype=np.uint8)
-        print(output.shape)
         image = Image.fromarray(output)
         file_name = os.path.join(randomized_image_folder, str(i) + ".jpg")
         image.save(file_name)
