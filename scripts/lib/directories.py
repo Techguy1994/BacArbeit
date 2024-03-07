@@ -117,7 +117,7 @@ def handle_output_directory(args, api, type, model, profiler):
             model_name = model.split("/")[-1].split(".xml")[0]
         else:
             model_name = model.split("/")[-1].split(".")[0]
-            
+
         outputs_dir = os.path.join(outputs_dir, model_name)
 
         output = os.path.join(outputs_dir, "output")

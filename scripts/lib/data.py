@@ -124,27 +124,35 @@ def create_pandas_dataframe(dict):
     df = pd.DataFrame(dict)
     return df
 
-def store_pandas_data_frame_as_csv(df, output, name_date, type, model_name, api, only_lat):
-    model_name = model_name.split("/")[-1]
-    print(only_lat)
-    if only_lat:
-        print(only_lat)
-        file_name = model_name + "_" + api + "_" + type + "_" + name_date + "_onyllat.csv"
-    else:
-        file_name = model_name + "_" + api + "_" + type + "_" + name_date + ".csv"
+def store_pandas_data_frame_as_csv(df, name_date, args):
+    
 
-    location = os.path.join(output, "output", file_name)
+
+    file_name = create_file_name(name_date, args)
+
+    location = os.path.join(args.output, "output", file_name)
     print(location)
     df.to_csv(location)
 
-def store_pandas_data_frame_as_csv_det_seg(df, output, name_date, type, model_name, api, only_lat):
-    model_name = model_name.split("/")[-1]
-    if only_lat:
-        file_name = model_name + "_" + api + "_" + type + "_" + name_date + "_onyllat.csv"
-    else:
-        file_name = model_name + "_" + api + "_" + type + "_" + name_date + ".csv"
-    location = os.path.join(output, "output", file_name)
+def store_pandas_data_frame_as_csv_det_seg(df, name_date, args):
+    file_name = create_file_name(name_date, args)
+    location = os.path.join(args.output , "output", file_name)
     df.to_csv(location)
+
+def create_file_name(name_date, args):
+
+    model_name = args.model.split("/")[-1]
+    model_name = model_name.split(".")
+    model_name = model_name[:-1]
+    model_name = "".join(model_name)
+
+    print(model_name)
+    if args.skip_output:
+        file_name = model_name + "_" + args.api + "_" + args.tpye + "_" + name_date + "_" + args.os + "_onyllat.csv"
+    else:
+        file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + ".csv"
+
+    return file_name
 
 
 

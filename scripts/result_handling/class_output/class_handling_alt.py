@@ -7,6 +7,7 @@ import os
 def main():
     api_type, model_name, result_file = handle_arguments()
     result_csv = get_current_general_directory(api_type, result_file, model_name)
+    print(result_csv)
     LOC_synset_mapping = 'LOC_synset_mapping.txt'
     LOC_val_solution = 'LOC_val_solution.csv'
 
@@ -121,11 +122,15 @@ def get_current_general_directory(type, result_file, model_name):
         base_dir = dir.split("/scripts/result_handling/class_output")[0]
         results_dir = os.path.join(base_dir, "results", "class", type)
         all_models = os.listdir(results_dir)
+        print(all_models)
+        #sys.exit()
 
         for model in all_models:
             if model_name == model:
 
                 results_dir = os.path.join(results_dir, model, "output")
+        
+        print(results_dir)
 
 
         all_results_file = os.listdir(results_dir)
