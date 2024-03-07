@@ -54,7 +54,6 @@ def run_tf(args):
 
     for i in range(args.niter):
         for image in args.images:
-            print(image)
             processed_image = pre.preprocess_tflite_moobilenet(image, input_shape[1], input_shape[2], input_type)
             interpreter.set_tensor(input_details[0]['index'], processed_image)
 
