@@ -1,0 +1,2 @@
+,image,inference time,label1,index1,value1,label2,index2,value2,label3,index3,value3,label4,index4,value4,label5,index5,value5
+0,/Users/marounel-chayeb/BacArbeit/ILSVRC_test_images/ILSVRC2012_val_00019228.JPEG,0.015752250095829368,oboe,684,0.0006313356570899487,acoustic guitar,403,0.0008416010532528162,cello,487,0.9703412652015686,violin,890,0.013579651713371277,banjo,421,0.0012136474251747131
