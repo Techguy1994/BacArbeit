@@ -126,8 +126,6 @@ def create_pandas_dataframe(dict):
 
 def store_pandas_data_frame_as_csv(df, name_date, args):
     
-
-
     file_name = create_file_name(name_date, args)
 
     location = os.path.join(args.output, "output", file_name)
@@ -148,7 +146,8 @@ def create_file_name(name_date, args):
 
     print(model_name)
     if args.skip_output:
-        file_name = model_name + "_" + args.api + "_" + args.tpye + "_" + name_date + "_" + args.os + "_onyllat.csv"
+        print("Here")
+        file_name = model_name + "_" + args.api + "_" + args.tpye + "_" + name_date + "_" + args.os + "_onlylat.csv"
     else:
         file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + ".csv"
 
