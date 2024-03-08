@@ -119,7 +119,7 @@ def get_current_general_directory(type, result_file, model_name):
 
     if not result_file:
         dir = os.path.dirname(os.path.realpath(__file__))
-        base_dir = dir.split("/scripts/result_handling/class_output")[0]
+        base_dir = dir.split("/scripts/result_handling/class_output/accuracy")[0]
         results_dir = os.path.join(base_dir, "results", "class", type)
         all_models = os.listdir(results_dir)
         print(all_models)
