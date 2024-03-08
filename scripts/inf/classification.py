@@ -163,10 +163,12 @@ def run_onnx(args):
     options = onnxruntime.SessionOptions()
 
     #, 'XNNPACKExecutionProvider'
+    print(args.num_threads)
     providers = ['CPUExecutionProvider']
     options.intra_op_num_threads = args.num_threads
     options.execution_mode = onnxruntime.ExecutionMode.ORT_SEQUENTIAL
-    #options.inter_op_num_threads = 4
+    #options.execution_mode = onnxruntime.ExecutionMode.ORT_PARALLEL
+    #options.inter_op_num_threads = 8
     #macht keinen Unterschied in meinen Tests (MobilenetV2)
     #options.add_session_config_entry('session.dynamic_block_base', '8') 
     #options.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_ENABLE_ALL
@@ -219,6 +221,10 @@ def run_pytorch(args):
     
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
+    
+    print(args.num_threads)
+    torch.set_num_threads(args.num_threads)
+
     if args.model == "mobilenet_v2":
         model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
     elif args.model == "mobilenet_v3_large":
@@ -226,9 +232,11 @@ def run_pytorch(args):
     elif args.model == "mobilenet_v3_small":
         model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_small', pretrained=True)
     elif args.model == "mobilenet_v3_large_q":
-        model = models.quantization.mobilenet_v3_large(pretrained=True)
+        torch.backends.quantized.engine = 'qnnpack'
+        model = models.quantization.mobilenet_v3_large(pretrained=True, quantize=True)
     elif args.model == "mobilenet_v2_q":
-        model = models.quantization.mobilenet_v2(pretrained=True)
+        torch.backends.quantized.engine = 'qnnpack'
+        model = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
     #func_call = pt.load_pytorch_model(args.model)
 
     #func_call = "models." + args.model + "(pretrained=True)"
@@ -237,6 +245,8 @@ def run_pytorch(args):
     #model = eval(func_call)
 
     #model = models.mobilenet_v2(pretrained=True)
+        
+    model = torch.jit.script(model)
 
     model.eval()
 
@@ -245,10 +255,9 @@ def run_pytorch(args):
     for i in range(args.niter):
         for image in args.images:
             input_image = Image.open(image)
-            print(len(np.shape(np.asarray(input_image).astype(float))))
+            #print(len(np.shape(np.asarray(input_image).astype(float))))
 
             if len(np.shape(np.asarray(input_image).astype(np.float32))) == 2:
-                print("found")
                 input_image = input_image.convert("RGB")
 
             input_tensor = preprocess(input_image)
@@ -356,9 +365,12 @@ def run_sync_ov(args):
     # 4) Apply preprocessing modifing the original 'model'
     model = ppp.build()
 
+    print(str(args.num_threads))
+
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
-    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": "4", "NUM_STREAMS": "4"} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
+    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": str(args.num_threads)} #"NUM_STREAMS": "1"} 
+    #config = {"PERFORMANCE_HINT": "THROUGHPUT", "INFERENCE_NUM_THREADS": str(args.num_threads), "NUM_STREAMS": "4"} 
     compiled_model = core.compile_model(model, device_name, config)
     #compiled_model = core.compile_model(model, device_name)
     num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")

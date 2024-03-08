@@ -196,7 +196,24 @@ def handle_arguments():
 
     #tflite latnecy tests
     if number == 270:
-        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so"], shell=False)
+    
+    #onnx latency tests
+    if number == 271:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv2-12.onnx", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "25", "-so", "-num_thr", "3"], shell=False)
+    #tf latency test
+    if number == 272:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v2_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "25", "-num_thr", "3"], shell=False)
+    # openvino latency test
+    if number == 273:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-large-1.0-224-tf_FP16.xml", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "25", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    #pytorch latency testing
+    if number == 274:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "25", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 275:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large_q", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "25", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 276:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v2_q", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "25", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
     
     if number == 280:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-large-1.0-224-tf_FP32.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntu_s"], shell=False)
