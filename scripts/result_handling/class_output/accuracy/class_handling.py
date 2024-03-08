@@ -94,7 +94,7 @@ def main():
 
     print(top_acc_1, top_acc_5, acc_1, acc_5)
 
-    with open(model_name + api_type + ".txt", "w") as f:
+    with open(model_name + "_" + api_type + ".txt", "w") as f:
         f.write("Number of images: " + str(number_of_images) + "\n")
         f.write("Top1 acc: " + str(acc_1) + "\n")
         f.write("Top5 acc: " + str(acc_5) + "\n")
