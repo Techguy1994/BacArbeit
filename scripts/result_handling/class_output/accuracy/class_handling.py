@@ -127,7 +127,7 @@ def get_current_general_directory(type, result_file, model_name):
 
         for model in all_models:
             if model_name == model:
-
+                print("!!!!---------------------------")
                 results_dir = os.path.join(results_dir, model, "output")
         
         print(results_dir)
