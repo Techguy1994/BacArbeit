@@ -15,7 +15,8 @@ def handle_arguments():
     args = parser.parse_args()
     number = int(args.n)
 
-    #classification 1, 00 tf, 20 pyarmnn, 40 onnx, 60 pytorch, 80 openvino
+    #test runs
+    #classification 1, 00 tf, 20 pyarmnn, 40 onnx, 60 pytorch, 80 openvino, pyarmnn outdated replaced with delegate test run on 190
     if number == 100:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgd", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
     if number == 101:
@@ -76,11 +77,6 @@ def handle_arguments():
     if number == 163:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgd", "-l", "imagenet_classes.txt", "-opd", "-ni", "1", "-so","-ri", "50"], shell=False)
 
-
-
-
-    
-
     if number == 170:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v2", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val/", "-l", "imagenet_classes.txt", "-opd", "-ni", "1"], shell=False)
     if number == 180:
@@ -89,10 +85,10 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2.xml", "-imgd", "-l", "imagenet_classes.txt", "-opd", "-ni", "1", "-so"], shell=False)
     if number == 182:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2.xml", "-imgd", "-l", "imagenet_classes.txt", "-opd", "-ni", "4", "-so","-ri", "50"], shell=False)
-    if number == 190:
+    if number == 190: #old test not working anymore as the link has been changed look in the n 200s to look for example if needed
         subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgd", "-l", "imagenet_classes.txt", "-opd", "-ni", "4", "-so", "-ri", "50"], shell=False)
  
-    #tflite and pyarmnn inference classification
+    #inference classification accuracy runs
     #tflite
     if number == 200:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1","-os", "ubuntu_s", "-num_thr", "3"], shell=False)
@@ -131,7 +127,7 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_small_075_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1","-os", "ubuntu_s", "-num_thr", "3"], shell=False)
     if number == 216:
         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_small_050_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1","-os", "ubuntu_s", "-num_thr", "3"], shell=False)
-    #pytroch
+    #pytorch
     if number == 217:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1","-os", "ubuntu_s", "-num_thr", "3"], shell=False)
     if number == 218:
@@ -156,7 +152,7 @@ def handle_arguments():
     if number == 227:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
 
-    #latency testing ubuntu server
+    #latency testing on ubuntu server
     #tflite and pyarmnn inference classification
     #tflite
     if number == 228:
@@ -215,8 +211,7 @@ def handle_arguments():
     if number == 292:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
 
-        #latency testing
-    #tflite and pyarmnn inference classification
+    #latency testing on raspberry os
     #tflite
     if number == 1228:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "3"], shell=False)
@@ -274,7 +269,7 @@ def handle_arguments():
     if number == 1292:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os32", "-num_thr", "3"], shell=False)
 
-
+    # comparing pyarmnn and delegate latency 
     if number == 250:
         subprocess.call(["python3", "run_inference.py", "-api", "pyarmnn", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgd",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so"], shell=False)
     if number == 251:
@@ -335,6 +330,7 @@ def handle_arguments():
     if number == 276:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v2_q", "-imgd", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "25", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
     
+    #openvin comparing FP16 and FP32
     if number == 280:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-large-1.0-224-tf_FP32.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntu_s"], shell=False)
     if number == 281:
@@ -351,7 +347,7 @@ def handle_arguments():
     
 
     
-
+    #mac os test runs for classification 
     if number == 300:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1"], shell=False)
     if number == 301:
@@ -488,6 +484,7 @@ def handle_arguments():
 
 
     # segmentation
+    # test runs
     if number == 800:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv3-cityscapes_1_default_2.tflite", "-imgd", "-l", "imagenet_classes.txt", "-c", "cityscapes","-opd", "-ni", "1", "-so", "-ri", "10"], shell=False)
     if number == 801:
@@ -518,6 +515,7 @@ def handle_arguments():
     if number == 821:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "seg", "-m", "deeplabv3_mobilenet_v3_small", "-imgd", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
     
+    # accuracy runs
     if number == 850:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
     if number == 851:
