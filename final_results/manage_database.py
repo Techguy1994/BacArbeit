@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 import csv
+import numpy as np
 
 def main():
     args = handle_arguments()
@@ -40,11 +41,12 @@ def create_new_database(database_name):
         "os": [],
         "api": [],
         "inference type": [],
-        "latency": [],
+        "latency avg": [],
         "top1": [],
         "top5": [],
         "map": [],
-        "miou": []
+        "miou": [],
+        "latency": []
     }
 
     df = pd.DataFrame(dict)
@@ -111,11 +113,8 @@ def manage_database(args):
 
                 df.loc[filt, "os"] = os
 
-                dict = df.to_dict()
-
-                dict["latency"][ind[0]] = get_latency_value(file_path)
-                
-                df = pd.DataFrame(dict)
+                print("latency csv file link and latency avg sill to add here, breaking with sys exit")
+                sys.exit()
 
                 return df
             else:
@@ -193,7 +192,9 @@ def add_entry(model_name, inference_type, api, onyl_lat, os, file_path, df):
     if "onlylat" in onyl_lat:
         #inference_time = df["inference time"].astype(float)
         #avg = inference_time.mean()
-        entry.update({"latency": [get_latency_value(file_path)]})
+        lat = get_latency_value(file_path)
+        print(file_path)
+        entry.update({"latency": file_path, "latency avg": np.mean(lat)})
         #new_row = pd.DataFrame(entry)
         #df = df.append(new_row, index=df.columns)
         df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True)

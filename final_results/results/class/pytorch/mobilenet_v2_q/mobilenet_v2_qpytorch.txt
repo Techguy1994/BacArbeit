@@ -1,3 +1,0 @@
-Number of images: 10000
-Top1 acc: 0.8557
-Top5 acc: 0.9272
