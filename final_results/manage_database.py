@@ -99,22 +99,21 @@ def manage_database(args):
         #print(df.columns)
         #print(df)
         
-        ind = df.index[(df["model_name"] == model_name) & (df["os"] == os)]
+        ind = df.index[(df["model_name"] == model_name) & (df["os"] == os) & (df["api"] == api)]
         print(ind)
         if len(ind) == 0:
             print("no row found")
             df = add_entry(model_name, inference_type, api, is_only_lat, os, file_path, df)
             return df
         else:
-            filt = df["model_name"] == model_name
+            filt = (df["model_name"] == model_name) & (df["api"] == api)
 
             if "onlylat" in is_only_lat:
                 print("found")
 
                 df.loc[filt, "os"] = os
-
-                print("latency csv file link and latency avg sill to add here, breaking with sys exit")
-                sys.exit()
+                df.loc[filt, "latency"] = file_path
+                df.loc[filt, "latency avg"] = np.mean(get_latency_value(file_path))
 
                 return df
             else:
@@ -127,8 +126,6 @@ def manage_database(args):
 
                     df.loc[filt, "top1"] = float(top1)
                     df.loc[filt, "top5"] = float(top5)
-
-                    print(top1, top5)
 
                     return df
                 elif inference_type == "det":

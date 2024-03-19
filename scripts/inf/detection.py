@@ -233,6 +233,14 @@ def run_pytorch(args, output_image_folder):
         model = torch.hub.load("ultralytics/yolov5", "yolov5n", pretrained=True)
     elif args.model == "yolov5s":
         model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
+    elif args.model == "yolov3":
+        model = torch.hub.load("ultralytics/yolov5", "yolov3", pretrained=True)
+    elif args.model == "yolov3-tiny":
+        model = torch.hub.load("ultralytics/yolov5", "yolov3-tiny", pretrained=True)
+    #elif args.model == "yolov7":
+    #    model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
+    #elif args.model == "yolov7-tiny":
+    #    model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
 
     model.eval()
 
