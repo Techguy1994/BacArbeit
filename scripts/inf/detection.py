@@ -3,11 +3,13 @@ import lib.postprocess as post
 import lib.preprocess as pre
 from time import perf_counter
 import lib.data as dat
+import lib.directories as d
 import pandas as pd
 import os 
 import cv2
 import numpy as np
 from PIL import Image
+import sys
 
 def run_tf(args, output_image_folder):
 
@@ -223,6 +225,7 @@ def run_pytorch(args, output_image_folder):
 
     import torch
     from torchvision import models, transforms
+    print(args.model)
 
     output_dict = dat.create_base_dictionary_det()
     if args.model == "yolov5l":
@@ -233,14 +236,16 @@ def run_pytorch(args, output_image_folder):
         model = torch.hub.load("ultralytics/yolov5", "yolov5n", pretrained=True)
     elif args.model == "yolov5s":
         model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
-    elif args.model == "yolov3":
-        model = torch.hub.load("ultralytics/yolov5", "yolov3", pretrained=True)
-    elif args.model == "yolov3-tiny":
-        model = torch.hub.load("ultralytics/yolov5", "yolov3-tiny", pretrained=True)
-    #elif args.model == "yolov7":
-    #    model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
-    #elif args.model == "yolov7-tiny":
-    #    model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
+    elif "yolov7" in args.model:
+        model = torch.hub.load('WongKinYiu/yolov7', 'custom', args.model, force_reload=True, trust_repo=True)
+    elif "yolov3" in args.model:
+        model = torch.hub.load("ultralytics/yolov3", "custom", args.model, force_reload=True, trust_repo=True)
+    elif "yolov8" in args.model:
+        from ultralytics import YOLO
+        print("yolov8")
+        model = YOLO(args.model)
+        
+    
 
     model.eval()
 
