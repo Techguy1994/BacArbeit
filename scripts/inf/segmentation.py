@@ -193,8 +193,13 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
 
     #outputs = ["num_detections:0", "detection_boxes:0", "detection_scores:0", "detection_classes:0"]
 
-    image_width = session.get_inputs()[0].shape[1]
-    image_height = session.get_inputs()[0].shape[2]
+    print("input shape", session.get_inputs()[0].shape[1], session.get_inputs()[0].shape[2], session.get_inputs()[0].shape[3])
+    if session.get_inputs()[0].shape[1] == 3:
+        image_width = session.get_inputs()[0].shape[2]
+        image_height = session.get_inputs()[0].shape[3]
+    elif session.get_inputs()[0].shape[3] == 3:
+        image_width = session.get_inputs()[0].shape[1]
+        image_height = session.get_inputs()[0].shape[2]
 
     input_data_type = session.get_inputs()[0].type
     output_data_type = session.get_outputs()[0].type
@@ -213,6 +218,7 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
             index_file = os.path.join(index_folder, index_file)
 
             processed_image = pre.preprocess_onnx_deeplab(image , input_data_type, image_height, image_width)
+            print(processed_image.shape)
 
             if args.profiler == "perfcounter":
 

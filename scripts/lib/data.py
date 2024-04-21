@@ -95,6 +95,7 @@ def store_output_dictionary_det_only_lat(data, image, time):
     data["label"].append([])
     data["index"].append([])
     data["value"].append([])
+    data["boxes"].append([])
 
 
     #for i in range(len(output)):
@@ -120,7 +121,7 @@ def store_output_dictionary_seg_only_lat(data, image, time):
 
 
 def create_pandas_dataframe(dict):
-    #print(dict)
+    print(dict)
     df = pd.DataFrame(dict)
     return df
 

@@ -16,6 +16,10 @@ def handle_model_directory(args):
 
     if args.api == "pytorch":
         if args.model:
+            if ".pt" in args.model:
+                general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
+                general_model_dir = os.path.join(general_dir, "models")
+                return search_file(args.model, general_model_dir)
             return args.model
         elif args.model_path:
             return args.model_path
@@ -29,7 +33,6 @@ def handle_model_directory(args):
         general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
         general_model_dir = os.path.join(general_dir, "models")
         return search_file(args.model, general_model_dir)
-            
     else:
         sys.exit("Error: no model name or model path given. Please Enter with -m a model name or with -mp the model path")
 

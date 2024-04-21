@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 import csv
+import numpy as np
 
 def main():
     args = handle_arguments()
@@ -40,11 +41,12 @@ def create_new_database(database_name):
         "os": [],
         "api": [],
         "inference type": [],
-        "latency": [],
+        "latency avg": [],
         "top1": [],
         "top5": [],
         "map": [],
-        "miou": []
+        "miou": [],
+        "latency": []
     }
 
     df = pd.DataFrame(dict)
@@ -97,25 +99,21 @@ def manage_database(args):
         #print(df.columns)
         #print(df)
         
-        ind = df.index[(df["model_name"] == model_name) & (df["os"] == os)]
+        ind = df.index[(df["model_name"] == model_name) & (df["os"] == os) & (df["api"] == api)]
         print(ind)
         if len(ind) == 0:
             print("no row found")
             df = add_entry(model_name, inference_type, api, is_only_lat, os, file_path, df)
             return df
         else:
-            filt = df["model_name"] == model_name
+            filt = (df["model_name"] == model_name) & (df["api"] == api)
 
             if "onlylat" in is_only_lat:
                 print("found")
 
                 df.loc[filt, "os"] = os
-
-                dict = df.to_dict()
-
-                dict["latency"][ind[0]] = get_latency_value(file_path)
-                
-                df = pd.DataFrame(dict)
+                df.loc[filt, "latency"] = file_path
+                df.loc[filt, "latency avg"] = np.mean(get_latency_value(file_path))
 
                 return df
             else:
@@ -128,8 +126,6 @@ def manage_database(args):
 
                     df.loc[filt, "top1"] = float(top1)
                     df.loc[filt, "top5"] = float(top5)
-
-                    print(top1, top5)
 
                     return df
                 elif inference_type == "det":
@@ -193,7 +189,9 @@ def add_entry(model_name, inference_type, api, onyl_lat, os, file_path, df):
     if "onlylat" in onyl_lat:
         #inference_time = df["inference time"].astype(float)
         #avg = inference_time.mean()
-        entry.update({"latency": [get_latency_value(file_path)]})
+        lat = get_latency_value(file_path)
+        print(file_path)
+        entry.update({"latency": file_path, "latency avg": np.mean(lat)})
         #new_row = pd.DataFrame(entry)
         #df = df.append(new_row, index=df.columns)
         df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True)
