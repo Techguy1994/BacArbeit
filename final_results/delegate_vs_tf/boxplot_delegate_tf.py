@@ -5,20 +5,26 @@ import os
 
 
 def main():
-    database = pd.read_csv("database_os_comparison.csv")
+    database = pd.read_csv("database.csv")
     print(database)
 
-    df = create_empty_dataframe()
-    print(df)
+    
 
-    db = filter_through_database(df)
+    df = create_empty_dataframe()
+    print(df.head)
+
+    
+
+    #db = filter_through_database(df)
+
+   
 
     df = interate_through_database(database, df)
 
     print(df)
     df.to_csv("temp.csv")
 
-    fig = px.box(df, x="model_name", y="latency", color="os", range_y=[0.005,0.1])
+    fig = px.box(df, x="model_name", y="latency", color="api", range_y=[0.005,0.1])
     fig.show()
 
     
@@ -54,21 +60,28 @@ def create_empty_dataframe():
 
 def filter_through_database(df):
     pass
+    #print(df.columns.values)
+    #filt = df["api"] == "tf"
+    #print(filt)
+    #print(df.loc[filt])
 
 def interate_through_database(database, df):
     for i,r in database.iterrows():
-        model_name = r["model_name"]
-        os = r["os"]
-        api = r["api"]
-        latency_link = r["latency"]
 
-        lat = pd.read_csv(latency_link)
+        if r["api"] in ["delegate","tf"]:
+            if r["os"] == "ubuntus":
+                model_name = r["model_name"]
+                os = r["os"]
+                api = r["api"]
+                latency_link = r["latency"]
 
-        for ii, rr in lat.iterrows():
-            inference_time = rr["inference time"]
+                lat = pd.read_csv(latency_link)
 
-            entry = {"model_name": [model_name], "os": [os], "api": [api], "latency": [inference_time]}
-            df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True) 
+                for ii, rr in lat.iterrows():
+                    inference_time = rr["inference time"]
+
+                    entry = {"model_name": [model_name], "api": [api], "latency": [inference_time]}
+                    df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True) 
 
     return df
 
