@@ -95,6 +95,7 @@ def store_output_dictionary_det_only_lat(data, image, time):
     data["label"].append([])
     data["index"].append([])
     data["value"].append([])
+    data["boxes"].append([])
 
 
     #for i in range(len(output)):
@@ -120,7 +121,7 @@ def store_output_dictionary_seg_only_lat(data, image, time):
 
 
 def create_pandas_dataframe(dict):
-    #print(dict)
+    print(dict)
     df = pd.DataFrame(dict)
     return df
 
@@ -147,7 +148,8 @@ def create_file_name(name_date, args):
     print(model_name)
     if args.skip_output:
         print("Here")
-        file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + "_onlylat.csv"
+        print(str(args.num_threads))
+        file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + "_" + str(args.num_threads) + "_onlylat.csv"
     else:
         file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + ".csv"
 

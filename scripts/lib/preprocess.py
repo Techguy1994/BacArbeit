@@ -139,7 +139,10 @@ def preprocess_onnx_deeplab(image, input_type, image_height, image_width):
     image = cv2.resize(image, (image_height, image_width))
     #image_data = cv2.normalize(image.astype(np.float32), None, -1.0, 1.0, cv2.NORM_MINMAX)
     image_data = cv2.normalize(image.astype(np.float32), None, 0, 1.0, cv2.NORM_MINMAX)
+    #image_data = image.transpose([2,0,1])
     image_data = np.expand_dims(image_data, 0)
+    print("image data shape")
+    print(image_data.shape)
 
     return image_data
 
