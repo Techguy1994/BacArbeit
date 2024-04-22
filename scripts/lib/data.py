@@ -148,7 +148,7 @@ def create_file_name(name_date, args):
     print(model_name)
     if args.skip_output:
         print("Here")
-        file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + "_onlylat.csv"
+        file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + "_" + args.num_threads +"_onlylat.csv"
     else:
         file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + ".csv"
 
