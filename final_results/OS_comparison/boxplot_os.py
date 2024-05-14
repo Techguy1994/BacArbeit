@@ -6,6 +6,7 @@ import os
 
 def main():
     database = pd.read_csv("database_os_comparison.csv")
+    csv = "temp.csv"
     print(database)
 
     df = create_empty_dataframe()
@@ -14,10 +15,12 @@ def main():
     df = interate_through_database(database, df)
 
     print(df)
-    df.to_csv("temp.csv")
+    df.to_csv(csv)
 
     fig = px.box(df, x="model_name", y="latency", color="os", range_y=[0.005,0.1])
     fig.show()
+
+    calculate_norm_os_lat()
 
     
 
@@ -68,6 +71,8 @@ def interate_through_database(database, df):
 
     return df
 
+def calculate_norm_os_lat():
+    pass
 
 
 
