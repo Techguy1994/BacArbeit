@@ -714,9 +714,70 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "seg", "-m", "deeplabv3_mobilenet_v3_large.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "macos"], shell=False)
     if number == 891:
         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
-    
-    # latency runs
-    #if number == 900:
+
+
+    # classification 3 vs 4 thread comparison runs
+    # 3 thread
+    #onnx
+    if number == 3240:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv2-12.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3241:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv2-12-int8.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3242:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_large_100_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3243:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_small_075_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3244:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_small_050_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    #pytroch
+    if number == 3245:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3246:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_small", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3247:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v2", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3248:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large_q", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3249:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v2_q", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    #openvino
+    if number == 3290:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-large-1.0-224-tf_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3291:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-small-1.0-224-tf_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 3292:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+
+    # 4 thread
+    #onnx
+    if number == 4240:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv2-12.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4241:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv2-12-int8.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4242:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_large_100_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4243:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_small_075_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4244:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_small_050_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    #pytroch
+    if number == 4245:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4246:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_small", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4247:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v2", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4248:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large_q", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4249:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v2_q", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    #openvino
+    if number == 4290:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-large-1.0-224-tf_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4291:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-small-1.0-224-tf_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
+    if number == 4292:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
 
 
 
