@@ -1,0 +1,3 @@
+model_name,os,api,inference type,latency avg,top1,top5,map,miou,latency,thread count
+mobilenetv2-12,s,onnx,class,0.0914232247750001,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/onnx/mobilenetv2-12/mobilenetv2-12_onnx_class_2024_5_14_15_59_ubuntu_s_3_onlylat.csv,3
+mobilenetv2-12,s,onnx,class,0.0838331555269942,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/onnx/mobilenetv2-12/mobilenetv2-12_onnx_class_2024_5_14_16_43_ubuntu_s_4_onlylat.csv,4

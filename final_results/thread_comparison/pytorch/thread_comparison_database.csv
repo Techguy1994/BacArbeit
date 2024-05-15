@@ -1,0 +1,3 @@
+model_name,os,api,inference type,latency avg,top1,top5,map,miou,latency,thread count
+mobilenet_v3_large,s,pytorch,class,0.2633637338290054,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v3_large/_pytorch_class_2024_5_14_17_14_ubuntu_s_3_onlylat.csv,3
+mobilenet_v3_large,s,pytorch,class,0.2679231640739672,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v3_large/_pytorch_class_2024_5_14_17_53_ubuntu_s_4_onlylat.csv,4
