@@ -779,6 +779,27 @@ def handle_arguments():
     if number == 4292:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP16.xml", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntu_s", "-num_thr", "4"], shell=False)
 
+    # yolov5l 3 and 4 thread comparison
+
+    # num_threads 3
+    if number == 3600:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "det", "-m", "yolov5l-fp16.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+    if number == 3604:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "det", "-m", "yolov5l.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+    if number == 3608:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "det", "-m", "yolov5l.xml", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+    if number == 3612:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "det", "-m", "yolov5l", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+
+    # num_threads 4
+    if number == 4600:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "det", "-m", "yolov5l-fp16.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "4"], shell=False)
+    if number == 4604:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "det", "-m", "yolov5l.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "4"], shell=False)
+    if number == 4608:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "det", "-m", "yolov5l.xml", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "4"], shell=False)
+    if number == 4612:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "det", "-m", "yolov5l", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "4"], shell=False)
 
 
 if __name__ == "__main__":
