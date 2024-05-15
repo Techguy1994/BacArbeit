@@ -1,6 +1,3 @@
-
-
-
 def handle_output_tf(output_data, output_details, label, n_big):
     import numpy as np
     results = []
@@ -58,7 +55,6 @@ def handle_output_onnx_mobilenet_class(output_data, output_details, label, n_big
         quit("not adapted to onnx, please change following code when quantized model is given")
         out_normalization_factor = np.iinfo(output_details[0]['dtype']).max
     elif "float" in output_details:
-        #print("float")
         out_normalization_factor = 1
 
 
@@ -104,22 +100,11 @@ def handle_output_openvino_moiblenet_class(output_data, label, n_big):
     max_positions = np.argpartition(probs, -n_big)[-n_big:]
     out_normalization_factor = 1
 
-    #print(output_details[0]["dtype"])
 
-    #if "integer" in output_details:
-    #    print("int")
-    #    quit("no adapted to onnx, please change following code when quantized model is given")
-    #    out_normalization_factor = np.iinfo(output_details[0]['dtype']).max
-    #elif "float" in output_details:
-    #    print("float")
-    #    out_normalization_factor = 1
 
     for entry in max_positions:
         # go over entries and print their position and result in percent
         val = probs[entry] / out_normalization_factor
-        #result[entry] = [val*100]
-        #print("\tpos {} : {:.2f}%".format(entry, val*100))
-        print(entry, val)
         results.append({"label": label[entry], "index": entry, "value": val})
         
     return results
@@ -128,8 +113,6 @@ def handle_output_openvino_moiblenet_class(output_data, label, n_big):
 def handle_output_tf_yolo_det_old(output_details, intepreter, original_image, thres, file_name, label):
     import numpy as np
     import cv2
-
-    print(thres)
 
     results = []
     output_data = []
@@ -140,7 +123,6 @@ def handle_output_tf_yolo_det_old(output_details, intepreter, original_image, th
 
 
     output_data = output_data[0][0]
-    print(output_data.shape)
 
     boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
     scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
@@ -150,17 +132,12 @@ def handle_output_tf_yolo_det_old(output_details, intepreter, original_image, th
     xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
 
     orig_W, orig_H = original_image.shape[1], original_image.shape[0]
-    print("Boxes shape: ", boxes.shape)
-    print("scores shape: ", scores.shape)
-    print("Classes Len", len(classes))
-    print("Orig: ", original_image.shape)
-    print(orig_H, orig_W)
+
 
     output_img = original_image
 
     for i in range(len(scores)):
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
-            print(label[classes[i]],classes[i], scores[i])
             xmin = int(max(1,(xyxy[0][i] * orig_W)))
             ymin = int(max(1,(xyxy[1][i] * orig_H)))
             xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
@@ -168,9 +145,6 @@ def handle_output_tf_yolo_det_old(output_details, intepreter, original_image, th
 
             output_img = cv2.rectangle(output_img, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
             results.append({"label": label[classes[i]],"index": classes[i], "value": scores[i]})
-
-        
-    print(file_name)
 
     cv2.imwrite(file_name, output_img)
 
@@ -181,8 +155,6 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
     import cv2
     import sys
 
-    #print(thres)
-
     results = []
     output_data = []
     all_det = []
@@ -192,10 +164,7 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
     for det in output_details:
         output_data.append(intepreter.get_tensor(det['index']))
 
-
-
     output_data = output_data[0][0]
-    #print(output_data.shape)
 
     boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
     scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
@@ -206,19 +175,11 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
     xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
 
     orig_W, orig_H = original_image.shape[1], original_image.shape[0]
-    #print("Boxes shape: ", boxes.shape)
-    #print("scores shape: ", scores.shape)
-    #print("Classes Len", len(classes))
-    #print("Orig: ", original_image.shape)
-    #print(orig_H, orig_W)
 
     output_img = original_image
-    #print(thres)
     for i in range(len(scores)):
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
 
-            #print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
-            #print(label[classes[i]],classes[i], scores[i])
             xmin = max(1,(xyxy[0][i] * orig_W))
             ymin = max(1,(xyxy[1][i] * orig_H))
             xmax = min(orig_W,(xyxy[2][i] * orig_W))
@@ -226,18 +187,13 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
 
             all_det.append((classes[i],[xmin, ymin, xmax, ymax], scores[i]))
 
-    #print("start of iou")
-    #print(all_det)
+
 
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
         all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1]) <= 0.45), [det for det in all_det])]
-    #print("")
-    #rint(nms_det)
 
-    #print(nms_det[0], nms_det[1])
-    
     for det in nms_det:
 
         x_left = round(det[1][0], 2)
@@ -257,8 +213,6 @@ def handle_output_tf_yolo_det_alt(output_details, intepreter, original_image, th
     import cv2
     import sys
 
-    print(thres)
-
     results = []
     output_data = []
     all_det = []
@@ -271,7 +225,7 @@ def handle_output_tf_yolo_det_alt(output_details, intepreter, original_image, th
 
 
     output_data = output_data[0][0]
-    #print(output_data.shape)
+
 
     boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
     scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
@@ -283,21 +237,13 @@ def handle_output_tf_yolo_det_alt(output_details, intepreter, original_image, th
     coco_xywh = [x- w/2,y-h/2,w,h]
 
     orig_W, orig_H = original_image.shape[1], original_image.shape[0]
-    #print("Boxes shape: ", boxes.shape)
-    #print("scores shape: ", scores.shape)
-    #print("Classes Len", len(classes))
-    #print("Orig: ", original_image.shape)
-    #print(orig_H, orig_W)
+
 
     output_img = original_image
-    #print(thres)
+
     for i in range(len(scores)):
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
-            #print(label[classes[i]],classes[i], scores[i])
-            #xmin = max(1,(xyxy[0][i] * orig_W))
-            #ymin = max(1,(xyxy[1][i] * orig_H))
-            #xmax = min(orig_W,(xyxy[2][i] * orig_W))
-            #ymax = min(orig_H,(xyxy[3][i] * orig_H))
+
             xl = coco_xywh[0][i]
             yl = coco_xywh[1][i]
             wl = coco_xywh[2][i]
@@ -305,17 +251,12 @@ def handle_output_tf_yolo_det_alt(output_details, intepreter, original_image, th
 
             all_det.append((classes[i],[xl, yl, wl, hl], scores[i]))
 
-    #print("start of iou")
-    #print(all_det)
 
     while all_det:
         element = int(np.argmax([all_det[i][2] for i in range(len(all_det))]))
         nms_det.append(all_det.pop(element))
         all_det = [*filter(lambda x: (iou(x[1], nms_det[-1][1], orig_W, orig_H) <= 0.4), [det for det in all_det])]
-    #print("")
-    #rint(nms_det)
 
-    #print(nms_det[0], nms_det[1])
     
 
     for det in nms_det:
@@ -342,7 +283,6 @@ def handle_output_tf_yolo_det_alt(output_details, intepreter, original_image, th
 
         bbox = [x_orig, y_orig, w_orig, h_orig]
 
-        #print(det) 
         output_img = cv2.rectangle(output_img, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (10, 255, 0), 2)
         results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": bbox})
 
@@ -353,13 +293,10 @@ def handle_output_tf_yolo_det_alt(output_details, intepreter, original_image, th
 def handle_output_pyarmnn_yolo_det(output_details, img_org, thres, img_result_file, label):
     import cv2
     import numpy as np
-    print("Output pyarmnn")
 
     results = []
     output_data = output_details[0][0]
-    #print(len(output_details))
-    print(output_data.shape)
-    #output_data = output_data[0][0]
+
 
     boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
     scores = np.squeeze( output_data[..., 4]) # confidences  [25200, 1]
@@ -369,17 +306,13 @@ def handle_output_pyarmnn_yolo_det(output_details, img_org, thres, img_result_fi
     xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
 
     orig_W, orig_H = img_org.shape[1], img_org.shape[0]
-    print("Boxes shape: ", boxes.shape)
-    print("scores shape: ", scores.shape)
-    print("Classes Len", len(classes))
-    print("Orig: ", img_org.shape)
-    print(orig_H, orig_W)
+
 
     output_img = img_org
 
     for i in range(len(scores)):
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
-            #print(labels[classes[i]],classes[i], scores[i])
+            
             xmin = int(max(1,(xyxy[0][i] * orig_W)))
             ymin = int(max(1,(xyxy[1][i] * orig_H)))
             xmax = int(min(orig_W,(xyxy[2][i] * orig_W)))
@@ -389,7 +322,7 @@ def handle_output_pyarmnn_yolo_det(output_details, img_org, thres, img_result_fi
             results.append({"label": label[classes[i]],"index": classes[i], "value": scores[i]})
 
         
-    print(output_img.shape)
+    
     cv2.imwrite(img_result_file, output_img)
 
     return results
@@ -403,9 +336,7 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
     all_det = []
     nms_det = []
 
-    #print(output_details)
     output_data = output_details[0]
-    #print(output_data.shape)
     output_data = output_data[0]
 
     boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
@@ -416,21 +347,14 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
     xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
 
     orig_W, orig_H = img_org.shape[1], img_org.shape[0]
-    #print("Boxes shape: ", boxes.shape)
-    #print("scores shape: ", scores.shape)
-    #print("Classes Len", len(classes))
-    #print("Orig: ", img_org.shape)
-    #print("model shape: ", model_shape)
-    #print(orig_H, orig_W)
+
 
     ratio_H, ratio_W = orig_H/model_shape[0], orig_W/model_shape[1]
-    print(ratio_H, ratio_W)
 
     output_img = img_org
 
     for i in range(len(scores)):
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
-            #print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
 
             xmin = max(1,xyxy[0][i])
             ymin = max(1,xyxy[1][i])
@@ -448,7 +372,6 @@ def handle_output_onnx_yolo_det(output_details, img_org, thres, img_result_file,
 
         
     for det in nms_det:
-        #print(det) 
         xmin = det[1][0]*ratio_W
         ymin = det[1][1]*ratio_H
         xmax = det[1][2]*ratio_W
@@ -478,21 +401,14 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
     all_det = []
     nms_det = []
 
-
-    #print("output; ", output)
-    #print("xyxy: ", output.xyxy[0])
-
     output = output.xyxy[0]
     output = output.numpy()
-    #print(output)
 
     # format xmin, ymin, xmax, ymax, score, index (label)
 
     for element in output:
-        #print(element)
-
+        
         if ((element[4] > thres) and (element[4] <= 1.0)):
-            #print([element[0], int(element[1]), int(element[2]), int(element[3])])
             all_det.append((int(element[5]), [element[0], element[1], element[2], element[3]], element[4]))
 
     
@@ -503,19 +419,14 @@ def handle_output_pytorch_yolo_det(output, img_org, thres, img_result_file, labe
 
         
     for det in nms_det:
-        #print(det) 
         output_img = cv2.rectangle(img_org, (int(det[1][0]),int(det[1][1])), (int(det[1][2]), int(det[1][3])), (10, 255, 0), 2)
-        #print("value: ", det[2])
-        #print("index: ", det[0])
-        #print("boxes: ", [det[1][0],det[1][1],det[1][2], det[1][3]])
-        #results.append({"label": label[det[0]]})
+
 
         #convert to x,y,w,h
         x_left = round(det[1][0], 2)
         y_left = round(det[1][1], 2)
         w = round(det[1][2] - det[1][0], 2)
         h = round(det[1][3] - det[1][1], 2)
-        #print(x_left, y_left, w ,h)
 
 
         results.append({"label": label[det[0]],"index": det[0], "value": det[2], "boxes": [x_left,y_left,w, h]})
@@ -537,12 +448,9 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
     for elem in output_details:
         output_data = output_details[elem]
 
-    #print(output_data)
-    #print(output_data.shape)
+
     output_data = output_data[0]
-    #print(output_data.shape)
-    #output_details = output_details[0]
-    #print(output_details.shape)
+
 
     boxes = np.squeeze(output_data[..., :4])    # boxes  [25200, 4]
     scores = np.squeeze( output_data[..., 4:5]) # confidences  [25200, 1]
@@ -552,24 +460,15 @@ def handle_output_ov_yolo_det(output_details, img_org, thres, img_result_file, l
     xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
 
     orig_W, orig_H = img_org.shape[1], img_org.shape[0]
-    #print("Boxes shape: ", boxes.shape)
-    #print("scores shape: ", scores.shape)
-    #print("Classes Len", len(classes))
-    #print("Orig: ", img_org.shape)
-    #print(orig_H, orig_W)
+
 
     ratio_H, ratio_W = orig_H/model_shape[0], orig_W/model_shape[1]
-    
-    #print("model shape: ", model_shape[0], model_shape[1])
-    #print(orig_H, orig_W)
-    #print(ratio_H, ratio_W)
+
 
     output_img = img_org
 
     for i in range(len(scores)):
         if ((scores[i] > thres) and (scores[i] <= 1.0)):
-            #print(labels[classes[i]],classes[i], scores[i])
-            #print(xyxy[0][i], xyxy[1][i], xyxy[2][i], xyxy[3][i])
             #xmin, ymin, xmax, ymax = xyxy[0][i]*ratio_W, xyxy[1][i]*ratio_H, xyxy[2][i]*ratio_W, xyxy[3][i]*ratio_H
             xmin = max(1,xyxy[0][i])
             ymin = max(1,xyxy[1][i])
@@ -609,13 +508,10 @@ def handle_output_deeplab_tf(output_details, interpreter, image, raw_file, overl
     import numpy as np
     import cv2
 
-    #print(output_details[0])
     output_data = interpreter.get_tensor(output_details[0]['index'])
 
     # my method, first resize, then argmax 
     output_data = output_data[0]
-
-    #print(output_data.shape)
 
     seg_map = np.ndarray((image.shape[0],image.shape[1],len(output_data[0,0,:])))
 
@@ -626,11 +522,7 @@ def handle_output_deeplab_tf(output_details, interpreter, image, raw_file, overl
     seg_map = np.argmax(seg_map, axis=2)
 
     result, out_image, out_mask = vis_segmentation_cv2(image, seg_map, label, colormap)
-    #print(img_result_file)
-    #results.append(result)
-    #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
-    #mask_out_path = gen_out_path + "_mask.jpg"
-    #result_pic_out_path = gen_out_path + ".jpg"
+
     cv2.imwrite(overlay_file, out_image)
     cv2.imwrite(raw_file, out_mask)
 
@@ -645,11 +537,10 @@ def handle_output_deeplab_tf_alt(output_details, interpreter, image, raw_file, o
     height = image.shape[0]
 
     output_data = interpreter.get_tensor(output_details[0]['index'])
-    #print(output_data.shape)
 
     output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
 
-    #print("outputclasses shape: ", output_classes.shape)
+
     
 
     unique_labels = np.unique(output_classes)
@@ -688,8 +579,6 @@ def handle_output_deeplab_pyarmnn(output_data, image, raw_file, overlay_file, in
 
     output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
 
-    #print(output_classes.shape)
-
     unique_labels = np.unique(output_classes)
     label = np.asarray(label)
     results = label[unique_labels]
@@ -719,23 +608,12 @@ def handle_output_deeplab_pyarmnn_old(output_data, image, raw_file, overlay_file
     import cv2
     import numpy as np
 
-    #print("label shape", labels.shape)
-
-    #print(output_data[0].shape)
-    #print(output_data[0][0].shape)
-    #print(output_data[0][0])
     
     output_data = output_data[0][0]
 
-    #print(output_data[0,0,:])
-    #print(len(output_data[0,0,:]))
-    #print("output_data", output_data.shape)
-
-
-    #seg_map = np.ndarray((img_res.shape[0],img_res.shape[1],len(output_data[0,0,:])))
     seg_map = np.ndarray((image.shape[0],image.shape[1],len(output_data[0,0,:])))
 
-    #print("segmap", seg_map.shape)
+
 
     for i in range(len(output_data[0,0,:])):
         seg_map[:,:,i] = cv2.resize(output_data[:,:,i], (image.shape[1],image.shape[0]))
@@ -743,15 +621,10 @@ def handle_output_deeplab_pyarmnn_old(output_data, image, raw_file, overlay_file
 
     seg_map = np.argmax(seg_map, axis=2)
 
-    #print("segmap after argmax (labels)", seg_map.shape)
 
     result, out_image, out_mask = vis_segmentation_cv2(image, seg_map, label, colormap)
     print(result.shape)
-    #print(img_result_file)
-    #results.append(result)
-    #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
-    #mask_out_path = gen_out_path + "_mask.jpg"
-    #result_pic_out_path = gen_out_path + ".jpg"
+
     cv2.imwrite(overlay_file, out_image)
     cv2.imwrite(raw_file, out_mask)
 
@@ -766,8 +639,6 @@ def handle_output_deeplab_onnx(output_data, image, raw_file, overlay_file, index
     height = image.shape[0]
 
     output_classes = np.uint8(np.argmax(output_data, axis=3)[0])
-
-    #print(output_classes.shape)
 
     unique_labels = np.unique(output_classes)
     label = np.asarray(label)
@@ -799,8 +670,7 @@ def handle_output_deeplab_onnx_old(output_data, origanal_image, raw_file, overla
     import cv2
 
     output_data = output_data[0]
-    print(len(output_data))
-    print(len(output_data[0,0,:]))
+
 
     seg_map = np.ndarray((origanal_image.shape[0],origanal_image.shape[1],len(output_data[0,0,:])))
 
@@ -811,11 +681,7 @@ def handle_output_deeplab_onnx_old(output_data, origanal_image, raw_file, overla
     seg_map = np.argmax(seg_map, axis=2)
 
     result, out_image, out_mask = vis_segmentation_cv2(origanal_image, seg_map, label, colormap)
-    #print(img_result_file)
-    #results.append(result)
-    #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
-    #mask_out_path = gen_out_path + "_mask.jpg"
-    #result_pic_out_path = gen_out_path + ".jpg"
+
     cv2.imwrite(overlay_file, out_image)
     cv2.imwrite(raw_file, out_mask)
 
@@ -830,11 +696,10 @@ def handle_output_deeplab_pytorch(output_data, image, raw_file, overlay_file, in
     height = image.shape[0]
 
     output_data = output_data.numpy()
-    #print(output_data.shape)
+
 
     output_classes = np.uint8(np.argmax(output_data, axis=0))
 
-    #print(output_classes.shape)
 
     unique_labels = np.unique(output_classes)
     label = np.asarray(label)
@@ -866,27 +731,12 @@ def handle_output_deeplab_pytorch_old(output_data, image, raw_file, overlay_file
     import cv2
 
     #https://github.com/onnx/models/tree/main/vision/object_detection_segmentation/ssd-mobilenetv1
-    results = []
-
-
 
     output = output_data.numpy()
     
-    
-    #print(output_details[0])
-   # output_data = interpreter.get_tensor(output_details[0]['index'])
-    
-    # my method, first resize, then argmax 
-    #output_data = output_data[0]
-
-    #print(output_data.shape)
-    #print(output.shape)
-    #print(img_res.shape)
-    #print(len(output_data[:,0,0]))
-
     seg_map = np.ndarray((image.shape[0],image.shape[1],len(output[:,0,0])))
 
-    #print(seg_map.shape)
+
 
     for i in range(len(output[:,0,0])):
         seg_map[:,:,i] = cv2.resize(output[i,:,:], (image.shape[1],image.shape[0]))
@@ -895,11 +745,7 @@ def handle_output_deeplab_pytorch_old(output_data, image, raw_file, overlay_file
     seg_map = np.argmax(seg_map, axis=2)
 
     result, out_image, out_mask = vis_segmentation_cv2(image, seg_map, label, colormap)
-    #print(img_result_file)
-    #results.append(result)
-    #gen_out_path = os.path.join(img_result_file, img_res.split("/")[-1].split(".")[0])
-    #mask_out_path = gen_out_path + "_mask.jpg"
-    #result_pic_out_path = gen_out_path + ".jpg"
+
     cv2.imwrite(overlay_file, out_image)
     cv2.imwrite(raw_file, out_mask)
 
@@ -913,10 +759,6 @@ def handle_output_deeplab_ov(output_data, image, raw_file, overlay_file, index_f
     width = image.shape[1]
     height = image.shape[0]
 
-    #output_data = output_data.values()
-
-    #predictions = next(iter(output_data.values()))
-
     for element in output_data:
         output = output_data[element][0]
         
@@ -924,17 +766,15 @@ def handle_output_deeplab_ov(output_data, image, raw_file, overlay_file, index_f
     output_classes = np.uint8(np.array(output, dtype="int"))
 
 
-    print("out shape", output_classes.shape)
-
     unique_labels = np.unique(output_classes)
-    print(unique_labels)
+    
     label = np.asarray(label)
-    print(label)
+    
     results = label[unique_labels]
-    print(results)
+
 
     output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
-    print(output_image.shape)
+    
 
     #colormap given in RGB but apparently BGR needed
 
@@ -973,12 +813,10 @@ def vis_segmentation_cv2(image, seg_map, LABEL_NAMES, colormap):
     import numpy as np
     """Visualizes input image, segmentation map and overlay view."""
 
-    #print(image.shape, )
+   
     cv2.imwrite("result1.jpg", image)
     seg_image = label_to_color_image(seg_map, colormap).astype(np.uint8)
 
-    #print(image.shape, seg_image.shape)
-    #print(LABEL_NAMES)
 
     overlay_picture = cv2.addWeighted(image, 0.7, seg_image, 0.5, 0)
 
@@ -998,9 +836,7 @@ def vis_segmentation_cv2(image, seg_map, LABEL_NAMES, colormap):
     LABEL_NAMES = np.asarray(LABEL_NAMES)
     #indeces = FULL_COLOR_MAP[unique_labels].astype(np.uint8)
     res = LABEL_NAMES[unique_labels]
-    #print(unique_labels) 
-    #print(indeces)
-    #print(res)
+
 
     return res, overlay_picture, seg_image
 
@@ -1021,18 +857,13 @@ def label_to_color_image(label, colormap):
         map maximum entry.
     """
 
-    #print("Label shape: ", label.shape)  
 
     if label.ndim != 2:
         raise ValueError('Expect 2-D input label')
 
     if np.max(label) >= len(colormap):
         raise ValueError('label value too large.')
-    #print("label to color")
-    #print(label)
-    #print(colormap)
-    #print(label.shape, colormap.shape)
-    #print(colormap[label])
+
 
     return colormap[label]
 
@@ -1049,8 +880,7 @@ def iou_old(box1_org, box2_org, orig_W, orig_H):
     Returns:
         Calculated intersection-over-union (IoU) value for two bounding boxes.
     """
-    #print(box1)
-    #print(box2)
+
 
 
     x1 = box1_org[0] 

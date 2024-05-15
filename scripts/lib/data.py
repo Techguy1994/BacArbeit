@@ -68,12 +68,8 @@ def store_output_dictionary_seg(data, image, time, output):
     data["image"].append(image)
     data["inference time"].append(time)
     data["label"].append([])
-
-    #print(output)
     
     for i in range(len(output)):
-        #print(data["label"][-1])
-        #print(output[i])
         data["label"][-1].append(output[i])
 
     return data
@@ -110,27 +106,19 @@ def store_output_dictionary_seg_only_lat(data, image, time):
     data["inference time"].append(time)
     data["label"].append([])
 
-    
-    #for i in range(len(output)):
-    #    print(data["label"][-1])
-    #    print(output[i])
-    #    data["label"][-1].append(output[i])
-
     return data
 
 
 
 def create_pandas_dataframe(dict):
-    print(dict)
     df = pd.DataFrame(dict)
     return df
 
 def store_pandas_data_frame_as_csv(df, name_date, args):
     
     file_name = create_file_name(name_date, args)
-
     location = os.path.join(args.output, "output", file_name)
-    print(location)
+
     df.to_csv(location)
 
 def store_pandas_data_frame_as_csv_det_seg(df, name_date, args):
@@ -145,10 +133,7 @@ def create_file_name(name_date, args):
     model_name = model_name[:-1]
     model_name = "".join(model_name)
 
-    print(model_name)
     if args.skip_output:
-        print("Here")
-        print(str(args.num_threads))
         file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + "_" + str(args.num_threads) + "_onlylat.csv"
     else:
         file_name = model_name + "_" + args.api + "_" + args.type + "_" + name_date + "_" + args.os + ".csv"

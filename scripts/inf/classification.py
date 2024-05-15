@@ -187,7 +187,7 @@ def run_onnx(args):
 
     for i in range(args.niter):
         for image in args.images:
-            print(image)
+            #print(image)
             processed_image = pre.preprocess_onnx_mobilenet(image, image_height, image_width, input_data_type)
 
             if args.profiler == "perfcounter":

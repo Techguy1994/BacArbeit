@@ -14,7 +14,6 @@ class Arguments:
         self.api = self.handle_api()
         self.profiler = self.handle_profiler_selection()
         self.output, self.time = d.handle_output_directory(self.args, self.api, self.type, self.model, self.profiler)
-        #print(self.output)
         self.niter = int(self.args.niter)
         self.thres = float(self.args.threshold)
         self.sleep = int(self.args.sleep)
@@ -24,8 +23,7 @@ class Arguments:
         self.randomized_input = self.args.randomized_input
         self.num_threads = int(self.args.number_threads)
         self.os = self.args.os
-        #print(int(self.randomized_input))
-        #handle_other_paramters()
+
 
     def arguments(self):
         parser = argparse.ArgumentParser(description='Raspberry Pi 4 Inference Module for Classification')
@@ -100,8 +98,7 @@ class Arguments:
     
     def handle_colormap_for_seg(self):
         if self.args.type == "seg":
-            if self.args.colormap == "ade20k":
-                #print(args.dataset)
+            if self.args.colormap == "ade20k": 
                 return create_ade20k_label_colormap()
             elif self.args.colormap == "pascal_voc_2012":
                 return create_pascal_label_colormap()
@@ -128,9 +125,6 @@ def create_pascal_label_colormap_old():
             colormap[:, channel] |= ((ind >> channel) & 1) << shift
         ind >>= 3
 
-    #print("colormap: --- >", colormap.shape)
-    #print(colormap)
-    #print("finto")
     return colormap
 
 def create_pascal_label_colormap(N=256, normalized=False):
@@ -153,8 +147,6 @@ def create_pascal_label_colormap(N=256, normalized=False):
         cmap[i] = np.array([r, g, b])
 
     cmap = cmap/255 if normalized else cmap
-    print("cmap shape: ", cmap.shape)
-    print("cmap: ", cmap)
 
     return cmap
 
