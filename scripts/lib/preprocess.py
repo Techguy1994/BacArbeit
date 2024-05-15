@@ -8,24 +8,17 @@ def preprocess_tflite_moobilenet(image_path, height, width, data_type):
     image = image.resize((width, height), Image.LANCZOS)
     #image = image.convert("RGB")
     #image_data = np.asarray(image).astype(data_type)
-    #print(len(np.shape(image_data)))
-    #print(np.shape(image_data))
+
 
     if len(np.shape(np.asarray(image).astype(data_type))) == 2:
         image = image.convert("RGB")
     
     image_data = np.asarray(image).astype(data_type)
 
-    
-    #print(len(np.shape(image_data)))
-    #print(np.shape(image_data))
-
     #print(image_data.flags)
     #image_data = np.atleast_3d(image)
     #image_data.setflags(write=1)
-    
-    #print(np.shape(image_data))
-    #print(image_data.flags)
+  
 
     if data_type is np.float32:
         for channel in range(image_data.shape[0]):
@@ -46,8 +39,6 @@ def preprocess_onnx_mobilenet(image_path, height, width, data_type):
     image = image.resize((width, height), Image.LANCZOS)
     #image_data = np.asarray(image).astype(type)
 
-    #print(len(np.shape(image_data)))
-    #print(np.shape(image_data))
 
     if len(np.shape(np.asarray(image).astype(type))) == 2:
         #image_data = np.expand_dims(image_data, 2)
@@ -55,8 +46,6 @@ def preprocess_onnx_mobilenet(image_path, height, width, data_type):
 
     image_data = np.asarray(image).astype(type)
 
-    
-    #print(len(np.shape(image_data)))
 
     image_data = image_data.transpose([2, 0, 1]) # transpose to CHW
     mean = np.array([0.079, 0.05, 0]) + 0.406
@@ -89,7 +78,7 @@ def preprocess_tflite_yolov5(image_path, height, width, data_type):
         print("float model")
         image_data = np.float32(image_data / 255)
     image_data = np.expand_dims(image_data, axis=0)
-    print(image_data.shape)
+
 
     return image_data, orig_img
 
@@ -141,8 +130,7 @@ def preprocess_onnx_deeplab(image, input_type, image_height, image_width):
     image_data = cv2.normalize(image.astype(np.float32), None, 0, 1.0, cv2.NORM_MINMAX)
     #image_data = image.transpose([2,0,1])
     image_data = np.expand_dims(image_data, 0)
-    print("image data shape")
-    print(image_data.shape)
+
 
     return image_data
 

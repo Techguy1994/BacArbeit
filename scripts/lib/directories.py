@@ -86,7 +86,6 @@ def create_random_input(count):
     return image_list
 
 def handle_label_directory(args):
-    #print(args)
     if args.labels:
         general_dir = os.path.abspath(os.path.dirname(__file__)).split("scripts")[0]
         general_labels_dir = os.path.join(general_dir, "labels")
