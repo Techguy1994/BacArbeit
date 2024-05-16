@@ -397,7 +397,7 @@ def run_sync_ov(args, output_image_folder):
                 output = post.handle_output_ov_yolo_det(result, img_org, args.thres, image_result_file, args.label,(640, 640))
                 output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
             else:
-                output_dict = dat.store_output_dictionary_det_only_lat(output_dict, args.images[j], lat)
+                output_dict = dat.store_output_dictionary_det_only_lat(output_dict, image, lat)
 
         time.sleep(args.sleep) 
 
