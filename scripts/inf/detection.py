@@ -360,11 +360,14 @@ def run_sync_ov(args, output_image_folder):
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
     config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": "4", "NUM_STREAMS": "4"} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
+    print("next")
     compiled_model = core.compile_model(model, device_name, config)
+    print("next")
     #compiled_model = core.compile_model(model, device_name)
     num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
     print("optimal number of requests", num_requests)
 
+    print("loading successfull")
 
     for i in range(args.niter):
         for image in args.images:
