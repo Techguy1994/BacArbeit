@@ -21,9 +21,9 @@ def run_tf(args, output_image_folder):
             print("delegate")
             armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.numthreads)
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
         else:
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.numthreads)
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
     except:
         import tensorflow as tf
 
@@ -31,9 +31,9 @@ def run_tf(args, output_image_folder):
             print("delegate")
             armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.numthreads)
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
         else:
-            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.numthreads)
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
 
     output_dict = dat.create_base_dictionary_det()
 

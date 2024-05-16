@@ -28,7 +28,7 @@ def run_tf(args):
             
             interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
         else:
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.numthreads)
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
     except:
         import tensorflow as tf
 
