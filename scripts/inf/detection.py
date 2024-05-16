@@ -21,9 +21,9 @@ def run_tf(args, output_image_folder):
             print("delegate")
             armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.numthreads)
         else:
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.numthreads)
     except:
         import tensorflow as tf
 
@@ -31,9 +31,9 @@ def run_tf(args, output_image_folder):
             print("delegate")
             armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.numthreads)
         else:
-            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.numthreads)
 
     output_dict = dat.create_base_dictionary_det()
 
@@ -168,6 +168,9 @@ def run_onnx(args, output_image_folder):
     options = onnxruntime.SessionOptions()
     providers = ['CPUExecutionProvider']
 
+    options.intra_op_num_threads = args.num_threads
+    options.execution_mode = onnxruntime.ExecutionMode.ORT_SEQUENTIAL
+
     session = onnxruntime.InferenceSession(args.model, options, providers=providers)
     #print(session.get_providers())
 
@@ -225,9 +228,11 @@ def run_pytorch(args, output_image_folder):
 
     import torch
     from torchvision import models, transforms
-    print(args.model)
 
     output_dict = dat.create_base_dictionary_det()
+
+    torch.set_num_threads(args.num_threads)
+
     if args.model == "yolov5l":
         model = torch.hub.load("ultralytics/yolov5", "yolov5l", pretrained=True)
     elif args.model == "yolov5m":
@@ -359,13 +364,13 @@ def run_sync_ov(args, output_image_folder):
 
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
-    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": "4", "NUM_STREAMS": "4"} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
+    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": str(args.num_threads)} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
     compiled_model = core.compile_model(model, device_name, config)
     #compiled_model = core.compile_model(model, device_name)
     num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
     print("optimal number of requests", num_requests)
 
-
+ 
     for i in range(args.niter):
         for image in args.images:
             
