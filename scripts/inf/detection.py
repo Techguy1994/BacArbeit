@@ -13,6 +13,8 @@ import sys
 
 def run_tf(args, output_image_folder):
 
+    print(args.num_threads)
+
     try:
         import tflite_runtime.interpreter as tflite
 
