@@ -6,7 +6,7 @@ import os
 
 def main():
     database = pd.read_csv("database_os_comparison.csv")
-    csv = "temp.csv"
+    csv = "temp_boxplot.csv"
     print(database)
 
     df = create_empty_dataframe()
