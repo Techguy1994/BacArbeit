@@ -43,13 +43,12 @@ def main():
     """
 
     #deprecated
-    """
     values = []
 
-    model_name = ["lite-model_mobilenet_v200_224_fp32_1"]
-    threads = ["1", "2", "3", "4"]
+    model_name = ["yolov5l"]
+    threads = ["3", "4"]
     df_names = get_values_for_plot(df)
-    model = "lite_model_mobilenet_v2_100_224_fp32_1"
+    model = "yolov5l"
     #print(df_names)
 
     for df_name in df_names:
@@ -65,7 +64,7 @@ def main():
     fig = ff.create_distplot(values, threads, bin_size=0.0001, curve_type="normal")
     print(fig)
     fig.show()
-    """
+    #depreccated end
 
     #trying with px 
     #filter_through_database(df)

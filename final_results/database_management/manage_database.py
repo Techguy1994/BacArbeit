@@ -57,23 +57,24 @@ def create_new_database(database_name):
 
 def manage_database(args):
     df = load_database(args.database)
-    print(args.file_name)
 
     file_path = find(args.file_name, "/Users/marounel-chayeb/BacArbeit/final_results/results/")
     print(file_path)
 
+
     is_only_lat = args.file_name.split("_")[-1]
     if "onlylat" in is_only_lat:
-        os = args.file_name.split("_")[-2]
+        print("---")
+        os = args.file_name.split("_")[-3]
         inference_type = file_path.split("/")[-4]
         model_name = file_path.split("/")[-2]
         api = file_path.split("/")[-3]
     else:
         os = args.os
         #os = "Nan"
+
         inference_type = file_path.split("/")[-4]
         if inference_type == "class":
-            print("Here")
             model_name = file_path.split("/")[-2]
             api = file_path.split("/")[-3]
         else:
@@ -86,30 +87,30 @@ def manage_database(args):
 
     #print(is_only_lat)
 
+    print("---")
+
     
 
     
     if df.empty:
-        print("empty")
         df = add_entry(model_name, inference_type, api, is_only_lat, os, file_path, df)
         return df
     else:
-        
+
         #print(model_name)
         #print(df.columns)
         #print(df)
         
         ind = df.index[(df["model_name"] == model_name) & (df["os"] == os) & (df["api"] == api)]
-        print(ind)
         if len(ind) == 0:
-            print("no row found")
+            #print("no row found")
             df = add_entry(model_name, inference_type, api, is_only_lat, os, file_path, df)
             return df
         else:
+
             filt = (df["model_name"] == model_name) & (df["api"] == api)
 
             if "onlylat" in is_only_lat:
-                print("found")
 
                 df.loc[filt, "os"] = os
                 df.loc[filt, "latency"] = file_path
@@ -135,7 +136,7 @@ def manage_database(args):
                         #    print(row)
 
                         for row in det_dict:
-                            print(api)
+                            #print(api)
                             if row["Type"] == api:
                                 #print(row["model_name"])
                                 if row["model_name"] == model_name:
@@ -220,10 +221,13 @@ def add_entry(model_name, inference_type, api, onyl_lat, os, file_path, df):
                 #    print(row)
 
                 for row in det_dict:
-                    print(api)
+                    print("-")
+                    print(api, row["Type"])
                     if row["Type"] == api:
-                        print(row["model_name"])
-                        if row["model_name"] == model_name:
+                        
+                        print("--")
+                        print(row["model_name"].strip())
+                        if row["model_name"].strip() == model_name:
                             map = row["Map (IoU=0.50:0.95)"]
                             map = float(map.replace(",", "."))
             

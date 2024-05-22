@@ -43,10 +43,10 @@ lite-model_mobilenet_v3_large_100_224_fp32_1,ubuntus,delegate,class,0.0453136516
 lite-model_mobilenet_v3_large_100_224_uint8_1,ubuntus,delegate,class,0.027223987239999,0.8556,0.913,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/delegate/lite-model_mobilenet_v3_large_100_224_uint8_1/lite-model_mobilenet_v3_large_100_224_uint8_1_delegate_class_2024_3_8_12_17_ubuntus_onlylat.csv
 lite-model_mobilenet_v3_small_100_224_fp32_1,ubuntus,delegate,class,0.0199928392089986,0.8038,0.8747,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/delegate/lite-model_mobilenet_v3_small_100_224_fp32_1/lite-model_mobilenet_v3_small_100_224_fp32_1_delegate_class_2024_3_8_12_18_ubuntus_onlylat.csv
 lite-model_mobilenet_v3_small_100_224_uint8_1,ubuntus,delegate,class,0.0131077585460013,0.7268,0.7653,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/delegate/lite-model_mobilenet_v3_small_100_224_uint8_1/lite-model_mobilenet_v3_small_100_224_uint8_1_delegate_class_2024_3_8_12_20_ubuntus_onlylat.csv
-yolov5l,ubuntus,tf,det,6.541665149214999,,,0.361,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5l/yolov5l-fp16_tf_det_2024_5_22_10_9_ubuntus_3_onlylat.csv
-yolov5m,ubuntus,tf,det,2.7897835843379934,,,0.318,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5m/yolov5m-fp16_tf_det_2024_5_22_11_59_ubuntus_3_onlylat.csv
-yolov5n,ubuntus,tf,det,0.3239334988420141,,,0.154,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5n/yolov5n-fp16_tf_det_2024_5_22_12_47_ubuntus_3_onlylat.csv
-yolov5s,ubuntus,tf,det,0.9548971229069666,,,0.238,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5s/yolov5s-fp16_tf_det_2024_5_22_12_53_ubuntus_3_onlylat.csv
+yolov5l,ubuntus,tf,det,,,,0.361,,
+yolov5m,ubuntus,tf,det,,,,0.318,,
+yolov5n,ubuntus,tf,det,,,,0.154,,
+yolov5s,ubuntus,tf,det,,,,0.238,,
 yolov5l,ubuntus,onnx,det,,,,0.361,,
 yolov5m,ubuntus,onnx,det,,,,0.318,,
 yolov5n,ubuntus,onnx,det,,,,0.154,,
