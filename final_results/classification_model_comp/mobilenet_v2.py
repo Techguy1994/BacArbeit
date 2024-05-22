@@ -3,7 +3,7 @@ import plotly.express as px
 
 def main():
     database = pd.read_csv("database.csv")
-    csv = "mobilenet_v3_large_scatter.csv"
+    csv = "mobilenet_v2_scatter.csv"
 
     df = create_empty_dataframe()
 
@@ -12,10 +12,10 @@ def main():
     print(df)
     df.to_csv(csv)
 
-    fig = px.scatter(df, x="top1", y="mean_lat", color="api", symbol="quantized")
+    fig = px.scatter(df, x="top1", y="mean_lat", color="model_name", symbol="api", title="MobilenNet V2")
     fig.show()
 
-    fig = px.scatter(df, x="top5", y="mean_lat", color="api", symbol="quantized")
+    fig = px.scatter(df, x="top5", y="mean_lat", color="api", symbol="model_name", title="MobilenNet V2")
     fig.show()
 
 
@@ -47,17 +47,19 @@ def interate_through_database(database, df):
 
 
     models = [
-        "lite-model_mobilenet_v3_large_100_224_fp32_1",
-        "mobilenetv3_large_100_Opset17",
-        "mobilenet-v3-large-1.0-224-tf_FP16",
-        "mobilenet_v3_large",
-        "lite-model_mobilenet_v3_large_100_224_uint8_1",
-        "mobilenet_v3_large_q"
+        "lite-model_mobilenet_v2_100_224_fp32_1",
+        "mobilenetv2-12",
+        "mobilenet-v2-1.4-224_FP16",
+        "mobilenet_v2",
+        "lite-model_mobilenet_v2_100_224_uint8_1",
+        "mobilenetv2-12-int8",
+        "mobilenet_v2_q"
         ]
     
     quantized = [
-        "lite-model_mobilenet_v3_large_100_224_uint8_1",
-        "mobilenet_v3_large_q"
+        "lite-model_mobilenet_v2_100_224_uint8_1",
+        "mobilenetv2-12-int8",
+        "mobilenet_v2_q"
     ]
 
     
@@ -76,7 +78,7 @@ def interate_through_database(database, df):
                 q = "no"
 
             entry = {
-                "model_name": ["mobilenet_v3_large"],
+                "model_name": [r["model_name"]],
                 "api": [api],
                 "mean_lat": [mean_lat],
                 "top1": [top1],

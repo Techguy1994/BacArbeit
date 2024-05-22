@@ -1,9 +1,9 @@
-,model_name,api,mean_lat,top1,top5,quantized
-0,mobilenet_v3_large,tf,0.0382383458709995,0.8559,0.9232,no
-1,mobilenet_v3_large,tf,0.0204206533980006,0.8538,0.9141,yes
-2,mobilenet_v3_large,onnx,0.0839044617619985,0.8128,0.8877,no
-3,mobilenet_v3_large,ov,0.0495775602390021,0.8758,0.9454,no
-4,mobilenet_v3_large,pytorch,0.2656031445889821,0.8767,0.9433,no
-5,mobilenet_v3_large,pytorch,0.031821044916005,0.8713,0.9375,yes
-6,mobilenet_v3_large,delegate,0.0453136516620017,0.8556,0.9232,no
-7,mobilenet_v3_large,delegate,0.027223987239999,0.8556,0.913,yes
+,model_name,api,mean_lat,top1,top5,alternative,quantized
+0,mobilenet_v3_large,tf,0.0123841412450013,0.8037,0.8747,,
+1,mobilenet_v3_large,tf,0.0072652251829978,0.7107,0.7636,,quantized
+2,mobilenet_v3_large,onnx,0.0194844045000053,0.6178,0.7009,,smaller onnx model
+3,mobilenet_v3_large,onnx,0.0292516279970095,0.7176,0.7963,,
+4,mobilenet_v3_large,ov,0.0204702149850035,0.8046,0.8793,,
+5,mobilenet_v3_large,pytorch,0.115265578747023,0.8246,0.8974,,
+6,mobilenet_v3_large,delegate,0.0199928392089986,0.8038,0.8747,,
+7,mobilenet_v3_large,delegate,0.0131077585460013,0.7268,0.7653,,quantized

@@ -3,7 +3,7 @@ import plotly.express as px
 
 def main():
     database = pd.read_csv("database.csv")
-    csv = "mobilenet_v3_large_scatter.csv"
+    csv = "mobilenet_v3_small_scatter.csv"
 
     df = create_empty_dataframe()
 
@@ -12,10 +12,10 @@ def main():
     print(df)
     df.to_csv(csv)
 
-    fig = px.scatter(df, x="top1", y="mean_lat", color="api", symbol="quantized")
+    fig = px.scatter(df, x="top1", y="mean_lat", color="api", symbol="quantized", title="MobilenNet V3 Small")
     fig.show()
 
-    fig = px.scatter(df, x="top5", y="mean_lat", color="api", symbol="quantized")
+    fig = px.scatter(df, x="top5", y="mean_lat", color="api", symbol="quantized", title="MobilenNet V3 Small")
     fig.show()
 
 
@@ -26,7 +26,7 @@ def create_empty_dataframe():
     "mean_lat": [],
     "top1": [],
     "top5": [],
-    "quantized": []
+    "alternative": []
     }
 
     df = pd.DataFrame(dict)
@@ -47,17 +47,17 @@ def interate_through_database(database, df):
 
 
     models = [
-        "lite-model_mobilenet_v3_large_100_224_fp32_1",
-        "mobilenetv3_large_100_Opset17",
-        "mobilenet-v3-large-1.0-224-tf_FP16",
-        "mobilenet_v3_large",
-        "lite-model_mobilenet_v3_large_100_224_uint8_1",
-        "mobilenet_v3_large_q"
+        "lite-model_mobilenet_v3_small_100_224_fp32_1",
+        "mobilenetv3_small_075_Opset17",
+        "mobilenetv3_small_050_Opset17",
+        "mobilenet-v3-small-1.0-224-tf_FP16",
+        "mobilenet_v3_small",
+        "lite-model_mobilenet_v3_small_100_224_uint8_1",
         ]
     
     quantized = [
-        "lite-model_mobilenet_v3_large_100_224_uint8_1",
-        "mobilenet_v3_large_q"
+        "lite-model_mobilenet_v3_small_100_224_uint8_1",
+        "mobilenetv3_small_050_Opset17"
     ]
 
     
@@ -70,13 +70,16 @@ def interate_through_database(database, df):
             top1 = r["top1"]
             top5 = r["top5"]
 
-            if r["model_name"] in quantized:
-                q = "yes"
+            if r["model_name"] == "lite-model_mobilenet_v3_small_100_224_uint8_1":
+                q = "quantized"
+            elif r["model_name"] == "mobilenetv3_small_050_Opset17":
+                q = "smaller onnx model"
             else:
-                q = "no"
+                q = ""
+            
 
             entry = {
-                "model_name": ["mobilenet_v3_large"],
+                "model_name": ["mobilenet_v3_small"],
                 "api": [api],
                 "mean_lat": [mean_lat],
                 "top1": [top1],
