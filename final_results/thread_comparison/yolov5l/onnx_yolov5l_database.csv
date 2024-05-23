@@ -1,3 +1,9 @@
 model_name,os,api,inference type,latency avg,top1,top5,map,miou,latency,thread count
 yolov5l,ubuntus,onnx,det,5.266374109092976,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5l/yolov5l_onnx_det_2024_5_16_13_29_ubuntus_3_onlylat.csv,3
 yolov5l,ubuntus,onnx,det,4.636479972458968,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5l/yolov5l_onnx_det_2024_5_16_19_36_ubuntus_4_onlylat.csv,4
+yolov5m,ubuntus,onnx,det,2.5658269180580064,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5m/yolov5m_onnx_det_2024_5_22_15_15_ubuntus_3_onlylat.csv,3
+yolov5m,ubuntus,onnx,det,2.2250803489270767,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5m/yolov5m_onnx_det_2024_5_23_3_54_ubuntus_4_onlylat.csv,4
+yolov5n,ubuntus,onnx,det,0.5308960886989734,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5n/yolov5n_onnx_det_2024_5_22_15_58_ubuntus_3_onlylat.csv,3
+yolov5n,ubuntus,onnx,det,0.3742383445829837,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5n/yolov5n_onnx_det_2024_5_23_4_31_ubuntus_4_onlylat.csv,4
+yolov5s,ubuntus,onnx,det,1.0283740141909783,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5s/yolov5s_onnx_det_2024_5_22_16_7_ubuntus_3_onlylat.csv,3
+yolov5s,ubuntus,onnx,det,0.9365158211440503,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5s/yolov5s_onnx_det_2024_5_23_4_38_ubuntus_4_onlylat.csv,4
