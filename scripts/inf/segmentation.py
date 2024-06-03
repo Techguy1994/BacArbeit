@@ -12,7 +12,7 @@ from PIL import Image
 
 def run_tf(args, raw_folder, overlay_folder, index_folder):
 
-    import tflite_runtime.interpreter as tflite
+    #import tflite_runtime.interpreter as tflite
     print("Chosen API: tflite runtime intepreter")
 
     output_dict = dat.create_base_dictionary_seg()
@@ -20,14 +20,31 @@ def run_tf(args, raw_folder, overlay_folder, index_folder):
     results = []
     inf_times = []
 
-    #delegate_input
-    if args.api == "delegate":
-        armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
-                                          options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=4)
-    else:
-        interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=4)
-        #interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None)
+    try:
+        import tflite_runtime.interpreter as tflite
+
+        #delegate_input
+        if args.api == "delegate":
+            print(os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
+            #sys.exit()
+            print("delegate")
+            #/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate
+            armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+            
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+        else:
+            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+    except:
+        import tensorflow as tf
+
+        if args.api == "delegate":
+            print("delegate")
+            armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+        else:
+            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
 
 
     interpreter.allocate_tensors()
@@ -67,7 +84,7 @@ def run_tf(args, raw_folder, overlay_folder, index_folder):
                 interpreter.invoke()
 
             if not args.skip_output:
-                output = post.handle_output_deeplab_tf_alt(output_details, interpreter, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
+                output = post.handle_output_deeplab_tf(output_details, interpreter, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
             else:
                 output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
@@ -217,7 +234,7 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
             index_file = index_file.split(".")[0] + ".png"
             index_file = os.path.join(index_folder, index_file)
 
-            processed_image = pre.preprocess_onnx_deeplab(image , input_data_type, image_height, image_width)
+            processed_image = pre.preprocess_onnx_deeplab_alt(image , input_data_type, image_height, image_width)
             print(processed_image.shape)
 
             if args.profiler == "perfcounter":
@@ -232,7 +249,7 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
                 output = session.run(outputs, {input_name:processed_image})[0]
 
             if not args.skip_output:
-                output = post.handle_output_deeplab_onnx(output, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
+                output = post.handle_output_deeplab_onnx_alt(output, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
             else:
                 output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
@@ -262,6 +279,7 @@ def run_pytorch(args, raw_folder, overlay_folder, index_folder):
     elif args.model == "deeplabv3_mobilenet_v3_small":
         model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_mobilenet_v3_small", pretrained=True)
     else: 
+        print(args.model)
         sys.exit("Nothing found")
 
     preprocess = pre.preprocess_pytorch_seg()

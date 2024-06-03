@@ -112,6 +112,7 @@ def preprocess_pytorch_yolo():
 def preprocess_tf_deeplab(image, input_shape, input_type):
     import cv2
     import numpy as np
+    import sys
 
     image = cv2.imread(image)
     image = cv2.resize(image, (input_shape[1], input_shape[2]))
@@ -120,16 +121,58 @@ def preprocess_tf_deeplab(image, input_shape, input_type):
 
     return image_data
 
+
+def preprocess_tf_deeplab_alt(image, input_shape, input_type):
+    import cv2
+    import numpy as np
+    import sys
+
+
+    image = cv2.imread(image)
+    image = cv2.resize(image, (input_shape[2], input_shape[3]))
+    image = image.transpose([2,0,1])
+
+    
+    image_data = cv2.normalize(image.astype(np.float32), None, 0, 1.0, cv2.NORM_MINMAX)
+    image_data = np.expand_dims(image_data, 0)
+
+    print(image_data.shape)
+
+    return image_data
+
 def preprocess_onnx_deeplab(image, input_type, image_height, image_width):
     import cv2
     import numpy as np
+    import sys
 
     image = cv2.imread(image)
     image = cv2.resize(image, (image_height, image_width))
+
+    #image_data = cv2.normalize(image.astype(np.float32), None, -1.0, 1.0, cv2.NORM_MINMAX)
+    image_data = cv2.normalize(image.astype(np.float32), None, 0, 1.0, cv2.NORM_MINMAX)
+    #image_data = image.transpose([2,0,1])
+
+    image_data = np.expand_dims(image_data, 0)
+
+    return image_data
+
+def preprocess_onnx_deeplab_alt(image, input_type, image_height, image_width):
+    import cv2
+    import numpy as np
+    import sys
+
+    image = cv2.imread(image)
+    print(image.shape)
+    image = cv2.resize(image, (image_height, image_width))
+    print(image.shape)
+    image = image.transpose([2,0,1])
+    print(image.shape)
+    #sys.exit()
     #image_data = cv2.normalize(image.astype(np.float32), None, -1.0, 1.0, cv2.NORM_MINMAX)
     image_data = cv2.normalize(image.astype(np.float32), None, 0, 1.0, cv2.NORM_MINMAX)
     #image_data = image.transpose([2,0,1])
     image_data = np.expand_dims(image_data, 0)
+    print(image_data.shape)
 
 
     return image_data

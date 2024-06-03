@@ -715,6 +715,20 @@ def handle_arguments():
     if number == 891:
         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
 
+    # deeplabv3 acurracy tests tflite,onnx converted
+    if number == 900:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "seg", "-m", "deeplabv3_mobilenet_v3_large.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "macos"], shell=False)
+    if number == 901:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "deeplabv3_mobilenet_v3_large.tflite", "-imgp", "/Users/marounel-chayeb/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
+    if number == 902:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "deeplabv3_257_mv_gpu.tflite", "-imgp", "/Users/marounel-chayeb/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
+    if number == 903:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "1.tflite", "-imgp", "/Users/marounel-chayeb/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
+
+    #deeplabv3+ tests
+
+    if number == 910:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "seg", "-m", "best_deeplabv3plus_mobilenet_voc_os16.pth", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/",  "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
 
     # classification 3 vs 4 thread comparison runs
     # 3 thread
