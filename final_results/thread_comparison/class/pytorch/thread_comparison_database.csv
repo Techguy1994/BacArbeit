@@ -1,3 +1,11 @@
 model_name,os,api,inference type,latency avg,top1,top5,map,miou,latency,thread count
 mobilenet_v3_large,s,pytorch,class,0.2633637338290054,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v3_large/_pytorch_class_2024_5_14_17_14_ubuntu_s_3_onlylat.csv,3
 mobilenet_v3_large,s,pytorch,class,0.2679231640739672,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v3_large/_pytorch_class_2024_5_14_17_53_ubuntu_s_4_onlylat.csv,4
+mobilenet_v2,s,pytorch,class,0.357257631437008,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v2/_pytorch_class_2024_5_15_15_24_ubuntu_s_3_onlylat.csv,3
+mobilenet_v2,s,pytorch,class,0.3557331398500237,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v2/_pytorch_class_2024_5_15_15_35_ubuntu_s_4_onlylat.csv,4
+mobilenet_v2_q,s,pytorch,class,0.0290637838339993,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v2_q/_pytorch_class_2024_5_23_10_35_ubuntu_s_3_onlylat.csv,3
+mobilenet_v2_q,s,pytorch,class,0.0237744223600024,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v2_q/_pytorch_class_2024_5_23_10_58_ubuntu_s_4_onlylat.csv,4
+mobilenet_v3_large_q,s,pytorch,class,0.0320283130059951,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v3_large_q/_pytorch_class_2024_5_23_10_34_ubuntu_s_3_onlylat.csv,3
+mobilenet_v3_large_q,s,pytorch,class,0.0279810568590045,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v3_large_q/_pytorch_class_2024_5_23_10_57_ubuntu_s_4_onlylat.csv,4
+mobilenet_v3_small,s,pytorch,class,0.1161595152050037,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v3_small/_pytorch_class_2024_5_23_10_24_ubuntu_s_3_onlylat.csv,3
+mobilenet_v3_small,s,pytorch,class,0.11442752041899482,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/class/pytorch/mobilenet_v3_small/_pytorch_class_2024_5_23_10_54_ubuntu_s_4_onlylat.csv,4

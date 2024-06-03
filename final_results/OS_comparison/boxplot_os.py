@@ -6,7 +6,7 @@ import os
 
 def main():
     database = pd.read_csv("database_os_comparison.csv")
-    csv = "temp_boxplot.csv"
+    csv = "temp_.csv"
     print(database)
 
     df = create_empty_dataframe()
@@ -19,8 +19,6 @@ def main():
 
     fig = px.box(df, x="model_name", y="latency", color="os", range_y=[0.005,0.1])
     fig.show()
-
-    calculate_norm_os_lat()
 
     
 
@@ -70,9 +68,6 @@ def interate_through_database(database, df):
             df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True) 
 
     return df
-
-def calculate_norm_os_lat():
-    pass
 
 
 
