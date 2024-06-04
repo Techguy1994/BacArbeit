@@ -32,6 +32,9 @@ def main():
     
     fig.show()
     """
+
+    for key, value in fw_means[1].items():
+        print((value - 1)/1*100)
  
 
 def create_empty_dataframe():

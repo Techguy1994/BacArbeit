@@ -19,7 +19,8 @@ def run_tf(args):
 
         #delegate_input
         if args.api == "delegate":
-            print(os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
+            if os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
+                print(os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
             #sys.exit()
             print("delegate")
             #/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate
