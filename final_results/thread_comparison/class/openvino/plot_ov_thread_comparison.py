@@ -18,13 +18,12 @@ def main():
     df = interate_through_database(database, df)
     df.to_csv("temp.csv")
 
-    model_name = "lite_model_mobilenet_v3_large_100_224_uint8_1"
-
+    model_name = "mobilenet-v3-large-1.0-224-tf_FP16"
     #deprecated
     values = []
 
     #model_name = ["lite-model_mobilenet_v3_large_100_224_fp32_1"]
-    threads = ["1", "2", "3", "4"]
+    threads = ["3", "4"]
     df_names = get_values_for_plot(df)
 
     #print(df_names)
@@ -39,13 +38,14 @@ def main():
 
     #print(len(values[0]))
                               
-    fig = ff.create_distplot(values, threads, bin_size=0.00001, curve_type="normal")
-    print(fig)
-    fig.show()
+    #fig = ff.create_distplot(values, threads, bin_size=0.00001, curve_type="normal")
+    #print(fig)
+    #fig.show()
 
 
     #trying with px 
     #filter_through_database(df)
+
     filt = (df["model_name"] == model_name)
     model_df = df.loc[filt]
 
