@@ -14,18 +14,27 @@ import sys
 
 def run_tf(args):
     #import tensorflow as tf
+
     try:
         import tflite_runtime.interpreter as tflite
 
         #delegate_input
         if args.api == "delegate":
+            print("armnn tflite delegate")
+
             if os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
+                libarmnnDelegate = "/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"
+                print(os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
+            elif os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
                 print(os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
             #sys.exit()
-            print("delegate")
+            
             #/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate
-            armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
-                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
+            #armnn_delegate = tflite.load_delegate(library=libarmnnDelegate,
+            #                                options={"backends": "CpuAcc,CpuRef", "logging-severity":"info", "number-of-threads": args.num_threads})
+            
+            armnn_delegate = tflite.load_delegate(library=libarmnnDelegate,
+                                options={"backends": "CpuAcc", "number-of-threads": args.num_threads, "reduce-fp32-to-fp16": True, "enable-fast-math": True, "logging-severity":"info", "disable-tflite-runtime-fallback": True})
             
             interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
         else:
@@ -103,6 +112,7 @@ def run_pyarmnn(args):
 
     #print(f"Preferred Backends: {preferredBackends}\n")
     print(f"Optimizationon warnings: {messages}")
+    
 
     # get input binding information for the input layer of the model
     graph_id = parser.GetSubgraphCount() - 1
