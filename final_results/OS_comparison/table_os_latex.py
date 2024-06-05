@@ -15,11 +15,10 @@ def main():
 
     fig = go.Figure(data=[go.Table(
         header=dict(values=list(df.columns),
-                    fill_color='paleturquoise',
-                    align='left'),
+                    align='center'),
         cells=dict(values=[df.model_name, df.api, df.loc[:,"mean latency ubuntu"], df.loc[:,"mean latency raspberryos"]],
-                fill_color='lavender',
-                align='left'))
+                align='center'), 
+        )
     ])
 
     fig.show()
@@ -55,7 +54,7 @@ def interate_through_database(database, df):
 
         #mean = lat.loc[:, "inference time"].mean()
         #var = lat.loc[:, "inference time"].var()
-        mean = lat["inference time"].mean()
+        mean = lat["inference time"].mean().round(3)
 
         if os == "ubuntus":
             mean_latency_str = "mean latency ubuntu"
