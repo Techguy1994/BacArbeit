@@ -53,7 +53,7 @@ yolov5n,ubuntus,onnx,det,0.5308960886989734,,,0.154,,/Users/marounel-chayeb/BacA
 yolov5s,ubuntus,onnx,det,1.0283740141909783,,,0.238,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5s/yolov5s_onnx_det_2024_5_22_16_7_ubuntus_3_onlylat.csv
 yolov5s,ubuntus,ov,det,0.9895916565540338,,,0.289,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5s/yolov5s_ov_det_2024_5_22_18_9_ubuntus_3_onlylat.csv
 yolov5m,ubuntus,ov,det,2.0203582274320344,,,0.36,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5m/yolov5m_ov_det_2024_5_22_17_34_ubuntus_3_onlylat.csv
-yolov5n,ubuntus,ov,det,0.44761659592694925,,,0.184,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5n/yolov5n_ov_det_2024_5_23_19_42_ubuntus_3_onlylat.csv
+yolov5n,ubuntus,ov,det,,,,0.184,,
 yolov5l,ubuntus,ov,det,4.089123034262024,,,0.401,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5l/yolov5l_ov_det_2024_5_22_16_25_ubuntus_3_onlylat.csv
 yolov5l,ubuntus,pytorch,det,5.962014848015966,,,0.437,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5l/yolov5l_pytorch_det_2024_5_22_18_26_ubuntus_3_onlylat.csv
 yolov5m,ubuntus,pytorch,det,2.9900214831900085,,,0.398,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5m/yolov5m_pytorch_det_2024_5_22_20_6_ubuntus_3_onlylat.csv
