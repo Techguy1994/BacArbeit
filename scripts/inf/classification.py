@@ -22,9 +22,9 @@ def run_tf(args):
         if args.api == "delegate":
             print("armnn tflite delegate")
 
-            if os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
-                libarmnnDelegate = "/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"
-                print(os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
+            if os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
+                libarmnnDelegate = "/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so.29.0"
+                print(os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
             elif os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
                 print(os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
             #sys.exit()
@@ -34,7 +34,7 @@ def run_tf(args):
             #                                options={"backends": "CpuAcc,CpuRef", "logging-severity":"info", "number-of-threads": args.num_threads})
             
             armnn_delegate = tflite.load_delegate(library=libarmnnDelegate,
-                                options={"backends": "CpuAcc", "number-of-threads": args.num_threads, "reduce-fp32-to-fp16": True, "enable-fast-math": True, "logging-severity":"info", "disable-tflite-runtime-fallback": True})
+                                options={"backends": "CpuAcc, CpuRef", "number-of-threads": args.num_threads, "reduce-fp32-to-fp16": True, "enable-fast-math": True, "logging-severity":"info", "disable-tflite-runtime-fallback": True})
             
             interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
         else:
