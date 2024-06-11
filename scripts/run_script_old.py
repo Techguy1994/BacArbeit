@@ -15,28 +15,6 @@ def handle_arguments():
     args = parser.parse_args()
     number = int(args.n)
 
-    """
-    number code:
-     first digit: OS: Ubuntu --> 1, RaspOS --> 5
-     second digit: thread count count: 1 thread --> 1, ...
-     third digit: inf type: classificaiton --> 1, object detection --> 2, image segmenation --> 3
-     fourht digit: FW: delegate --> 0, tflite-runtime --> 2, onnx --> 4, openvino --> 6, pytorch --> 8
-     fifth digit: run type: latency --> 0, accuracy --> 5
-     sixth digit: model_number --> custom
-
-    models: 
-    lite-model_mobilenet_v3_large_100_224_fp32_1.tflite: 00
-    """
-
-    #classification
-    if number == 5112000:
-        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "1"], shell=False)
-    if number == 5312000:
-        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "3"], shell=False)
-
-
-
-    sys.exit()
     #test runs
     #classification 1, 00 tf, 20 pyarmnn, 40 onnx, 60 pytorch, 80 openvino, pyarmnn outdated replaced with delegate test run on 190
     if number == 100:
