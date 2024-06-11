@@ -17,6 +17,7 @@ def run_tf(args):
 
     try:
         import tflite_runtime.interpreter as tflite
+        print("tensorflow-runtime")
 
         #delegate_input
         if args.api == "delegate":
@@ -45,6 +46,7 @@ def run_tf(args):
             interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
     except:
         import tensorflow as tf
+        print("tensorflow")
 
         if args.api == "delegate":
             print("delegate")

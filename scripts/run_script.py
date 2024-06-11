@@ -32,6 +32,11 @@ def handle_arguments():
             onnx: 
                 mobilenetv3_large_100_Opset17.onnx: 40
 
+            openvino:
+
+            pytorch:
+
+
 
     """
 
@@ -51,7 +56,11 @@ def handle_arguments():
     if number == 5114040:
         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_large_100_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1","-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "1"], shell=False)
     if number == 5314040:
-        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_large_100_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "1"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_large_100_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "3"], shell=False)
+
+    #classification, openvino
+
+    #classificaiton, pytorch
 
 
     sys.exit()
