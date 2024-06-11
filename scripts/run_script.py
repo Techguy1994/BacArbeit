@@ -25,7 +25,14 @@ def handle_arguments():
      sixth digit: model_number --> custom
 
     models: 
-    lite-model_mobilenet_v3_large_100_224_fp32_1.tflite: 00
+        classification:
+            tflite:
+                lite-model_mobilenet_v3_large_100_224_fp32_1.tflite: 00
+            
+            onnx: 
+                mobilenetv3_large_100_Opset17.onnx: 40
+
+
     """
 
     #classification, tflite
@@ -39,7 +46,12 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "1"], shell=False)
     if number == 5310000:
         subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "class", "-m", "lite-model_mobilenet_v3_large_100_224_fp32_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "3"], shell=False)
-
+    
+    # classification, onnx
+    if number == 5114040:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_large_100_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "raspberry_os", "-num_thr", "1"], shell=False)
+    if number == 5314040:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_large_100_Opset17.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "raspberry_os", "-num_thr", "1"], shell=False)
 
 
     sys.exit()
