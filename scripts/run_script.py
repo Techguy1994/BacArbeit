@@ -3,7 +3,6 @@ import argparse
 import sys
 
 def main():
-    #dic = create_dictionary()
     handle_arguments()
     
 
@@ -25,7 +24,6 @@ def handle_arguments():
      sixth digit: model_number --> custom
 
     models: 
-        classification:
             tflite:
                 lite-model_mobilenet_v3_large_100_224_fp32_1.tflite: 00
             
@@ -70,6 +68,10 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "1"], shell=False)
     if number == 53180150:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "raspberry_os", "-num_thr", "3"], shell=False)
+
+    # classification accuracy runs
+    if number == 13185150:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1","-os", "ubuntu_s", "-num_thr", "3"], shell=False)
 
     sys.exit()
     #test runs
