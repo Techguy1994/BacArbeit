@@ -10,7 +10,14 @@ def main():
     if args.new:
         create_new_database(args.database)
     elif args.update:
-        df = manage_database(args)
+
+        if args.del_ov_class:
+            print("delete")
+            df = delete_custom_rows(args)
+        else:
+            print("update")
+            df = manage_database(args)
+
         df = df.loc[:, ~df.columns.str.match('Unnamed')]
         df.to_csv(args.database, index=False)
         
@@ -31,6 +38,7 @@ def handle_arguments():
     parser.add_argument("-m", "--model", required=False)
     parser.add_argument("-f", "--file_name", required=False)
     parser.add_argument("-os", "--os", required=False, default="ubuntus")
+    parser.add_argument("-del", "--del_ov_class", required=False, action="store_true")
 
     return parser.parse_args()
 
@@ -108,7 +116,7 @@ def manage_database(args):
             return df
         else:
 
-            filt = (df["model_name"] == model_name) & (df["api"] == api)
+            filt = (df["model_name"] == model_name) & (df["api"] == api) & (df["os"] == os)
 
             if "onlylat" in is_only_lat:
 
@@ -258,8 +266,6 @@ def add_entry(model_name, inference_type, api, onyl_lat, os, file_path, df):
             return df
 
 
-def update_entry():
-    pass
 
 def get_latency_value(csv_path):
     print(csv_path)
@@ -267,17 +273,15 @@ def get_latency_value(csv_path):
     res = pd.read_csv(csv_path)
     return res["inference time"].to_list()
 
-def find_all_models():
-    pass
+def delete_custom_rows(args):
+    df = load_database(args.database)
 
-def find_classification_information():
-    pass
+    i = df[((df.api == 'ov') & (df.loc[:, "inference type"] == "class"))].index
 
-def find_detection_information():
-    pass
 
-def find_segmentation_information():
-    pass
+    df = df.drop(i)
+
+    return df
 
 if __name__ == "__main__":
     main()
