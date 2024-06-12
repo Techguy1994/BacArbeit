@@ -40,6 +40,7 @@ def handle_arguments():
 
             pytorch:
                 mobilenet_v3_large: 150
+                mobilenet_v3_large_q: 151
 
 
     """
@@ -93,6 +94,8 @@ def handle_arguments():
     # classification accuracy runs
     if number == 13185150:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1","-os", "ubuntu_s", "-num_thr", "3"], shell=False)
+    if number == 13185151:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large_q", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1","-os", "ubuntu_s", "-num_thr", "3"], shell=False)
 
 
     #tflite delegate
