@@ -110,7 +110,6 @@ def handle_arguments():
     parser.add_argument("-t", "--type", required=True)
     parser.add_argument("-m", "--model_name", required=True)
     parser.add_argument("-f", "--result_file", required=False)
-    #parser.add_argument("-s", "--skip_json_creation", required=False, action="store_true")
     args = parser.parse_args()
 
     return args.type, args.model_name, args.result_file
