@@ -276,7 +276,7 @@ def get_latency_value(csv_path):
 def delete_custom_rows(args):
     df = load_database(args.database)
 
-    i = df[((df.api == 'ov') & (df.loc[:, "inference type"] == "class"))].index
+    i = df[(df.loc[:, "inference type"] == "det")].index
 
 
     df = df.drop(i)
