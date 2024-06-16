@@ -250,7 +250,7 @@ def run_pytorch(args):
         model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_small', pretrained=True)
     elif args.model == "mobilenet_v3_large_q":
         torch.backends.quantized.engine = 'qnnpack'
-        model = models.quantization.mobilenet_v3_large(pretrained=True)
+        model = models.quantization.mobilenet_v3_large(pretrained=True, quantize=True)
     elif args.model == "mobilenet_v2_q":
         torch.backends.quantized.engine = 'qnnpack'
         model = models.quantization.mobilenet_v2(pretrained=True)
