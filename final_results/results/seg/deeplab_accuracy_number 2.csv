@@ -1,0 +1,9 @@
+Type;model_name;Accuracy;;
+ov;deeplabv3_FP16.xml;69.723 %;;
+ov;deeplabv3_FP32.xml;69.737 %;;
+onnx;lite-model_deeplabv3-mobilenetv2_1_default_1.onnx;60.915 %;;
+delegate;lite-model_deeplabv3-mobilenetv2_1_default_1;60.915 %;;
+delegate;lite-model_deeplabv3-mobilenetv2-int8_1_default_1;52.034 %;;
+tf;lite-model_deeplabv3-mobilenetv2_1_default_1;60.854 %;;
+tf;lite-model_deeplabv3-mobilenetv2-int8_1_default_1;52.651 %;;
+pytorch;deeplabv3_mobilenet_v3_large;69.391 %;;
