@@ -55,7 +55,7 @@ def run_classification(args, name_date):
     if args.profiler == "cprofiler":
         profiler.disable()
 
-        with open(os.path.join(args.time_dir, name_date), 'w') as stream:
+        with open(os.path.join(args.time, name_date), 'w') as stream:
             stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
             stats.print_stats()
 

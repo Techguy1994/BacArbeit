@@ -253,7 +253,7 @@ def run_pytorch(args):
         model = models.quantization.mobilenet_v3_large(pretrained=True, quantize=True)
     elif args.model == "mobilenet_v2_q":
         torch.backends.quantized.engine = 'qnnpack'
-        model = models.quantization.mobilenet_v2(pretrained=True, quantize=True)
+        model = models.quantization.mobilenet_v2(pretrained=True)
     #func_call = pt.load_pytorch_model(args.model)
 
     #func_call = "models." + args.model + "(pretrained=True)"
