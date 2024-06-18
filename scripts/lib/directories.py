@@ -127,6 +127,14 @@ def handle_output_directory(args, api, type, model, profiler):
 
         if profiler == "cprofiler":
             time_dir = os.path.join(outputs_dir, "cprofiler")
+        
+        if profiler == "onnx":
+            time_dir = os.path.join(outputs_dir, "onnx")
+        
+        if profiler == "pytorch":
+            time_dir = os.path.join(outputs_dir, "pytorch")
+        
+
 
         if type in ["det", "seg"]:
             image_dir = os.path.join(outputs_dir, "images")

@@ -194,6 +194,8 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
     output_dict = dat.create_base_dictionary_seg()
 
     options = onnxruntime.SessionOptions()
+    if args.profiler == "onnx":
+        options.enable_profiling = True
 
     # 'XNNPACKExecutionProvider'
     providers = ['CPUExecutionProvider']
@@ -259,8 +261,11 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
         time.sleep(args.sleep)     
 
     df = dat.create_pandas_dataframe(output_dict)
-    print(df)
-    return df
+
+    if args.profiler == "onnx":
+        return df, session
+    else:
+        return df
                 
                 
 
@@ -324,7 +329,7 @@ def run_pytorch(args, raw_folder, overlay_folder, index_folder):
         time.sleep(args.sleep)     
 
     df = dat.create_pandas_dataframe(output_dict)
-    print(df)
+    #print(df)
     return df
 
 def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
@@ -478,5 +483,69 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
     return df
     
 
-#def run_async_openvino():
-#    print("todo")
+def run_pytorch_with_profiler(args, raw_folder, overlay_folder, index_folder):
+    import torch
+    from torchvision import models, transforms
+    from torch.profiler import profile, record_function, ProfilerActivity
+
+    output_dict = dat.create_base_dictionary_seg()
+
+    if args.model == "deeplabv3_resnet50":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_resnet50", pretrained=True)
+    elif args.model == "deeplabv3_resnet101":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_resnet101", pretrained=True)
+    elif args.model == "deeplabv3_mobilenet_v3_large":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_mobilenet_v3_large", pretrained=True)
+    elif args.model == "deeplabv3_mobilenet_v3_small":
+        model = torch.hub.load('pytorch/vision:v0.10.0',"deeplabv3_mobilenet_v3_small", pretrained=True)
+    else: 
+        print(args.model)
+        sys.exit("Nothing found")
+
+    preprocess = pre.preprocess_pytorch_seg()
+
+    model.eval()
+
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference"):
+
+            for i in range(args.niter):
+                for image in args.images:
+                    original_image = cv2.imread(image)
+                    raw_file = image.split("/")[-1]
+                    raw_file = raw_file.split(".")[0] + ".png"
+                    raw_file = os.path.join(raw_folder, raw_file)
+
+                    overlay_file = os.path.join(overlay_folder, image.split("/")[-1])
+
+                    index_file = image.split("/")[-1]
+                    index_file = index_file.split(".")[0] + ".png"
+                    index_file = os.path.join(index_folder, index_file)
+
+                    input_batch = pre.preprocess_pytorch_deeplab(image, preprocess)
+
+                    if args.profiler == "perfcounter":
+                        
+                        start_time = perf_counter()
+                        with torch.no_grad():
+                            output = model(input_batch)['out'][0]
+                        end_time = perf_counter()
+                        lat = end_time - start_time
+                        print("time in ms: ", lat*1000)
+                    else:
+                        with torch.no_grad():
+                            output = model(input_batch)['out'][0]
+
+                    if not args.skip_output:
+                        output = post.handle_output_deeplab_pytorch(output, original_image, raw_file, overlay_file, index_file, args.colormap, args.label)
+                        output_dict = dat.store_output_dictionary_seg(output_dict, image, lat, output)
+                    else:
+                        output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, image, lat)
+                
+
+                
+        time.sleep(args.sleep)     
+
+    df = dat.create_pandas_dataframe(output_dict)
+    print(df)
+    return df

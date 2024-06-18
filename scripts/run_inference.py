@@ -31,6 +31,7 @@ def main():
 def run_classification(args, name_date):
     if args.profiler == "cprofiler":
         import cProfile, pstats
+        import io
         profiler = cProfile.Profile()
         profiler.enable()
 
@@ -39,15 +40,17 @@ def run_classification(args, name_date):
     if args.api == "pyarmnn":
         df = cl.run_pyarmnn(args)
     if args.api == "onnx":
-        df = cl.run_onnx(args)
-    if args.api == "pytorch":
-        df = cl.run_pytorch(args)
-    if args.api == "ov":
-        print(args.a_sync)
-        if args.a_sync:
-            df = cl.run_async_ov(args)
+        if args.profiler == "onnx":
+            df, session = cl.run_onnx(args)
         else:
-            df = cl.run_sync_ov(args)
+            df = cl.run_onnx(args)
+    if args.api == "pytorch":
+        if args.profiler == "pytorch":
+            df = cl.run_pytorch_with_profiler(args)
+        else:
+            df, profiler = cl.run_pytorch(args)
+    if args.api == "ov":
+        df = cl.run_sync_ov(args)
 
     print(df)
     dat.store_pandas_data_frame_as_csv(df, name_date, args)
@@ -55,9 +58,27 @@ def run_classification(args, name_date):
     if args.profiler == "cprofiler":
         profiler.disable()
 
-        with open(os.path.join(args.time, name_date), 'w') as stream:
-            stats = pstats.Stats(profiler, stream=stream).sort_stats("cumtime")
-            stats.print_stats()
+        s = io.StringIO()
+        ps = pstats.Stats(profiler, stream=s).sort_stats('cumtime')
+        ps.print_stats()
+
+        with open('temp.txt', 'w+') as f:
+            f.write(s.getvalue())
+        
+        save_cprofiler_csv(args, name_date)
+    elif args.profiler == "onnx":
+        prof_file = session.end_profiling()
+        print(prof_file)
+        print(os.path.join(args.time, prof_file))
+        os.rename(prof_file, os.path.join(args.time, prof_file))
+    elif args.profiler == "pytorch":
+        print(args.time)
+        os.rename("temp.json", args.time)
+
+
+        
+        
+
 
     
 def run_detection(args, name_date):
@@ -68,7 +89,8 @@ def run_detection(args, name_date):
     #sys.exit()
 
     if args.profiler == "cprofiler":
-        import cProfile
+        import cProfile, pstats
+        import io
         profiler = cProfile.Profile()
         profiler.enable()
 
@@ -77,7 +99,10 @@ def run_detection(args, name_date):
     if args.api == "pyarmnn":
         df = det.run_pyarmnn(args, output_image_folder)
     if args.api == "onnx":
-        df = det.run_onnx(args, output_image_folder)
+        if args.profiler == "onnx":
+            df, session = det.run_onnx(args, output_image_folder)
+        else:
+            df = det.run_onnx(args, output_image_folder)
     if args.api == "pytorch":
         df = det.run_pytorch(args, output_image_folder)
     if args.api == "ov":
@@ -88,10 +113,29 @@ def run_detection(args, name_date):
     
     if args.profiler == "cprofiler":
         profiler.disable()
+
+        s = io.StringIO()
+        ps = pstats.Stats(profiler, stream=s).sort_stats('cumtime')
+        ps.print_stats()
+
+        with open('temp.txt', 'w+') as f:
+            f.write(s.getvalue())
+        
+        save_cprofiler_csv(args, name_date)
+    
+    elif args.profiler == "onnx":
+        prof_file = session.end_profiling()
+        print(prof_file)
+        print(os.path.join(args.time, prof_file))
+        os.rename(prof_file, os.path.join(args.time, prof_file))
+    elif args.profiler == "pytorch":
+        print(args.time)
+        os.rename("temp.json", args.time)
     
 def run_segmentation(args, name_date):
     if args.profiler == "cprofiler":
-        import cProfile
+        import cProfile, pstats
+        import io
         profiler = cProfile.Profile()
         profiler.enable()
 
@@ -104,9 +148,15 @@ def run_segmentation(args, name_date):
     if args.api == "pyarmnn":
         df = seg.run_pyarmnn(args, raw_folder, overlay_folder, index_folder)
     if args.api == "onnx":
-        df = seg.run_onnx(args, raw_folder, overlay_folder, index_folder)
+        if args.prfiler == "onnx":
+            df, session = seg.run_onnx(args, raw_folder, overlay_folder, index_folder)
+        else: 
+            df = seg.run_onnx(args, raw_folder, overlay_folder, index_folder)
     if args.api == "pytorch":
-        df = seg.run_pytorch(args, raw_folder, overlay_folder, index_folder)
+        if args.profiler == "pytroch":
+            df = seg.run_pytorch_with_profiler(args, raw_folder, overlay_folder, index_folder)
+        else:
+            df = seg.run_pytorch(args, raw_folder, overlay_folder, index_folder)
     if args.api == "ov":
         df = seg.run_sync_openvino(args, raw_folder, overlay_folder, index_folder)
     
@@ -117,21 +167,81 @@ def run_segmentation(args, name_date):
 
     if args.profiler == "cprofiler":
         profiler.disable()
+
+        s = io.StringIO()
+        ps = pstats.Stats(profiler, stream=s).sort_stats('cumtime')
+        ps.print_stats()
+
+        with open('temp.txt', 'w+') as f:
+            f.write(s.getvalue())
+        
+        save_cprofiler_csv(args, name_date)
+    
+    elif args.profiler == "onnx":
+        prof_file = session.end_profiling()
+        print(prof_file)
+        print(os.path.join(args.time, prof_file))
+        os.rename(prof_file, os.path.join(args.time, prof_file))
+    elif args.profiler == "pytorch":
+        print(args.time)
+        os.rename("temp.json", args.time)
     
         
-"""
-def create_image_folder_with_current_time_stamp(output_folder):
-    date = datetime.now()
-    folder_name_date = str(date.year)+ "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "_" + str(date.minute)
 
-    images_folder = os.path.join(output_folder, "images", folder_name_date)
+def save_cprofiler_csv(args, name_date):
+    import pandas as pd
 
-    val = os.makedirs(images_folder)
-    print(val)
+    with open('temp.txt') as f:
+        lines = f.readlines()
 
-    return images_folder, folder_name_date
-"""
 
+
+        ncalls_list = []
+        tottime_list = []
+        percall_tot_list = []
+        cumtime_list = []
+        percall_cum_list = []
+        filename_list = []
+
+        start = 0
+        for line in lines:
+            if start < 5:
+                start = start + 1
+            else:
+                print(line)
+
+                ncalls = line[0:9]
+                tottime = line[10:18]
+                percall_tot = line[19:27]
+                cum_time = line[28:36]
+                percall_cum = line[37:45]
+                filename = line[46:-1]
+
+                ncalls_list.append(ncalls)
+                tottime_list.append(tottime)
+                percall_tot_list.append(percall_tot)
+                cumtime_list.append(cum_time)
+                percall_cum_list.append(percall_cum)
+                filename_list.append(filename)
+        
+        profiler_dict = {
+             "ncalls": ncalls_list,
+             "tottime": tottime_list,
+             "percall_tot": percall_tot_list,
+             "cumtime": cumtime_list,
+             "percall_cum": percall_cum_list,
+             "filename:lineno(function)": filename_list
+
+        }
+
+        #print(profiler_dict)
+
+        df = pd.DataFrame(profiler_dict)
+
+        print(df.head(5))
+        cprofiler_name = os.path.join(args.time, name_date + ".csv")
+        df.to_csv(cprofiler_name)
+        print(cprofiler_name)
 
 
 

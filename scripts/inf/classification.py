@@ -178,6 +178,8 @@ def run_onnx(args):
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
     options = onnxruntime.SessionOptions()
+    if args.profiler == "onnx":
+        options.enable_profiling = True
 
     #, 'XNNPACKExecutionProvider'
     print(args.num_threads)
@@ -192,6 +194,8 @@ def run_onnx(args):
 
     session = onnxruntime.InferenceSession(args.model, options, providers=providers)
     print(session.get_providers())
+
+
 
     input_name = session.get_inputs()[0].name
     output_name = session.get_outputs()[0].name
@@ -227,7 +231,10 @@ def run_onnx(args):
 
         time.sleep(args.sleep)
 
-    return df
+    if args.profiler == "onnx":
+        return df, session
+    else:
+        return df
 
 def run_pytorch(args):
 
@@ -289,6 +296,7 @@ def run_pytorch(args):
                 print("time in ms: ", lat*1000)
             else:
                 output = model(input_batch)
+                lat = 0
 
             if not args.skip_output:
                 output = post.handle_output_pytorch_mobilenet_class(output, args.label, args.n_big)
@@ -423,8 +431,86 @@ def run_sync_ov(args):
     return df
 
 
-def run_async_ov(args):
-    print("todo")
+def run_pytorch_with_profiler(args):
+
+    import torch
+    from torchvision import models, transforms
+    import sys
+    import lib.load_pytorch_models as pt
+    from torch.profiler import profile, record_function, ProfilerActivity
+    
+    output_dict = dat.create_base_dictionary_class(args.n_big)
+
+    
+    print(args.num_threads)
+    torch.set_num_threads(args.num_threads)
+
+    if args.model == "mobilenet_v2":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
+    elif args.model == "mobilenet_v3_large":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_large', pretrained=True)
+    elif args.model == "mobilenet_v3_small":
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_small', pretrained=True)
+    elif args.model == "mobilenet_v3_large_q":
+        torch.backends.quantized.engine = 'qnnpack'
+        model = models.quantization.mobilenet_v3_large(pretrained=True, quantize=True)
+    elif args.model == "mobilenet_v2_q":
+        torch.backends.quantized.engine = 'qnnpack'
+        model = models.quantization.mobilenet_v2(pretrained=True)
+    #func_call = pt.load_pytorch_model(args.model)
+
+    #func_call = "models." + args.model + "(pretrained=True)"
+    #model = func_call
+    #print(func_call)
+    #model = eval(func_call)
+
+    #model = models.mobilenet_v2(pretrained=True)
+        
+    model = torch.jit.script(model)
+
+    model.eval()
+
+    preprocess = pre.preprocess_pytorch_mobilenet()
+
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference"):
+
+            for i in range(args.niter):
+                for image in args.images:
+                    input_image = Image.open(image)
+                    #print(len(np.shape(np.asarray(input_image).astype(float))))
+
+                    if len(np.shape(np.asarray(input_image).astype(np.float32))) == 2:
+                        input_image = input_image.convert("RGB")
+
+                    input_tensor = preprocess(input_image)
+                    input_batch = input_tensor.unsqueeze(0) 
+
+                    if args.profiler == "perfcounter":
+                        start_time = perf_counter()
+                        with torch.no_grad():
+                            output = model(input_batch)
+                        end_time = perf_counter()
+                        lat = end_time - start_time
+                        print("time in ms: ", lat*1000)
+                    else:
+                        output = model(input_batch)
+                        lat = 0
+
+                    if not args.skip_output:
+                        output = post.handle_output_pytorch_mobilenet_class(output, args.label, args.n_big)
+                        output_dict = dat.store_output_dictionary_class(output_dict, image, lat, output, args.n_big)
+                    else:
+                        output_dict = dat.store_output_dictionary_only_lat(output_dict, image, lat, args.n_big)
+                    df = dat.create_pandas_dataframe(output_dict)
+                    
+
+                time.sleep(args.sleep)
+    
+    prof.export_chrome_trace("temp.json")
+    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=10))
+
+    return df
 
 
 

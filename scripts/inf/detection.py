@@ -168,6 +168,8 @@ def run_onnx(args, output_image_folder):
     output_dict = dat.create_base_dictionary_det()
 
     options = onnxruntime.SessionOptions()
+    if args.profiler == "onnx":
+        options.enable_profiling = True
     providers = ['CPUExecutionProvider']
 
     options.intra_op_num_threads = args.num_threads
@@ -224,7 +226,10 @@ def run_onnx(args, output_image_folder):
     df = dat.create_pandas_dataframe(output_dict)
     #print("pandas output: ", df)    
 
-    return df
+    if args.profiler == "onnx":
+        return df, session
+    else:
+        return df
 
 def run_pytorch(args, output_image_folder):
 
@@ -408,4 +413,78 @@ def run_sync_ov(args, output_image_folder):
 
     return df
 
+def run_pytorch_with_profiler(args, output_image_folder):
+
+    import torch
+    from torchvision import models, transforms
+    from torch.profiler import profile, record_function, ProfilerActivity
+
+    output_dict = dat.create_base_dictionary_det()
+
+    torch.set_num_threads(args.num_threads)
+
+    if args.model == "yolov5l":
+        model = torch.hub.load("ultralytics/yolov5", "yolov5l", pretrained=True)
+    elif args.model == "yolov5m":
+        model = torch.hub.load("ultralytics/yolov5", "yolov5m", pretrained=True)
+    elif args.model == "yolov5n":
+        model = torch.hub.load("ultralytics/yolov5", "yolov5n", pretrained=True)
+    elif args.model == "yolov5s":
+        model = torch.hub.load("ultralytics/yolov5", "yolov5s", pretrained=True)
+    elif "yolov7" in args.model:
+        model = torch.hub.load('WongKinYiu/yolov7', 'custom', args.model, force_reload=True, trust_repo=True)
+    elif "yolov3" in args.model:
+        model = torch.hub.load("ultralytics/yolov3", "custom", args.model, force_reload=True, trust_repo=True)
+    elif "yolov8" in args.model:
+        from ultralytics import YOLO
+        print("yolov8")
+        model = YOLO(args.model)
+        
+    
+
+    model.eval()
+
+    preprocess = pre.preprocess_pytorch_yolo()
+
+    #print(args.images)
+
+    with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
+        with record_function("model_inference"):
+
+            for i in range(args.niter):
+                for image in args.images:
+                    image_result_file = os.path.join(output_image_folder, image.split("/")[-1])
+                    img_org = cv2.imread(image)
+                    input_image = Image.open(image)
+
+                    #input_tensor = preprocess(input_image)
+                    #print(input_tensor.shape)
+                    #input_batch = input_tensor
+                    #input_batch = input_tensor.unsqueeze(0) 
+                    #print(input_batch.shape)
+
+                    if args.profiler == "perfcounter":
+                        start_time = perf_counter()
+                        with torch.no_grad():
+                            output = model(image)
+                        end_time = perf_counter()
+                        lat = end_time - start_time
+                        print("time in ms: ", lat*1000)
+                    else:
+                        lat = 0
+                        with torch.no_grad():
+                            output = model(input_image)
+
+                    if not args.skip_output:
+                        output = post.handle_output_pytorch_yolo_det(output, img_org, args.thres, image_result_file, args.label,(1, 1))
+                        output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
+                    else:
+                        output_dict = dat.store_output_dictionary_det_only_lat(output_dict, image, lat)
+
+                time.sleep(args.sleep)    
+
+    df = dat.create_pandas_dataframe(output_dict)
+    #print("pandas output: ", df) 
+
+    return df
 
