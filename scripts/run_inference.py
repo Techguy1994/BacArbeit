@@ -73,7 +73,7 @@ def run_classification(args, name_date):
         os.rename(prof_file, os.path.join(args.time, prof_file))
     elif args.profiler == "pytorch":
         print(args.time)
-        os.rename("temp.json", args.time)
+        os.rename("temp.json", os.path.join(args.time, name_date + "_pytorch_profiler.json"))
 
 
         

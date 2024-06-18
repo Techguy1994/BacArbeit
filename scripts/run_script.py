@@ -240,7 +240,7 @@ def handle_arguments():
     
     #pytorch profiler test
     if number == 131801501:
-        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-os", "ubuntus", "-num_thr", "3", "-p", "pytorch"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "10", "-os", "ubuntus", "-num_thr", "3", "-p", "pytorch"], shell=False)
 
 
 
