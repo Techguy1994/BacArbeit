@@ -23,6 +23,8 @@ class Arguments:
         self.randomized_input = self.args.randomized_input
         if self.args.number_threads:
             self.num_threads = int(self.args.number_threads)
+        else: 
+            self.num_threads = False
         self.os = self.args.os
 
 
