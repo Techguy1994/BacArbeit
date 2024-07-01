@@ -50,9 +50,6 @@ def handle_arguments():
                 mobilenet_v3_small:     152
                 mobilenet_v2:           153
                 mobilenet_v2_q:         154
-
-
-
     """
     #raspberry os
     # latency
