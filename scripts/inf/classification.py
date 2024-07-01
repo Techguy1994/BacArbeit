@@ -58,11 +58,13 @@ def run_tf(args):
             armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
             if args.num_threads:
+                print(args.num_threads)
                 interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
             else:
                 interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate])
         else:
             if args.num_threads:
+                print(args.num_threads)
                 interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
             else: 
                 interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None) 

@@ -64,7 +64,7 @@ class Arguments:
         parser.add_argument("-so", "--skip_output", help="if provided this skips the output handling", action="store_true")
         parser.add_argument("-ri", "--randomized_input", help="randomizes inputs for the input, give a of the number of the input", required=False)
 
-        parser.add_argument("-num_thr", "--number_threads", help="set number of threads", required=False, default=1)
+        parser.add_argument("-num_thr", "--number_threads", help="set number of threads", required=False)
         parser.add_argument("-os", "--os", help="set number of threads", required=False, default="Linux")
 
 
