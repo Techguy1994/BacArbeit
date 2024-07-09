@@ -17,25 +17,57 @@ def run_tf(args, output_image_folder):
 
     try:
         import tflite_runtime.interpreter as tflite
+        print("tensorflow-runtime")
 
         #delegate_input
         if args.api == "delegate":
-            print("delegate")
-            armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
-                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            print("armnn tflite delegate")
+            print("hey")
+
+            if os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
+                libarmnnDelegate = "/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"
+                print(os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
+            #elif os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
+            #    print(os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
+            #sys.exit()
+            else:
+                print("delegate not found")
+                sys.exit()
+            
+            #/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate
+            #armnn_delegate = tflite.load_delegate(library=libarmnnDelegate,
+            #                                options={"backends": "CpuAcc,CpuRef", "logging-severity":"info", "number-of-threads": args.num_threads})
+            
+            armnn_delegate = tflite.load_delegate(library=libarmnnDelegate,
+                                options={"backends": "CpuAcc, CpuRef", "number-of-threads": args.num_threads, "reduce-fp32-to-fp16": True, "enable-fast-math": True})
+            if args.num_threads:
+                interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            else:
+                interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate])
         else:
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            if args.num_threads:
+                interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            else:
+                interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None)
     except:
         import tensorflow as tf
+        print("tensorflow")
 
         if args.api == "delegate":
             print("delegate")
-            armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn_bld/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+            armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            if args.num_threads:
+                print(args.num_threads)
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            else:
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate])
         else:
-            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            if args.num_threads:
+                print(args.num_threads)
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            else: 
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None) 
 
     output_dict = dat.create_base_dictionary_det()
 
