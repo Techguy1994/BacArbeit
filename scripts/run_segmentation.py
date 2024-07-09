@@ -25,32 +25,47 @@ def handle_arguments():
 
     models: 
             tflite:
-                lite-model_mobilenet_v3_large_100_224_fp32_1.tflite:    00
-                lite-model_mobilenet_v3_large_100_224_uint8_1.tflite:   01
-                lite-model_mobilenet_v3_small_100_224_fp32_1.tflite:    02
-                lite-model_mobilenet_v3_small_100_224_uint8_1.tflite:   03
-                lite-model_mobilenet_v2_100_224_fp32_1.tflite:          04
-                lite-model_mobilenet_v2_100_224_uint8_1.tflite:         05
+                lite-model_deeplabv3-mobilenetv2_1_default_1:               00
+                lite-model_deeplabv3-mobilenetv2-int8_1_default_1.tflite:   01
             
             onnx: 
-                mobilenetv3_large_100_Opset17.onnx: 50
-                mobilenetv3_small_075_Opset17.onnx: 51
-                mobilenetv3_small_050_Opset17.onnx: 52
-                mobilenetv2-12.onnx:                53
-                mobilenetv2-12-int8.onnx:           54
+                lite-model_deeplabv3-mobilenetv2_1_default_1:               25
 
             openvino:
-                mobilenet-v3-large-1.0-224-tf_FP32.xml: 100
-                mobilenet-v3-large-1.0-224-tf_FP32.xml: 101
-                mobilenet-v2-1.4-224_FP32.xml:          102
+                deeplabv3_FP32:                                             50
+
 
             pytorch:
-                mobilenet_v3_large:     150
-                mobilenet_v3_large_q:   151
-                mobilenet_v3_small:     152
-                mobilenet_v2:           153
-                mobilenet_v2_q:         154
+                deeplabv3_mobilenet_v3_large:                               75
+
     """
+
+    #deeplabv3 accuracy runs
+    #tf
+    if number == 1332500:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+    if number == 1332501:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2-int8_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+    
+    #delegate
+    if number == 1330500:
+        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+    if number == 1330501:
+        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2-int8_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+    
+    #onnx
+    if number == 134525:
+         subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1"], shell=False)
+    
+    #openvino
+    if number == 136550:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "seg", "-m", "deeplabv3_FP32.xml", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+
+    #pytorch
+    if number == 1338575:
+        subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "seg", "-m", "deeplabv3_mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/",  "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+
+    #deeplabv3 latency runs
 
 if __name__ == "__main__":
     main()
