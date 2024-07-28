@@ -4,10 +4,12 @@ import pandas as pd
 import sys
 import os
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def main():
-    database = pd.read_csv("thread_comparison_database.csv")
+    database = pd.read_csv("database.csv")
 
     
 
@@ -18,17 +20,26 @@ def main():
     df = interate_through_database(database, df)
     df.to_csv("temp.csv")
 
-    model_name = "lite_model_mobilenet_v3_large_100_224_uint8_1"
+    model_name = "lite-model_mobilenet_v3_large_100_224_fp32_1"
+
+    filt = (df["model_name"] == model_name)
+    model_df = df.loc[filt]
+    print(model_df.head)
+
+    sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.0001, stat="count")
+    plt.show()
+
+    #print(model_df.head)
 
     #deprecated
-    values = []
+    #values = []
 
     #model_name = ["lite-model_mobilenet_v3_large_100_224_fp32_1"]
-    threads = ["1", "2", "3", "4"]
-    df_names = get_values_for_plot(df)
+    #threads = ["1", "2", "3", "4"]
+    #df_names = get_values_for_plot(df)
 
     #print(df_names)
-
+    """
     for df_name in df_names:
         for thread in threads:
             temp = model_name + "_T" + thread
@@ -38,7 +49,9 @@ def main():
                 values.append(eval(temp).latency.values.tolist())
 
     #print(len(values[0]))
-                              
+
+    #print(values)
+                    
     fig = ff.create_distplot(values, threads, bin_size=0.00001, curve_type="normal")
     print(fig)
     fig.show()
@@ -54,6 +67,7 @@ def main():
     fig = px.histogram(model_df, x="latency", color="thread", marginal="box", barmode="overlay", nbins=5000, title=model_name)
     fig.update_traces(opacity=0.75)
     fig.show()
+    """
 
 
 
@@ -114,8 +128,10 @@ def get_values_for_plot(df):
         for thread in threads:
             
             filt = (df["model_name"] == model_name) & (df["thread"] == thread)
-            
-            name = model_name + "_T" + str(int(thread))
+            if thread == "False":
+                name = model_name + "_T" + thread
+            else:
+                name = model_name + "_T" + str(int(thread))
 
             
             name = name.replace("-", "_")
