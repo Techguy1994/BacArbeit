@@ -177,7 +177,10 @@ def load_database(database_name):
     return df
 
 def add_entry(model_name, inference_type, api, onyl_lat, os, file_path, df, thread):
-    entry = {"model_name": [model_name], "api": [api], "inference type": [inference_type], "os": [os], "thread count": [str(int(thread))]}
+    if thread == "False":
+        entry = {"model_name": [model_name], "api": [api], "inference type": [inference_type], "os": [os], "thread count": [thread]}
+    else:
+        entry = {"model_name": [model_name], "api": [api], "inference type": [inference_type], "os": [os], "thread count": [str(int(thread))]}
     if "onlylat" in onyl_lat:
         #inference_time = df["inference time"].astype(float)
         #avg = inference_time.mean()
