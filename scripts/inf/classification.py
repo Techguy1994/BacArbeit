@@ -265,7 +265,7 @@ def run_pytorch(args):
     if args.model == "mobilenet_v2":
         model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
     elif args.model == "mobilenet_v3_large":
-        model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_large', pretrained=True)
+        model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_large', weights="MobileNet_V3_Large_Weights.IMAGENET1K_V1")
     elif args.model == "mobilenet_v3_small":
         model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v3_small', pretrained=True)
     elif args.model == "mobilenet_v3_large_q":
