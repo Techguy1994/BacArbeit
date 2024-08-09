@@ -258,7 +258,6 @@ def run_pytorch(args):
     
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
-    
     print(args.num_threads)
     torch.set_num_threads(args.num_threads)
 
