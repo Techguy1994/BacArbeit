@@ -58,6 +58,8 @@ def run_classification(args, name_date):
     print(df)
     dat.store_pandas_data_frame_as_csv(df, name_date, args)
 
+    print("Profiler file saving")
+
     if args.profiler == "cprofiler":
         profiler.disable()
 
@@ -66,8 +68,7 @@ def run_classification(args, name_date):
         ps.print_stats()
 
         with open('temp.txt', 'w+') as f:
-            f.write(s.getvalue())
-        
+            f.write(s.getvalue()) 
         save_cprofiler_csv(args, name_date)
     elif args.profiler == "onnx":
         prof_file = session.end_profiling()
@@ -77,6 +78,9 @@ def run_classification(args, name_date):
     elif args.profiler == "pytorch":
         print(args.time)
         os.rename("temp.json", os.path.join(args.time, name_date + "_pytorch_profiler.json"))
+
+    
+    print("The End")
 
 
         
