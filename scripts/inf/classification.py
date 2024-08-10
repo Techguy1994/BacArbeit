@@ -456,6 +456,8 @@ def run_pytorch_with_profiler(args):
     import lib.load_pytorch_models as pt
     from torch.profiler import profile, record_function, ProfilerActivity
     
+    print("run pytorch profiler")
+
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
     
