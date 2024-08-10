@@ -48,10 +48,10 @@ def run_classification(args, name_date):
         print("pytorch")
         if args.profiler == "pytorch":
             print("profiling")
-            df, profiler = cl.run_pytorch(args)
+            df, profiler = cl.run_pytorch_with_profiler(args)
         else:
             print("not profiling")
-            df = cl.run_pytorch_with_profiler(args)
+            df = cl.run_pytorch(args)
     if args.api == "ov":
         df = cl.run_sync_ov(args)
 
