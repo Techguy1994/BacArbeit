@@ -255,6 +255,9 @@ def run_pytorch(args):
     from torchvision import models, transforms
     import sys
     import lib.load_pytorch_models as pt
+
+
+    print("start pytorch")
     
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
@@ -319,6 +322,8 @@ def run_pytorch(args):
             
 
         time.sleep(args.sleep)
+
+    print("inf end")
 
     return df
 
