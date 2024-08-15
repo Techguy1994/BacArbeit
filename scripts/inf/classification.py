@@ -22,7 +22,6 @@ def run_tf(args):
         #delegate_input
         if args.api == "delegate":
             print("armnn tflite delegate")
-            print("hey")
 
             if os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
                 libarmnnDelegate = "/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"
@@ -55,7 +54,7 @@ def run_tf(args):
 
         if args.api == "delegate":
             print("delegate")
-            armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
+            armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
             if args.num_threads:
                 print(args.num_threads)
@@ -197,7 +196,10 @@ def run_onnx(args):
     #, 'XNNPACKExecutionProvider'
     print(args.num_threads)
     providers = ['CPUExecutionProvider']
-    options.intra_op_num_threads = args.num_threads
+    if args.num_threads:
+        print("set thread")
+        options.intra_op_num_threads = args.num_threads
+
     options.execution_mode = onnxruntime.ExecutionMode.ORT_SEQUENTIAL
     #options.execution_mode = onnxruntime.ExecutionMode.ORT_PARALLEL
     #options.inter_op_num_threads = 8
@@ -262,6 +264,8 @@ def run_pytorch(args):
     output_dict = dat.create_base_dictionary_class(args.n_big)
 
     print(args.num_threads)
+    if args.num_threads:
+        print("set thread")
     torch.set_num_threads(args.num_threads)
 
     if args.model == "mobilenet_v2":
@@ -411,7 +415,11 @@ def run_sync_ov(args):
 
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
-    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": str(args.num_threads)} #"NUM_STREAMS": "1"} 
+    if args.num_threads:
+        print("set thread")
+        config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": str(args.num_threads)} #"NUM_STREAMS": "1"} 
+    else: 
+        config = {"PERFORMANCE_HINT": "LATENCY"} 
     #config = {"PERFORMANCE_HINT": "THROUGHPUT", "INFERENCE_NUM_THREADS": str(args.num_threads), "NUM_STREAMS": "4"} 
     compiled_model = core.compile_model(model, device_name, config)
     #compiled_model = core.compile_model(model, device_name)
