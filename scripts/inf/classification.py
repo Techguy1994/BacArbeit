@@ -266,7 +266,7 @@ def run_pytorch(args):
     print(args.num_threads)
     if args.num_threads:
         print("set thread")
-    torch.set_num_threads(args.num_threads)
+        torch.set_num_threads(args.num_threads)
 
     if args.model == "mobilenet_v2":
         model = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
