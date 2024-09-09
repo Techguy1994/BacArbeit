@@ -11,6 +11,14 @@ import matplotlib.pyplot as plt
 def main():
     database = pd.read_csv("load_database.csv")
 
+    palette = {
+    'False': 'tab:blue',
+    '1': 'tab:green',
+    '2': 'tab:brown',
+    '3': 'tab:red',
+    '4': 'tab:orange'
+    }
+
     df = create_empty_dataframe()
 
     df = interate_through_database(database, df)
@@ -22,10 +30,12 @@ def main():
     print(threads)
     print(df.head)
 
-    apis = ["onnx", "ov", "pytroch", "delegate", "tf"]
+    apis = ["onnx", "ov", "pytorch", "delegate", "tf"]
     loads = ["default", "one", "two", "three"]
+    label = ["Default", "4 cores", "3 cores", "2 cores", "1 core"]
 
-    boolean = False
+    booleans = ["tf", "arm", "torch", "ov", "onnx", True]
+    boolean = booleans[4]
 
     if boolean == True:
         for api in apis:
@@ -36,19 +46,100 @@ def main():
                 print(model_df.head)
                 model_df.to_csv("temp_filt.csv")
 
-                distplot = sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.0001, stat="count")
+                distplot = sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.001, stat="count")
                 distplot.figure.savefig(name)
-    else:
-        api = apis[1]
-        load = loads[1]
+    elif boolean == "tf":
+        api = apis[4]
+        load = loads[0]
         name = api + load + ".png"
         filt = (df["api"] == api) & (df["load"] == load)
         model_df = df.loc[filt]
         print(model_df.head)
         model_df.to_csv("temp_filt.csv")
-        distplot = sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.0001, stat="count")
+        model_df = model_df.sort_values(by=["thread"])
+        print(model_df)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.0005, palette=palette, legend=False)
+        plt.xlim(0.035,0.12)
+        plt.ylim(0,1000)
+        plt.ylabel("KDE")
+        plt.xlabel("Latency (s)")
+        plt.legend(loc="upper right", labels = label, title="Core Settings")
+        plt.title("Tflite runtime")
         plt.show()
-
+    elif boolean == "arm":
+        api = apis[3]
+        load = loads[0]
+        name = api + load + ".png"
+        filt = (df["api"] == api) & (df["load"] == load)
+        model_df = df.loc[filt]
+        print(model_df.head)
+        model_df.to_csv("temp_filt.csv")
+        model_df = model_df.sort_values(by=["thread"])
+        print(model_df)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.0005, palette=palette, legend=False)
+        plt.xlim(0.035,0.12)
+        plt.ylim(0,1000)
+        plt.ylabel("KDE")
+        plt.xlabel("Latency (s)")
+        #plt.legend(loc="upper right", labels = label, title="Core Settings")
+        plt.title("Armnn delegate")
+        plt.show()
+    elif boolean == "ov":
+        api = apis[1]
+        load = loads[0]
+        name = api + load + ".png"
+        filt = (df["api"] == api) & (df["load"] == load)
+        model_df = df.loc[filt]
+        print(model_df.head)
+        model_df.to_csv("temp_filt.csv")
+        model_df = model_df.sort_values(by=["thread"])
+        print(model_df)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.0005, palette=palette, legend=False)
+        plt.xlim(0.035,0.12)
+        plt.ylim(0,1000)
+        plt.ylabel("KDE")
+        plt.xlabel("Latency (s)")
+       #plt.legend(loc="upper right", labels = label, title="Core Settings")
+        plt.title("Openvino")
+        plt.show()
+    elif boolean == "onnx":
+        api = apis[0]
+        load = loads[0]
+        name = api + load + ".png"
+        filt = (df["api"] == api) & (df["load"] == load)
+        model_df = df.loc[filt]
+        print(model_df.head)
+        model_df.to_csv("temp_filt.csv")
+        model_df = model_df.sort_values(by=["thread"])
+        print(model_df)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.0005, palette=palette, legend=False)
+        plt.xlim(0.035,0.12)
+        plt.ylim(0,1000)
+        plt.ylabel("KDE")
+        plt.xlabel("Latency (s)")
+        #plt.legend(loc="upper right", labels = label, title="Core Settings")
+        plt.title("Onnx runtime")
+        plt.show()
+    elif boolean == "torch":
+        print("heyyyo")
+        api = apis[2]
+        load = loads[0]
+        name = api + load + ".png"
+        print(api)
+        filt = (df["api"] == api) & (df["load"] == load)
+        model_df = df.loc[filt]
+        print(model_df.head)
+        model_df.to_csv("temp_filt.csv")
+        model_df = model_df.sort_values(by=["thread"])
+        print(model_df)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kde=True, binwidth=0.0005, palette=palette, legend=False)
+        #plt.xlim(0.03,0.1)
+        plt.ylim(0,1000)
+        plt.ylabel("KDE")
+        plt.xlabel("Latency (s)")
+        plt.legend(loc="upper right", labels = label, title="Core Settings")
+        plt.title("PyTorch")
+        plt.show()
 
 def create_empty_dataframe():
     dict = {
@@ -74,7 +165,7 @@ def interate_through_database(database, df):
         api = r["api"]
         l = r["load"]
 
-        print(model_name, threads, api)
+        print(model_name, threads, api, latency_link)
 
         lat = pd.read_csv(latency_link)
 
