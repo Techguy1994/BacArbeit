@@ -32,9 +32,17 @@ def run_tf(args, raw_folder, overlay_folder, index_folder):
             armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
             
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            if args.num_threads:
+                print(args.num_threads)
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            else:
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate])
         else:
-            interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            if args.num_threads:
+                print(args.num_threads)
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            else: 
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None) 
     except:
         import tensorflow as tf
 
@@ -42,9 +50,17 @@ def run_tf(args, raw_folder, overlay_folder, index_folder):
             print("delegate")
             armnn_delegate = tf.lite.experimental.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
                                             options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            if args.num_threads:
+                print(args.num_threads)
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            else:
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate])
         else:
-            interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            if args.num_threads:
+                print(args.num_threads)
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            else: 
+                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None) 
 
 
     interpreter.allocate_tensors()
@@ -200,6 +216,10 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
     # 'XNNPACKExecutionProvider'
     providers = ['CPUExecutionProvider']
 
+    if args.num_threads:
+        print("set thread")
+        options.intra_op_num_threads = args.num_threads
+
     session = onnxruntime.InferenceSession(args.model, options, providers=providers)
     print(session.get_providers())
 
@@ -286,6 +306,11 @@ def run_pytorch(args, raw_folder, overlay_folder, index_folder):
     else: 
         print(args.model)
         sys.exit("Nothing found")
+    
+    print(args.num_threads)
+    if args.num_threads:
+        print("set thread")
+        torch.set_num_threads(args.num_threads)
 
     preprocess = pre.preprocess_pytorch_seg()
 
@@ -433,7 +458,11 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
 
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
-    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": "4", "NUM_STREAMS": "4"} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
+    if args.num_threads:
+        print("set thread")
+        config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": str(args.num_threads)} #"NUM_STREAMS": "1"} 
+    else: 
+        config = {"PERFORMANCE_HINT": "LATENCY"} 
     compiled_model = core.compile_model(model, device_name, config)
     #compiled_model = core.compile_model(model, device_name)
     num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
