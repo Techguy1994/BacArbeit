@@ -204,7 +204,9 @@ def run_onnx(args, output_image_folder):
         options.enable_profiling = True
     providers = ['CPUExecutionProvider']
 
-    options.intra_op_num_threads = args.num_threads
+    if args.num_threads:
+        print("set thread")
+        options.intra_op_num_threads = args.num_threads
     options.execution_mode = onnxruntime.ExecutionMode.ORT_SEQUENTIAL
 
     session = onnxruntime.InferenceSession(args.model, options, providers=providers)
