@@ -270,7 +270,10 @@ def run_pytorch(args, output_image_folder):
 
     output_dict = dat.create_base_dictionary_det()
 
-    torch.set_num_threads(args.num_threads)
+    print(args.num_threads)
+    if args.num_threads:
+        print("set thread")
+        torch.set_num_threads(args.num_threads)
 
     if args.model == "yolov5l":
         model = torch.hub.load("ultralytics/yolov5", "yolov5l", pretrained=True)
@@ -403,7 +406,11 @@ def run_sync_ov(args, output_image_folder):
 
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
-    config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": str(args.num_threads)} #"PERFORMANCE_HINT_NUM_REQUESTS": "1"} findet nicht
+    if args.num_threads:
+        print("set thread")
+        config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": str(args.num_threads)} #"NUM_STREAMS": "1"} 
+    else: 
+        config = {"PERFORMANCE_HINT": "LATENCY"} 
     compiled_model = core.compile_model(model, device_name, config)
     #compiled_model = core.compile_model(model, device_name)
     num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
