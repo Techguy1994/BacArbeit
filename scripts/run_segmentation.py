@@ -76,8 +76,12 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os","-so", "-ri", "1000", "ubuntus","-so", "-ri", "1000" "-num_thr", "2"], shell=False)
     if number == 1332500:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os","-so", "-ri", "1000", "ubuntus","-so", "-ri", "1000" "-num_thr", "3"], shell=False)
-    if number == 1332500:
+    if number == 1432500:
         subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os","-so", "-ri", "1000", "ubuntus","-so", "-ri", "1000" "-num_thr", "4"], shell=False)
+
+
+    if number == 1332501:
+        subprocess.call(["python3", "run_inference.py", "-api", "tf", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2-int8_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os","-so", "-ri", "1000", "ubuntus","-so", "-ri", "1000" "-num_thr", "3"], shell=False)
 
     #delegate 
     if number == 1030500:
@@ -90,6 +94,9 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", ,"-so", "-ri", "1000", "-num_thr", "3"], shell=False)
     if number == 1430500:
         subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", ,"-so", "-ri", "1000", "-num_thr", "3"], shell=False)
+
+    if number == 1330501:
+        subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "seg", "-m", "lite-model_deeplabv3-mobilenetv2-int8_1_default_1.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", ,"-so", "-ri", "1000", "-num_thr", "3"], shell=False)
 
     #onnx
     if number == 134525:

@@ -1,4 +1,5 @@
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd 
 import sys
 import os
@@ -13,9 +14,6 @@ def main():
     df = create_empty_dataframe()
     print(df.head)
 
-    
-
-    #db = filter_through_database(df)
 
    
 
@@ -24,7 +22,25 @@ def main():
     print(df)
     df.to_csv("temp.csv")
 
-    fig = px.box(df, x="model_name", y="latency", color="api", range_y=[0.005,0.1])
+    #fig = px.box(df, x="model_name", y="latency", color="api", range_y=[0.005,0.1])
+
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Violin(x=df['model_name'][ df['api'] == 'tf' ],
+                            y=df['latency'][ df['api'] == 'tf' ],
+                            legendgroup='Yes', scalegroup='Yes', name='Tensorflite Runtime',
+                            side='negative',
+                            line_color='blue')
+                )
+    fig.add_trace(go.Violin(x=df['model_name'][ df['api'] == 'delegate' ],
+                            y=df['latency'][ df['api'] == 'delegate' ],
+                            legendgroup='No', scalegroup='No', name='Armnn Delegate',
+                            side='positive',
+                            line_color='orange')
+                )
+    fig.update_traces(meanline_visible=True)
+    fig.update_layout(violingap=0, violinmode='overlay')
     fig.show()
 
 

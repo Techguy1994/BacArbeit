@@ -41,7 +41,7 @@ def handle_arguments():
 
             openvino:
                 mobilenet-v3-large-1.0-224-tf_FP32.xml: 100
-                mobilenet-v3-large-1.0-224-tf_FP32.xml: 101
+                mobilenet-v3-small-1.0-224-tf_FP32.xml: 101
                 mobilenet-v2-1.4-224_FP32.xml:          102
 
             pytorch:

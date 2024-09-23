@@ -17,6 +17,11 @@ def main():
     unique_apis = db['api'].unique()
     unique_loads = db["load"].unique()
 
+    sort_loads = ["default", "one", "two", "three"]
+
+
+
+
     print(unique_apis)
 
     for api in unique_apis:
@@ -32,11 +37,20 @@ def main():
            
             entry = {"mean latency": [max_value], "thread": [threads], "api": [api], "load": [load]}
             df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True)
+    
+    df['load'] = pd.Categorical(df['load'], categories=sort_loads, ordered=True)
+    df = df.sort_values('load')
 
     df.to_csv("scatter.csv")
 
-    fig = px.scatter(df, x="load", y='mean latency', color='api', symbol="thread", title='Scatter Plot Example')
+    # start of the scatter plot
 
+    fig = px.scatter(df, x="load", y='mean latency', color='api', symbol="thread", title='Scatter Plot Example')
+    for api in df['api'].unique():
+        color_df = df[df['api'] == api]
+        fig.add_scatter(x=color_df['load'], y=color_df['mean latency'], mode='lines', name=f'Line for {api}')
+
+    fig.update_traces(marker=dict(size=15))
     # Show the plot
     fig.show()
 
