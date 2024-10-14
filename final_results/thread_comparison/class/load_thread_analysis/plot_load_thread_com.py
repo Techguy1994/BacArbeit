@@ -14,7 +14,7 @@ def main():
     palette = {
     'False': 'tab:blue',
     '1': 'tab:green',
-    '2': 'tab:brown',
+    '2': 'tab:purple',
     '3': 'tab:red',
     '4': 'tab:orange'
     }
@@ -35,7 +35,7 @@ def main():
     label = ["Default", "4 cores", "3 cores", "2 cores", "1 core"]
 
     booleans = ["tf", "arm", "torch", "ov", "onnx", True]
-    boolean = booleans[0]
+    boolean = booleans[2]
 
     if boolean == True:
         for api in apis:
@@ -60,10 +60,8 @@ def main():
         print(model_df)
         distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", palette=palette, legend=False)
         plt.xlim(0.035,0.1)
-        plt.ylim(0,1000)
+        plt.ylim(0,500)
         plt.ylabel("KDE")
-        #plt.yscale("log")
-        #plt.xscale("log")
         plt.xlabel("Latency (s)")
         plt.legend(loc="upper right", labels = label, title="Core Settings")
         plt.title("Tflite runtime")
@@ -78,9 +76,9 @@ def main():
         model_df.to_csv("temp_filt.csv")
         model_df = model_df.sort_values(by=["thread"])
         print(model_df)
-        distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", binwidth=0.0005, palette=palette, legend=False)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", palette=palette, legend=False)
         plt.xlim(0.035,0.1)
-        plt.ylim(0,1000)
+        plt.ylim(0,500)
         plt.ylabel("KDE")
         plt.xlabel("Latency (s)")
         plt.legend(loc="upper right", labels = label, title="Core Settings")
@@ -96,9 +94,9 @@ def main():
         model_df.to_csv("temp_filt.csv")
         model_df = model_df.sort_values(by=["thread"])
         print(model_df)
-        distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", binwidth=0.0005, palette=palette, legend=False)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", palette=palette, legend=False)
         plt.xlim(0.035,0.1)
-        plt.ylim(0,1000)
+        plt.ylim(0,500)
         plt.ylabel("KDE")
         plt.xlabel("Latency (s)")
         plt.legend(loc="upper right", labels = label, title="Core Settings")
@@ -114,9 +112,9 @@ def main():
         model_df.to_csv("temp_filt.csv")
         model_df = model_df.sort_values(by=["thread"])
         print(model_df)
-        distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", binwidth=0.0005, palette=palette, legend=False)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", palette=palette, legend=False)
         plt.xlim(0.035,0.1)
-        plt.ylim(0,1000)
+        plt.ylim(0,500)
         plt.ylabel("KDE")
         plt.xlabel("Latency (s)")
         plt.legend(loc="upper right", labels = label, title="Core Settings")
@@ -134,12 +132,12 @@ def main():
         model_df.to_csv("temp_filt.csv")
         model_df = model_df.sort_values(by=["thread"])
         print(model_df)
-        distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", binwidth=0.0005, palette=palette, legend=False)
-        #plt.xlim(0.03,0.1)
-        plt.ylim(0,1000)
+        distplot = sns.displot(model_df, x="latency", hue="thread", kind="kde", palette=palette, legend=False)
+        plt.xlim(0.1,0.3)
+        plt.ylim(0,10)
         plt.ylabel("KDE")
         plt.xlabel("Latency (s)")
-        plt.legend(loc="upper right", labels = label, title="Core Settings")
+        plt.legend(loc="upper right", labels = label, title="Core Settings set in Code")
         plt.title("PyTorch")
         plt.show()
 
