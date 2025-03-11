@@ -67,8 +67,6 @@ def manage_database(args):
     df = load_database(args.database)
 
     file_path = find(args.file_name, "/Users/marounel-chayeb/BacArbeit/final_results/results/")
-    print(file_path)
-
 
     is_only_lat = args.file_name.split("_")[-1]
     if "onlylat" in is_only_lat:
@@ -81,7 +79,9 @@ def manage_database(args):
         os = args.os
         #os = "Nan"
 
+        print(file_path)
         inference_type = file_path.split("/")[-4]
+
         if inference_type == "class":
             model_name = file_path.split("/")[-2]
             api = file_path.split("/")[-3]
@@ -93,9 +93,6 @@ def manage_database(args):
     
 
 
-    #print(is_only_lat)
-
-    print("---")
 
     
 
@@ -116,6 +113,7 @@ def manage_database(args):
             return df
         else:
 
+            print(model_name, api, os)
             filt = (df["model_name"] == model_name) & (df["api"] == api) & (df["os"] == os)
 
             if "onlylat" in is_only_lat:
@@ -254,11 +252,13 @@ def add_entry(model_name, inference_type, api, onyl_lat, os, file_path, df):
                 #    print(row)
 
                 for row in seg_dict:
-                    print(api)
+                    #print(api)
                     if row["Type"] == api:
                         print(row["model_name"])
                         if row["model_name"] == model_name:
                             miou = float(row["Accuracy"].split("%")[0])
+                            print(miou)
+                
                             
             entry.update({"miou": [miou]})
             df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True)

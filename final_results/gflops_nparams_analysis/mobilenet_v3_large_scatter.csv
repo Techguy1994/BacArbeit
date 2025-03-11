@@ -1,0 +1,13 @@
+,model_name,mean_lat,map,gflops,nparams
+0,yolov5s,0.9895916565540338,0.289,"1    16.602
+Name: GFLOPS, dtype: float64","1    7.3267
+Name: MParams, dtype: float64"
+1,yolov5m,2.0203582274320344,0.36,"3    49.1832
+Name: GFLOPS, dtype: float64","3    21.273
+Name: MParams, dtype: float64"
+2,yolov5n,0.4476165959269492,0.184,"0    4.5567
+Name: GFLOPS, dtype: float64","0    1.9682
+Name: MParams, dtype: float64"
+3,yolov5l,4.089123034262024,0.401,"2    109.4885
+Name: GFLOPS, dtype: float64","2    46.6345
+Name: MParams, dtype: float64"

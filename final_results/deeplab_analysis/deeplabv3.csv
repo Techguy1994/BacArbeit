@@ -1,0 +1,8 @@
+,Model,API,Average latency,MIoU,quantized
+0,deeplabv3_FP32,ov,1.4153439430109394,69.737,no
+1,lite-model_deeplabv3-mobilenetv2_1_default_1,tf,1.5449291518009964,60.854,no
+2,lite-model_deeplabv3-mobilenetv2_1_default_1,delegate,2.7991116133689538,60.915,no
+3,lite-model_deeplabv3-mobilenetv2-int8_1_default_1,delegate,1.1966186171500086,52.034,yes
+4,lite-model_deeplabv3-mobilenetv2-int8_1_default_1,tf,0.6907445196309964,52.651,yes
+5,deeplabv3_mobilenet_v3_large,pytorch,2.140868339128039,69.391,no
+6,deeplabv3_mobilenet_v3_large,onnx,1.352634124917902,57.058,no

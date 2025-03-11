@@ -155,7 +155,7 @@ def run_segmentation(args, name_date):
     if args.api == "pyarmnn":
         df = seg.run_pyarmnn(args, raw_folder, overlay_folder, index_folder)
     if args.api == "onnx":
-        if args.prfiler == "onnx":
+        if args.profiler == "onnx":
             df, session = seg.run_onnx(args, raw_folder, overlay_folder, index_folder)
         else: 
             df = seg.run_onnx(args, raw_folder, overlay_folder, index_folder)

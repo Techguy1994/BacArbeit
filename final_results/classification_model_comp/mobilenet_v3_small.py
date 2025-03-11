@@ -13,9 +13,13 @@ def main():
     df.to_csv(csv)
 
     fig = px.scatter(df, x="top1", y="mean_lat", color="api", symbol="quantized", title="MobilenNet V3 Small")
+    fig.update_traces(marker=dict(size=20),
+                selector=dict(mode='markers'))
     fig.show()
 
     fig = px.scatter(df, x="top5", y="mean_lat", color="api", symbol="quantized", title="MobilenNet V3 Small")
+    fig.update_traces(marker=dict(size=20),
+                  selector=dict(mode='markers'))
     fig.show()
 
 
@@ -50,7 +54,7 @@ def interate_through_database(database, df):
         "lite-model_mobilenet_v3_small_100_224_fp32_1",
         "mobilenetv3_small_075_Opset17",
         "mobilenetv3_small_050_Opset17",
-        "mobilenet-v3-small-1.0-224-tf_FP16",
+        "mobilenet-v3-small-1.0-224-tf_FP32",
         "mobilenet_v3_small",
         "lite-model_mobilenet_v3_small_100_224_uint8_1",
         ]
@@ -76,7 +80,7 @@ def interate_through_database(database, df):
                 q = "smaller onnx model"
             else:
                 q = ""
-            
+        
 
             entry = {
                 "model_name": ["mobilenet_v3_small"],

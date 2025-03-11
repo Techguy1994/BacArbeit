@@ -1,17 +1,17 @@
 ,mean latency,thread,api,load
-0,0.0820787913809908,4,onnx,default
-4,0.0479397422809983,False,ov,default
-8,0.0434001170709797,False,delegate,default
-12,0.0373705926220081,4,tf,default
-2,0.0898111342210029,3,onnx,one
-6,0.0535334376700006,3,ov,one
-10,0.0481659273099944,3,delegate,one
-14,0.0427529789760004,3,tf,one
-3,0.0989384927610117,2,onnx,two
-7,0.0613546758569754,4,ov,two
-11,0.055207366567014,2,delegate,two
-15,0.0520221731269993,2,tf,two
-1,0.1289522751729919,1,onnx,three
-5,0.0681226615010091,4,ov,three
-9,0.0741350276910043,1,delegate,three
-13,0.0755894631151531,False,tf,three
+0,0.0820787913809908,4,onnx_runtime,0 core load
+4,0.0479397422809983,default,Openvino,0 core load
+8,0.0434001170709797,default,Armnn Delegate,0 core load
+12,0.0373705926220081,4,tensorflow_runtime,0 core load
+2,0.0898111342210029,3,onnx_runtime,1 core load
+6,0.0535334376700006,3,Openvino,1 core load
+10,0.0481659273099944,3,Armnn Delegate,1 core load
+14,0.0427529789760004,3,tensorflow_runtime,1 core load
+3,0.0989384927610117,2,onnx_runtime,2 cores load
+7,0.0613546758569754,4,Openvino,2 cores load
+11,0.055207366567014,2,Armnn Delegate,2 cores load
+15,0.0520221731269993,2,tensorflow_runtime,2 cores load
+1,0.1289522751729919,1,onnx_runtime,3 cores load
+5,0.0681226615010091,4,Openvino,3 cores load
+9,0.0741350276910043,1,Armnn Delegate,3 cores load
+13,0.0755894631151531,default,tensorflow_runtime,3 cores load

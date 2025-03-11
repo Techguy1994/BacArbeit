@@ -22,29 +22,41 @@ def run_tf(args, raw_folder, overlay_folder, index_folder):
 
     try:
         import tflite_runtime.interpreter as tflite
+        print("tensorflow-runtime")
 
         #delegate_input
         if args.api == "delegate":
-            print(os.path.exists("/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
+            print("armnn tflite delegate")
+            print(args.num_threads)
+
+            if os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
+                libarmnnDelegate = "/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"
+                print(os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
+            #elif os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"):
+            #    print(os.path.exists("/home/pi/sambashare/armnn/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so"))
             #sys.exit()
-            print("delegate")
-            #/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate
-            armnn_delegate = tflite.load_delegate(library="/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate/libarmnnDelegate.so",
-                                            options={"backends": "CpuAcc,CpuRef", "logging-severity":"info"})
-            
-            if args.num_threads:
-                print(args.num_threads)
-                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
             else:
-                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate])
+                print("delegate not found")
+                sys.exit()
+            
+            #/home/pi/sambashare/armnn-24.02/build-tool/scripts/aarch64_build/delegate
+            #armnn_delegate = tflite.load_delegate(library=libarmnnDelegate,
+            #                                options={"backends": "CpuAcc,CpuRef", "logging-severity":"info", "number-of-threads": args.num_threads})
+            
+            armnn_delegate = tflite.load_delegate(library=libarmnnDelegate,
+                                options={"backends": "CpuAcc, CpuRef", "number-of-threads": args.num_threads, "reduce-fp32-to-fp16": True, "enable-fast-math": True})
+            if args.num_threads:
+                interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate], num_threads=args.num_threads)
+            else:
+                interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=[armnn_delegate])
         else:
             if args.num_threads:
-                print(args.num_threads)
-                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
-            else: 
-                interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None) 
+                interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
+            else:
+                interpreter = tflite.Interpreter(model_path=args.model, experimental_delegates=None)
     except:
         import tensorflow as tf
+        print("tensorflow")
 
         if args.api == "delegate":
             print("delegate")
@@ -61,7 +73,6 @@ def run_tf(args, raw_folder, overlay_folder, index_folder):
                 interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None, num_threads=args.num_threads)
             else: 
                 interpreter = tf.lite.Interpreter(model_path=args.model, experimental_delegates=None) 
-
 
     interpreter.allocate_tensors()
 

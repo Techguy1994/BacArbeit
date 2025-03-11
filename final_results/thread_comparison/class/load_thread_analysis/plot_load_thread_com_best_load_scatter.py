@@ -17,23 +17,32 @@ def main():
     unique_apis = db['api'].unique()
     unique_loads = db["load"].unique()
 
-    sort_loads = ["default", "one", "two", "three"]
+    sort_loads = ["0 core load", "1 core load", "2 cores load", "3 cores load"]
 
 
-
-
-    print(unique_apis)
 
     for api in unique_apis:
         for load in unique_loads:
             filtered_db = db[(db["api"] == api) & (db["load"] == load)]
             max_value = filtered_db["latency avg"].min()
-            print(max_value, api, load)
+            #print(max_value, api, load)
 
             filtered_max_db = filtered_db[filtered_db["latency avg"] == max_value]
 
             for i,r in filtered_max_db.iterrows():
                 threads = r["thread count"]
+
+            if load == "default":
+                load = "0 core load"
+            elif load == "one":
+                load = "1 core load"
+            elif load == "two":
+                load = "2 cores load"
+            elif load == "three":
+                load = "3 cores load"
+
+            if threads == "False":
+                threads = "default"
            
             entry = {"mean latency": [max_value], "thread": [threads], "api": [api], "load": [load]}
             df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True)
@@ -41,16 +50,28 @@ def main():
     df['load'] = pd.Categorical(df['load'], categories=sort_loads, ordered=True)
     df = df.sort_values('load')
 
+    df['api'] = df['api'].replace('onnx', 'onnx_runtime')
+    df['api'] = df['api'].replace('ov', 'Openvino')
+    df['api'] = df['api'].replace('tf', 'tensorflow_runtime')
+    df['api'] = df['api'].replace('delegate', 'Armnn Delegate')
+
+    
+
     df.to_csv("scatter.csv")
 
     # start of the scatter plot
 
-    fig = px.scatter(df, x="load", y='mean latency', color='api', symbol="thread", title='Scatter Plot Example')
+    fig = px.scatter(df, x="load", y='mean latency', color='api', symbol="thread", title='Comparison for different CPU loads for MobileNet V3 Large')
     for api in df['api'].unique():
         color_df = df[df['api'] == api]
-        fig.add_scatter(x=color_df['load'], y=color_df['mean latency'], mode='lines', name=f'Line for {api}')
+        fig.add_scatter(x=color_df['load'], y=color_df['mean latency'], mode='lines', showlegend = False)
 
     fig.update_traces(marker=dict(size=15))
+    fig.update_layout(
+    legend_title="Frameworks with core settings",
+    xaxis_title="CPU stress on different amount of cores",
+    yaxis_title="Average latency"
+)
     # Show the plot
     fig.show()
 
@@ -101,8 +122,12 @@ def interate_through_database(database, df):
         threads = r["thread count"]
         api = r["api"]
         l = r["load"]
+        print(l)
+        if l == "default":
+            print(l)
+            l = "noload"
 
-        print(avg, threads, api)
+        #print(avg, threads, api)
 
         lat = pd.read_csv(latency_link)
 

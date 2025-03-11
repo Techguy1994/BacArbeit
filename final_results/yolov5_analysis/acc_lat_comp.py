@@ -14,16 +14,28 @@ def main():
     df = interate_through_database(database, df)
     df.to_csv("temp.csv")
 
-    fig = px.line(df, x="map", y="latency", color="api",title="Yolov5")
-    fig.show()
+    bool = False
+
+    if bool:
+        fig = px.line(df, x="mAP", y="Average latency", color="API", markers=True)
+        fig.update_layout(
+        xaxis=dict(range=[0.15, 0.5]),
+        yaxis=dict(range=[0, 7])  # Set the x-axis range from 2 to 8
+        )
+        fig.show()
+    else:
+        fig = px.bar(df, x="Model", y="Average latency", color="API", barmode="group")
+        fig.show()
+
+
 
 
 def create_empty_dataframe():
     dict = {
-    "model_name": [],
-    "latency": [],
-    "api": [],
-    "map": []
+    "Model": [],
+    "Average latency": [],
+    "API": [],
+    "mAP": []
 }
 
     df = pd.DataFrame(dict)
@@ -42,7 +54,7 @@ def interate_through_database(database, df):
         map = r["map"]
         api = r["api"]
 
-        entry = {"model_name": [model_name], "latency": [latency], "map": [map], "api": [api]}
+        entry = {"Model": [model_name], "Average latency": [latency], "mAP": [map], "API": [api]}
         df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True) 
 
     return df

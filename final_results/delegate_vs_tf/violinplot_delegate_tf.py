@@ -22,6 +22,12 @@ def main():
     print(df)
     df.to_csv("temp.csv")
 
+    fu = ["fp32", "uint8"]
+
+    mask = df['model_name'].str.contains(fu[1])
+    df = df[mask]
+
+
     #fig = px.box(df, x="model_name", y="latency", color="api", range_y=[0.005,0.1])
 
 
