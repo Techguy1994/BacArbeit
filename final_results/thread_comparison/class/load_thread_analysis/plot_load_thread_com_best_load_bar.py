@@ -19,35 +19,73 @@ def main():
 
     sort_loads = ["default", "one", "two", "three"]
 
+    db = db.sort_values('load')
 
+    load_order = ['default', 'one', 'two', 'three']
+    db['load'] = pd.Categorical(db['load'], categories=load_order, ordered=True)
 
+    # 2. Fix the 'thread count' order
+    thread_order = ['False', '1', '2', '3', '4']
+    db['thread count'] = pd.Categorical(db['thread count'], categories=thread_order, ordered=True)
+
+    load_mapping = {
+    'default': 'no load',
+    'one': '1 thread load',
+    'two': '2 thread load',
+    'three': '3 thread load'
+}
+    
+    api_mapping = {
+        "ov": "OpenVINO",
+        "onnx": "Onnx",
+        "tf": "Tensorflow",
+        "delegate": "ArmNN Delegate"
+    }
+
+    # Apply the mapping
+    db["api"] = db["api"].replace(api_mapping)
+    db['load'] = db['load'].replace(load_mapping)
+    db['thread count'] = db['thread count'].replace({"False": 'Default'})
+
+    db.to_csv("bar.csv")
 
     print(unique_apis)
-
-    for api in unique_apis:
-        for load in unique_loads:
-            filtered_db = db[(db["api"] == api) & (db["load"] == load)]
-            max_value = filtered_db["latency avg"].min()
-            print(max_value, api, load)
-
-            filtered_max_db = filtered_db[filtered_db["latency avg"] == max_value]
-
-            for i,r in filtered_max_db.iterrows():
-                threads = r["thread count"]
-           
-            entry = {"mean latency": [max_value], "thread": [threads], "api": [api], "load": [load]}
-            df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True)
     
-    df['load'] = pd.Categorical(df['load'], categories=sort_loads, ordered=True)
-    df = df.sort_values('load')
+    g = sns.catplot(
+        data=db, kind="bar",
+        x="load", y="latency avg", hue="thread count",
+        col="api", col_wrap=2,
+        palette="viridis"
+    )
 
-    df.to_csv("bar.csv")
+    for ax in g.axes.flat:
+        ax.set_ylim(0, 0.4)
 
-    fig = px.bar(df, x='load', y='mean latency', color="api", barmode='group')
+    #g.add_legend(title="Thread Count", bbox_to_anchor=(1.05, 0.5), loc="center left")
 
-    fig.show()
+    # Optional: rename axes or titles
+    g.set_titles("{col_name}")
+    for ax in g.axes.flat:
+        ax.set_title(ax.get_title(), fontsize=20)
+    g.set_axis_labels("Artificial Load", "Latency (s)", fontsize = 16)
+    g._legend.set_title("Thread Count")
+    g._legend.set_bbox_to_anchor((0.06, 1.0)) 
+    g._legend.set_loc("upper left")  
 
-    # start of the scatter plot
+    for ax in g.axes.flat:
+        ax.tick_params(axis='x', labelsize=10)
+        ax.tick_params(axis='y', labelsize=10)
+
+    # Set font size for legend labels
+    for text in g._legend.get_texts():
+        text.set_fontsize(13)
+
+    # Optionally adjust the legend title font size too
+    g._legend.get_title().set_fontsize(15)
+
+    plt.tight_layout()
+    plt.savefig("bar_plot_4_subplot.pdf", bbox_inches='tight')
+    plt.savefig("bar_plot_4_subplot.png", dpi=300, bbox_inches='tight')
 
 
         

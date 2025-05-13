@@ -539,6 +539,25 @@ def handle_arguments():
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "class", "-m", "mobilenet_v3_large", "-imgp", "/home/pi/sambashare/BacArbeit/ILSVRC_val_10000/", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "10", "-os", "ubuntus", "-num_thr", "3", "-p", "pytorch"], shell=False)
 
 
+    if number == 1:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv2-12.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
+    if number == 2:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv2-12-int8.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
+    if number == 3:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_large_100_Opset17.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
+    if number == 4:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_small_075_Opset17.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
+    if number == 5:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv3_small_050_Opset17.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
+
+    if number == 6:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-large-1.0-224-tf_FP32.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
+    if number == 7:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v3-small-1.0-224-tf_FP32.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000", "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
+    if number == 8:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet-v2-1.4-224_FP32.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
+    if number == 9:
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "class", "-m", "mobilenet_v2_int8.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000", "-l", "mobilenet_tflite.txt", "-opd", "-ni", "1", "-os", "ubuntus"], shell=False)
 
 
     sys.exit()
@@ -921,8 +940,9 @@ def handle_arguments():
     if number == 4647:
         subprocess.call(["python3", "run_inference.py", "-api", "pytorch", "-t", "det", "-m", "yolov3-tiny", "-imgp", "/home/pi/sambashare/BacArbeit/cocoval2017/", "-l", "yolo_labels.txt", "-opd", "-ni", "1", "-thres", "0.25", "-so", "-ri", "1000", "-os", "ubuntus", "-num_thr", "4"], shell=False)
 
-
-
+    # mac os testing
+    if number == 1:
+        subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "class", "-m", "mobilenetv2-12.onnx", "-imgp", "/Users/marounel-chayeb/BacArbeit/ILSVRC_val_10000",  "-l", "imagenet_classes_mobilenet.txt", "-opd", "-ni", "1", "-ri", "1000", "-so", "-os", "ubuntus", "-num_thr", "3"], shell=False)
 
 if __name__ == "__main__":
     main()

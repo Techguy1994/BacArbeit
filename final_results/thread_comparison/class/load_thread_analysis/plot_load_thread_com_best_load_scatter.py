@@ -1,12 +1,8 @@
-import plotly.express as px
-import plotly.figure_factory as ff
 import pandas as pd 
 import sys
-import os
-import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+import matplotlib.lines as mlines 
 
 def main():
     database = pd.read_csv("load_database.csv")
@@ -17,7 +13,7 @@ def main():
     unique_apis = db['api'].unique()
     unique_loads = db["load"].unique()
 
-    sort_loads = ["0 core load", "1 core load", "2 cores load", "3 cores load"]
+    sort_loads = ["No load", "1 thread load", "2 thread load", "3 thread load"]
 
 
 
@@ -33,16 +29,16 @@ def main():
                 threads = r["thread count"]
 
             if load == "default":
-                load = "0 core load"
+                load = "No load"
             elif load == "one":
-                load = "1 core load"
+                load = "1 thread load"
             elif load == "two":
-                load = "2 cores load"
+                load = "2 thread load"
             elif load == "three":
-                load = "3 cores load"
+                load = "3 thread load"
 
             if threads == "False":
-                threads = "default"
+                threads = "Default"
            
             entry = {"mean latency": [max_value], "thread": [threads], "api": [api], "load": [load]}
             df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True)
@@ -50,10 +46,10 @@ def main():
     df['load'] = pd.Categorical(df['load'], categories=sort_loads, ordered=True)
     df = df.sort_values('load')
 
-    df['api'] = df['api'].replace('onnx', 'onnx_runtime')
-    df['api'] = df['api'].replace('ov', 'Openvino')
-    df['api'] = df['api'].replace('tf', 'tensorflow_runtime')
-    df['api'] = df['api'].replace('delegate', 'Armnn Delegate')
+    df['api'] = df['api'].replace('onnx', 'ONNX')
+    df['api'] = df['api'].replace('ov', 'OpenVINO')
+    df['api'] = df['api'].replace('tf', 'Tensorflow')
+    df['api'] = df['api'].replace('delegate', 'ArmNN Delegate')
 
     
 
@@ -61,40 +57,77 @@ def main():
 
     # start of the scatter plot
 
-    fig = px.scatter(df, x="load", y='mean latency', color='api', symbol="thread", title='Comparison for different CPU loads for MobileNet V3 Large')
+
+
+
+
+    # Sample DataFrame structure (replace this with your actual df)
+    # df = pd.read_csv("your_data.csv")
+
+    # Set seaborn style
+    sns.set(style="whitegrid")
+
+    # Create figure and axis
+    fig, ax = plt.subplots(figsize=(12, 7))  # Adjust figure size
+
+    # Scatter plot with different colors for each 'api'
+    sns.scatterplot(
+        data=df, x="load", y="mean latency", hue="api", style="thread", 
+        s=250, ax=ax  # Adjust marker size
+    )
+
+    # Add line plots for each 'api'
     for api in df['api'].unique():
         color_df = df[df['api'] == api]
-        fig.add_scatter(x=color_df['load'], y=color_df['mean latency'], mode='lines', showlegend = False)
+        ax.plot(
+            color_df['load'], color_df['mean latency'], 
+            linestyle='-', linewidth=4, alpha=0.25  # Adjust line width
+        )
 
-    fig.update_traces(marker=dict(size=15))
-    fig.update_layout(
-    legend_title="Frameworks with core settings",
-    xaxis_title="CPU stress on different amount of cores",
-    yaxis_title="Average latency"
-)
+    # Labels and title
+    #ax.set_title('Comparison for different CPU loads for MobileNet V3 Large', fontsize=16)  # Title size
+    ax.set_xlabel('CPU load on different amount of cores', fontsize=20)  # X-axis label size
+    ax.set_ylabel('Mean latency (s)', fontsize=20)  # Y-axis label size
+    ax.set_ylim(0, 0.2) 
+
+    # Adjust tick label sizes
+    ax.tick_params(axis='both', which='major', labelsize=18)
+
+    # Legend adjustments
+    handles, labels = ax.get_legend_handles_labels()
+
+    manual_order = [
+    "Frameworks",  # Placeholder for API section
+    "ONNX", "Tensorflow", "OpenVINO", "Arm Delegate", # Example API names (replace with actual ones from df)
+    "Thread count",  # Placeholder for Thread count section
+    "Default", "1", "2", "3", "4"
+    ]
+
+    # Sort handles according to manual_order
+
+    section_handle = mlines.Line2D([], [], color="white", label=" ")  # Invisible legend item
+
+    new_handles = []
+    new_labels = []
+
+    for label in manual_order:
+        if label in labels:
+            new_handles.append(handles[labels.index(label)])
+            new_labels.append(label)
+        elif label in ["Frameworks", "Thread count"]:  # Add section headers
+            new_handles.append(section_handle)
+            new_labels.append(label)
+
+
+    #new_labels = ["API" if label == "api" else "Thread count" if label == "thread" else label for label in labels]
+    ax.legend(new_handles, new_labels, title="Frameworks and the amount of threads set", fontsize=13, title_fontsize=15,loc='upper left')
+
+    plt.tight_layout()
+    plt.savefig("scatter_comp_updated.pdf", bbox_inches='tight')
+    
+
     # Show the plot
-    fig.show()
-
-            
-
-
-
-    """
-    df = create_empty_dataframe()
-
-    df = interate_through_database(database, df)
-    df.to_csv("temp.csv")
-
-    apis = df.api.unique()
-    threads = df.thread.unique()
-    print(apis)
-    print(threads)
-    print(df.head)
-
-    apis = ["onnx", "ov", "pytorch", "delegate", "tf"]
-    loads = ["default", "one", "two", "three"]
-    label = ["Default", "4 cores", "3 cores", "2 cores", "1 core"]
-    """
+    plt.savefig("scatter_comp_updated.png", dpi=300, bbox_inches='tight')
 
 
         

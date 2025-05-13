@@ -278,7 +278,9 @@ def run_pytorch(args, output_image_folder):
         torch.set_num_threads(args.num_threads)
 
     if args.model == "yolov5l":
+        from ultralytics import YOLO
         model = torch.hub.load("ultralytics/yolov5", "yolov5l", pretrained=True)
+        #model = torch.hub.load("ultralytics/yolov5", "custom", path="/Users/marounel-chayeb/BacArbeit/models/yolov5/pytorch/yolov5l.pt", source="local")
     elif args.model == "yolov5m":
         model = torch.hub.load("ultralytics/yolov5", "yolov5m", pretrained=True)
     elif args.model == "yolov5n":
@@ -294,9 +296,13 @@ def run_pytorch(args, output_image_folder):
         print("yolov8")
         model = YOLO(args.model)
         
-    
+    #print(torch.backends.quantized.engine)
+    torch.backends.quantized.engine = "qnnpack"
+    #print(torch.backends.quantized.engine)
 
     model.eval()
+
+    #model = torch.jit.script(model) 
 
     preprocess = pre.preprocess_pytorch_yolo()
 
@@ -308,11 +314,11 @@ def run_pytorch(args, output_image_folder):
             img_org = cv2.imread(image)
             input_image = Image.open(image)
 
-            #input_tensor = preprocess(input_image)
-            #print(input_tensor.shape)
-            #input_batch = input_tensor
-            #input_batch = input_tensor.unsqueeze(0) 
-            #print(input_batch.shape)
+            input_tensor = preprocess(input_image)
+            print(input_tensor.shape)
+            input_batch = input_tensor
+            input_batch = input_tensor.unsqueeze(0) 
+            print(input_batch.shape)
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()

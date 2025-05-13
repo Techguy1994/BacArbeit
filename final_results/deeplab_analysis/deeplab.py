@@ -1,197 +1,96 @@
 import pandas as pd
-import plotly.express as px
 import numpy as np
-import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import sys
+import seaborn as sns
 
 def main():
     database = pd.read_csv("database.csv")
-    csv = "deeplabv3.csv"
+    csv = "deeplabv3_.csv"
 
-    df = create_empty_dataframe()
+    database = database[database['inference type'] != "class"]
+    db = database[database['inference type'] != "det"]
 
-    bool = False
+    db = db.drop('top1', axis=1)
+    db = db.drop('top5', axis=1)
+    db = db.drop('map', axis=1)
+    db = db.drop('inference type', axis=1)
+    db = db.drop('os', axis=1)
 
-    df = interate_through_database(database, df)
-    df.to_csv(csv)
-    
-    if bool:
-        df = df.sort_values(by=['Average latency', 'MIoU'])
-        print(df)
-        df["MIoU"] = df["MIoU"] / 100
+    db.to_csv("test.csv")
 
-        #pareto_points_top1 = pareto_top1(df)
-        print(df)
-        
-        #top1 plot
-        fig = px.scatter(df, x="MIoU", y="Average latency", color="API", symbol="Model", title="DeeplabV3")
-        fig.update_traces(marker=dict(size=20),
-                    selector=dict(mode='markers'))
-        #fig.add_trace(
-        #    go.Scatter(
-        #        x=pareto_points_top1['top1'],
-        #        y=pareto_points_top1['mean_lat'],
-        #        mode='lines+markers',
-        #        name='Pareto Front',
-        #        line=dict(color='red', width=2),
-        #        marker=dict(size=8)
-        #)
-    #)
-        fig.show()
-    else:
-        pass
+    df = db
 
+    df['api'] = df['api'].replace('onnx', 'Onnx')
+    df['api'] = df['api'].replace('ov', 'Openvino')
+    df['api'] = df['api'].replace('tf', 'Tensorflow')
+    df['api'] = df['api'].replace('delegate', 'Armnn Delegate')
+    df['api'] = df['api'].replace('pytorch', 'PyTorch')
 
-
-
-
-def pareto_top(df):
-    print("Df")
-    print(df)
-    
-    pareto_df = df[['Average latency', 'top1']]
-
-    print("just lat and top1")
-    print(pareto_df)
-
-
-    pareto_indices = is_pareto_efficient(pareto_df.to_numpy())
-    pareto_points = pareto_df[pareto_indices]
-
-    return pareto_points
-
-
-
-
-
-
-def is_pareto_efficient(costs):
-
-    print("pareto function df")
-    print(costs)
-    print(costs.shape)
-    
-    
-
-    is_efficient_bool = np.ones(costs.shape[0], dtype=bool)
-    is_efficient = np.ones(costs.shape[0])
-    k = 3
-
-    optimal = np.array([0,1]).reshape(1,2)
-    print("------")
-    print("optimal vector")
-    print(optimal)
-    print(optimal.shape)
-    
-
-
-
-    for i in range(costs.shape[0]):
-        print("next pass")
-        print(costs[i][0], costs[i][1])
-
-        v_diff = optimal - costs[i,:] 
-
-        print(v_diff)
-        is_efficient[i] = np.sqrt((v_diff[0,0]*1).round(3)**2 + v_diff[0,1].round(3)**2)
-        print(v_diff)
-        print(is_efficient[i])
-       
+    df['model_name'] = df['model_name'].replace('deeplabv3_FP32', 'DeeplabV3 MobileNetV3 Large')
+    df['model_name'] = df['model_name'].replace('deeplabv3_mobilenet_v3_large', 'DeeplabV3 MobileNetV3 Large')
+    df['model_name'] = df['model_name'].replace('lite-model_deeplabv3-mobilenetv2_1_default_1', 'DeeplabV3 MobileNetV2 FP32')
+    df['model_name'] = df['model_name'].replace('lite-model_deeplabv3-mobilenetv2-int8_1_default_1', 'DeeplabV3 MobileNetV2 INT8')
 
     
-    
-    print(is_efficient)
-    
-    idx = np.argpartition(is_efficient, k)
-    print(idx)
 
-    lowest_indices = np.argsort(is_efficient)[:3]
-    print(lowest_indices)
+    df = df.rename(columns={
+        "api": "API",
+        "model_name": "Model"
+    })
 
-    for i in range(idx.shape[0]):
-        print(i, idx[i])
-        if i < 3:
-            is_efficient_bool[idx[i]] = True
-        else:
-            is_efficient_bool[idx[i]] = False    
+    df["miou"] = df["miou"] / 100
 
+    df = df.sort_values(by='latency avg')
 
-    print(is_efficient_bool)
+    # Extract Pareto front: increasing mIoU with increasing latency
+    pareto_front = []
+    max_miou = -float("inf")
 
-    return is_efficient_bool
+    for _, row in df.iterrows():
+        if row["miou"] > max_miou:
+            pareto_front.append(row)
+            max_miou = row["miou"]
 
+    pareto_df = pd.DataFrame(pareto_front)
 
-    """
-    Find the Pareto-efficient points.
-    """
-    is_efficient = np.ones(costs.shape[0], dtype=bool)
-    for i, c in enumerate(costs):
-        if is_efficient[i]:
-            is_efficient[is_efficient] = np.any(costs[is_efficient] < c, axis=1)  # Keep points not dominated
-            is_efficient[i] = True  # Re-include this point
-    return is_efficient
-
-
-def create_empty_dataframe():
-    dict = {
-    "Model": [],
-    "API": [],
-    "Average latency": [],
-    "MIoU": [],
-    "quantized": []
-    }
-
-    df = pd.DataFrame(dict)
-
-    return df
-
-def interate_through_database(database, df):
-
-    database = database[database["inference type"] == "seg"]
-
-    #print(database)
-
-    """
-    models = [
-        "lite-model_mobilenet_v2_100_224_fp32_1",
-        "mobilenetv2-12",
-        "mobilenet-v2-1.4-224_FP32",
-        "mobilenet_v2",
-        "lite-model_mobilenet_v2_100_224_uint8_1",
-        "mobilenetv2-12-int8",
-        "mobilenet_v2_q"
-        ]
-    
-    quantized = [
-        "lite-model_mobilenet_v2_100_224_uint8_1",
-        "mobilenetv2-12-int8",
-        "mobilenet_v2_q"
-    ]
-    """
     
 
-    for i,r in database.iterrows():
-        api = r["api"]
-        mean_lat = r["latency avg"]
-        miou = r["miou"]
-        model_name = r["model_name"]
+    # Plot with Seaborn
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(
+        data=df,
+        x="miou",
+        y="latency avg",
+        hue="API",
+        style="Model",
+        s=200  # Marker size, adjust as needed
+    )
 
-        if "int8" in model_name:
-            q = "yes"
-        else:
-            q = "no"
+    sns.lineplot(
+    data=pareto_df,
+    x="miou",
+    y="latency avg",
+    color="black",
+    linewidth=2,
+    marker="o",
+    label="Pareto Front",
+    alpha = 0.5,
+    linestyle="--"
+)
 
-        entry = {
-            "Model": [model_name],
-            "API": [api],
-            "Average latency": [mean_lat],
-            "MIoU": [miou],
-            "quantized": [q]
-        }
-        df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True) 
-    
-    return df
+    plt.title("DeeplabV3")
+    plt.xlabel("mIoU")
+    plt.ylabel("Latency Avg")
+    plt.legend(loc='upper left')  # Move legend out of the plot
+    plt.tight_layout()
+    plt.show()
+
+
+
+
+
+
 
 
 if __name__ == "__main__":

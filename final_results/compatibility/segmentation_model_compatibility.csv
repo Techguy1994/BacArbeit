@@ -1,0 +1,5 @@
+;;;;;;;;
+models;tflite;;onnx;;openvino;;pytorch;
+quantized;quanitzed;not qunatized;quanitzed;not qunatized;quanitzed;not qunatized;quanitzed;not qunatized
+deeplabv3 mobilenetv3large;no;no;no;converted;no;yes;no;yes
+deeplabv3 mobilenetv2;yes;yes;no;converted;no;no;no;no

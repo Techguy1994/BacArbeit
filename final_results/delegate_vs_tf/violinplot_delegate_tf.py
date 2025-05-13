@@ -3,6 +3,8 @@ import plotly.graph_objects as go
 import pandas as pd 
 import sys
 import os
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def main():
@@ -22,13 +24,33 @@ def main():
     print(df)
     df.to_csv("temp.csv")
 
-    fu = ["fp32", "uint8"]
+    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v2_100_224_fp32_1', 'MobileNetV2 FP32')
+    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v2_100_224_uint8_1', 'MobileNetV2 UINT8')
+    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v3_large_100_224_fp32_1', 'MobileNetV3 Large FP32')
+    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v3_large_100_224_uint8_1', 'MobileNetV3 Large UINT8')
+    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v3_small_100_224_fp32_1', 'MobileNetV3 Small FP32')
+    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v3_small_100_224_uint8_1', 'MobileNetV3 Small UINT8')
 
-    mask = df['model_name'].str.contains(fu[1])
+
+
+    fu = ["FP32", "UINT8"]
+
+    print(df["model_name"].unique())
+
+    choice = 1
+
+    mask = df['model_name'].str.contains(fu[choice])
     df = df[mask]
 
 
     #fig = px.box(df, x="model_name", y="latency", color="api", range_y=[0.005,0.1])
+
+    if choice == 0:
+        y_range = [0.01,0.06]
+    elif choice == 1:
+        y_range = [0, 0.035]
+
+
 
 
     fig = go.Figure()
@@ -46,8 +68,27 @@ def main():
                             line_color='orange')
                 )
     fig.update_traces(meanline_visible=True)
-    fig.update_layout(violingap=0, violinmode='overlay')
+
+
+    fig.update_layout(
+    violingap=0, violinmode='overlay',
+    plot_bgcolor='white',
+    autosize = True,
+    margin=dict(l=50, r=300, t=50, b=50),
+    font=dict(family="Arial", size=14), # White background
+    xaxis=dict(
+        showgrid=True, gridcolor='lightgray',  # Show gridlines on x-axis
+        zeroline=True, zerolinecolor='gray', title =dict(text = "Model " + fu[choice], font=dict(size=24)),
+        tickfont = dict(size=16)  # Add zero line
+    ),
+    yaxis=dict(
+        showgrid=True, gridcolor='lightgray',  # Show gridlines on y-axis
+        zeroline=True, zerolinecolor='gray', title = dict(text = "Latency (s)", font=dict(size=24)), range=y_range, tickfont=dict(size=16)
+    ),
+    legend = dict(font=dict(size=20))
+)
     fig.show()
+
 
 
 

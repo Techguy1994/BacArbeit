@@ -333,7 +333,7 @@ def run_pytorch(args):
 
 def run_sync_ov(args):
 
-    from openvino.runtime import InferRequest, AsyncInferQueue
+    #from openvino.runtime import InferRequest, AsyncInferQueue
     from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
     from openvino import Core, Layout, Type
 
@@ -430,6 +430,10 @@ def run_sync_ov(args):
         for image in args.images:
             img_org = cv2.imread(image)
             input_tensor = pre.preprocess_ov_mobilenet(shape, img_org)
+
+            print(np.min(input_tensor), np.max(input_tensor))
+
+            sys.exit()
 
             if args.profiler == "perfcounter":
                 start_time = perf_counter()

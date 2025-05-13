@@ -1,9 +1,0 @@
-,model_name,api,mean_lat,top1,top5,alternative,quantized
-0,mobilenet_v3_small,tf,0.0124093833990012,0.8037,0.8747,,
-1,mobilenet_v3_small,tf,0.0104207548880015,0.7107,0.7636,,quantized
-2,mobilenet_v3_small,onnx,0.0194844045000053,0.6178,0.7009,,smaller onnx model
-3,mobilenet_v3_small,onnx,0.0292516279970095,0.7176,0.7963,,
-4,mobilenet_v3_small,pytorch,0.075850074197998,0.8246,0.8974,,
-5,mobilenet_v3_small,delegate,0.0195357919339971,0.8038,0.8747,,
-6,mobilenet_v3_small,delegate,0.0135534431180003,0.7268,0.7653,,quantized
-7,mobilenet_v3_small,ov,0.0206180166490017,0.7999,0.8796,,
