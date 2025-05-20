@@ -6,63 +6,20 @@ import seaborn as sns
 
 
 def main():
-    database = pd.read_csv("database.csv")
-    csv = "deeplabv3_.csv"
+    df = pd.read_csv("database_updated.csv")
 
-    database = database[database['inference type'] != "seg"]
-    db = database[database['inference type'] != "det"]
+    df = df[df['inference type'] != "seg"]
+    df = df[df['inference type'] != "det"]
 
-    db = db[db["os"].str.contains("raspberryos")==False]
-    db = db[db["model_name"].str.contains("mobilenetv2-12-int8")==False]
-    db = db[db["model_name"].str.contains("mobilenetv3_small_075_Opset17")==False]
-    db = db[db["model_name"].str.contains("mobilenet_v3_large_q")==False]
-    db = db[db["model_name"].str.contains("mobilenet_v2_q")==False]
     
 
-    db = db.drop('miou', axis=1)
-    db = db.drop('map', axis=1)
+    db = db.drop('mIoU', axis=1)
+    db = db.drop('mAP', axis=1)
     db = db.drop('inference type', axis=1)
-    db = db.drop('os', axis=1)
 
     db.to_csv("db.csv")
 
-    
-
     df = db
-
-    df['api'] = df['api'].replace('onnx', 'Onnx')
-    df['api'] = df['api'].replace('ov', 'Openvino')
-    df['api'] = df['api'].replace('tf', 'Tensorflow')
-    df['api'] = df['api'].replace('delegate', 'Armnn Delegate')
-    df['api'] = df['api'].replace('pytorch', 'PyTorch')
-
-
-    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v2_100_224_fp32_1', 'MobileNetV2')
-    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v2_100_224_uint8_1', 'MobileNetV2 INT8')
-    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v3_large_100_224_fp32_1', 'MobileNetV3 Large')
-    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v3_large_100_224_uint8_1', 'MobileNetV3 Large INT8')
-    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v3_small_100_224_fp32_1', 'MobileNetV3 Small')
-    df['model_name'] = df['model_name'].replace('lite-model_mobilenet_v3_small_100_224_uint8_1', 'MobileNetV3 Small INT8')
-
-    df['model_name'] = df['model_name'].replace('mobilenetv2-12', 'MobileNetV2')
-    df['model_name'] = df['model_name'].replace('mobilenetv3_large_100_Opset17', 'MobileNetV3 Large')
-    df['model_name'] = df['model_name'].replace('mobilenetv3_small_050_Opset17', 'MobileNetV3 Small')
-
-    df['model_name'] = df['model_name'].replace('mobilenet_v2', 'MobileNetV2')
-    df['model_name'] = df['model_name'].replace('mobilenet_v3_large', 'MobileNetV3 Large')
-    df['model_name'] = df['model_name'].replace('mobilenet_v3_small', 'MobileNetV3 Small')
-
-    df['model_name'] = df['model_name'].replace('mobilenet-v2-1.4-224_FP32', 'MobileNetV2')
-    df['model_name'] = df['model_name'].replace('mobilenet-v3-large-1.0-224-tf_FP32', 'MobileNetV3 Large')
-    df['model_name'] = df['model_name'].replace('mobilenet-v3-small-1.0-224-tf_FP32', 'MobileNetV3 Small')
-
-    df = df.rename(columns={
-        "api": "API",
-        "model_name": "Model",
-        "top1": "Top 1",
-        "top5": "Top 5",
-        "latency avg": "average latency"
-    })
 
     df.to_csv("df.csv")
 
@@ -70,8 +27,8 @@ def main():
     mobileNetv3l = "MobileNetV3 Large"
     mobileNetv3s = "MobileNetV3 Small"
 
-    top1 = "Top 1"
-    top5 = "Top 5"
+    top1 = "Top1"
+    top5 = "Top5"
 
     model = mobileNetv3s
     top = top1
@@ -99,8 +56,8 @@ def main():
     sns.scatterplot(
         data=df,
         x=top,
-        y="average latency",
-        hue="API",
+        y="Median Latency [s]",
+        hue="Frameworks",
         style="Model",
         s=200  # Marker size, adjust as needed
     )

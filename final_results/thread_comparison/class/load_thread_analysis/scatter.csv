@@ -1,17 +1,17 @@
-,mean latency,thread,api,load
-0,0.0820787913809908,4,ONNX,No load
-4,0.0479397422809983,Default,OpenVINO,No load
-8,0.0434001170709797,Default,ArmNN Delegate,No load
-12,0.0373705926220081,4,Tensorflow,No load
-2,0.0898111342210029,3,ONNX,1 thread load
-6,0.0535334376700006,3,OpenVINO,1 thread load
-10,0.0481659273099944,3,ArmNN Delegate,1 thread load
-14,0.0427529789760004,3,Tensorflow,1 thread load
-3,0.0989384927610117,2,ONNX,2 thread load
-7,0.0613546758569754,4,OpenVINO,2 thread load
-11,0.055207366567014,2,ArmNN Delegate,2 thread load
-15,0.0520221731269993,2,Tensorflow,2 thread load
-1,0.1289522751729919,1,ONNX,3 thread load
-5,0.0681226615010091,4,OpenVINO,3 thread load
-9,0.0741350276910043,1,ArmNN Delegate,3 thread load
-13,0.0755894631151531,Default,Tensorflow,3 thread load
+,median latency,thread,api,load
+0,0.0819036425000376,Four Cores,ONNX,No Load
+4,0.04782501950001,Default,OpenVINO,No Load
+8,0.0425131530000726,Default,Arm NN Delegate,No Load
+12,0.0373388739999426,Four Cores,TFLite,No Load
+2,0.0896217729999761,Three Cores,ONNX,One Core Load
+6,0.0534010034999709,Three Cores,OpenVINO,One Core Load
+10,0.0479547850000016,Three Cores,Arm NN Delegate,One Core Load
+14,0.0424400439999317,Three Cores,TFLite,One Core Load
+3,0.0988352560002567,Two Cores,ONNX,Two Core Load
+7,0.0603440265003882,Four Cores,OpenVINO,Two Core Load
+11,0.0548618385000736,Two Cores,Arm NN Delegate,Two Core Load
+15,0.0519813169998997,Two Cores,TFLite,Two Core Load
+1,0.1288585120000788,One Core,ONNX,Three Core Load
+5,0.0670654195000678,Four Cores,OpenVINO,Three Core Load
+9,0.0738698109998949,One Core,Arm NN Delegate,Three Core Load
+13,0.0752579975000031,One Core,TFLite,Three Core Load

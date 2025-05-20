@@ -1,0 +1,10 @@
+,model_name,api,mean_lat,top1,top5,quantized
+1,lite-model_mobilenet_v2_100_224_uint8_1,tf,0.0282248118630022,0.8517,0.9205,yes
+3,mobilenetv2-12-int8,onnx,0.0301933002579982,0.7126,0.7896,yes
+6,lite-model_mobilenet_v2_100_224_uint8_1,delegate,0.0306642976020006,0.8479,0.9171,yes
+0,lite-model_mobilenet_v2_100_224_fp32_1,tf,0.0423863762280014,0.8542,0.924,no
+5,lite-model_mobilenet_v2_100_224_fp32_1,delegate,0.0543979899110035,0.8542,0.924,no
+2,mobilenetv2-12,onnx,0.0823555530399969,0.7292,0.8159,no
+7,mobilenet-v2-1.4-224_FP32,ov,0.1006177049209983,0.8768,0.9451,no
+4,mobilenet_v2,pytorch,0.2633356338730073,0.8655,0.9284,no
+8,mobilenet_v2_q,pytorch,0.2730134996960009,0.8558,0.9272,yes

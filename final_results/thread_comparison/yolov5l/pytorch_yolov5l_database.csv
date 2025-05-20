@@ -1,9 +1,0 @@
-model_name,os,api,inference type,latency avg,top1,top5,map,miou,latency,thread count
-yolov5l,ubuntus,pytorch,det,6.057500371918042,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5l/yolov5l_pytorch_det_2024_5_16_16_7_ubuntus_3_onlylat.csv,3
-yolov5l,ubuntus,pytorch,det,5.369159284306159,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5l/yolov5l_pytorch_det_2024_5_16_21_49_ubuntus_4_onlylat.csv,4
-yolov5m,ubuntus,pytorch,det,2.9900214831900085,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5m/yolov5m_pytorch_det_2024_5_22_20_6_ubuntus_3_onlylat.csv,3
-yolov5m,ubuntus,pytorch,det,2.686289494338125,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5m/yolov5m_pytorch_det_2024_5_23_8_2_ubuntus_4_onlylat.csv,4
-yolov5n,ubuntus,pytorch,det,0.6515444056480337,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5n/yolov5n_pytorch_det_2024_5_22_20_56_ubuntus_3_onlylat.csv,3
-yolov5n,ubuntus,pytorch,det,0.5930924721329648,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5n/yolov5n_pytorch_det_2024_5_23_8_47_ubuntus_4_onlylat.csv,4
-yolov5s,ubuntus,pytorch,det,1.3304049012109609,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5s/yolov5s_pytorch_det_2024_5_22_21_8_ubuntus_3_onlylat.csv,3
-yolov5s,ubuntus,pytorch,det,1.18443053891795,,,,,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5s/yolov5s_pytorch_det_2024_5_23_8_58_ubuntus_4_onlylat.csv,4
