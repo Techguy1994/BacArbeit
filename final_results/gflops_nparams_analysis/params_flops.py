@@ -6,7 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 def main():
-    database = pd.read_csv("database.csv")
+    database = pd.read_csv("database_updated.csv")
     csv = "test.csv"
 
     df = create_empty_dataframe()
@@ -16,15 +16,6 @@ def main():
     print(df)
     df.to_csv(csv)
 
-
-    df['model_name'] = df['model_name'].replace('deeplabv3_FP32', 'DeeplabV3')
-    df['model_name'] = df['model_name'].replace('mobilenet-v2-1.4-224_FP32', 'MobileNetV2')
-    df['model_name'] = df['model_name'].replace('mobilenet-v3-large-1.0-224-tf_FP32', 'MobileNetV3 Large')
-    df['model_name'] = df['model_name'].replace('mobilenet-v3-small-1.0-224-tf_FP32', 'MobileNetV3 Small')
-    df['model_name'] = df['model_name'].replace('yolov5l', 'Yolov5l')
-    df['model_name'] = df['model_name'].replace('yolov5m', 'Yolov5m')
-    df['model_name'] = df['model_name'].replace('yolov5n', 'Yolov5n')
-    df['model_name'] = df['model_name'].replace('yolov5s', 'Yolov5s')
 
 
 # Set style for whitegrid
@@ -73,11 +64,11 @@ def main():
 
 def create_empty_dataframe():
     dict = {
-    "model_name": [],
-    "mean_lat": [],
-    "map": [],
-    "GFlops": [],
-    "NParams in Million": []
+    "Model": [],
+    "median_lat": [],
+    "mAP": [],
+    "GFLOPS": [],
+    "NParams": []
     }
 
     df = pd.DataFrame(dict)
@@ -88,27 +79,22 @@ def create_empty_dataframe():
 
 def interate_through_database(database, df):
 
-    database = database[(database["api"] == "ov")]
+    database = database[(database["Frameworks"] == "OpenVINO")]
 
     for i,r in database.iterrows():
-        #print(r["model_name"])
 
         gflops_mparams_csv = "GFLOPS_MPARAMS.csv"
         gflops_mparams_df = pd.read_csv(gflops_mparams_csv, delimiter=";")
 
-        print(r["model_name"])
-
-        print(gflops_mparams_df[gflops_mparams_df["model"] == r["model_name"]]["GFLOPS"])
-
-        gflops = gflops_mparams_df[gflops_mparams_df["model"] == r["model_name"]]["GFLOPS"].item()
-        mparams = gflops_mparams_df[gflops_mparams_df["model"] == r["model_name"]]["MParams"].item()
+        gflops = gflops_mparams_df[gflops_mparams_df["model"] == r["Model"]]["GFLOPS"].item()
+        mparams = gflops_mparams_df[gflops_mparams_df["model"] == r["Model"]]["MParams"].item()
 
         entry = {
-                "model_name": r["model_name"],
-                "mean_lat": [r["latency avg"]],
-                "map": [r["map"]],
+                "Model": r["Model"],
+                "mean_lat": [r["Median Latency [s]"]],
+                "mAP": [r["mAP"]],
                 "GFlops": [gflops],
-                "NParams in Million": [mparams]
+                "NParams": [mparams]
             }
         
         df = pd.concat([df, pd.DataFrame(entry)], ignore_index=True) 

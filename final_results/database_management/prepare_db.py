@@ -45,7 +45,7 @@ def main():
     df = df.rename(columns={
         "api": "Frameworks",
         "model_name": "Model",
-        "latency avg": "Mean Latency [s]"
+        "latency avg": "Mean Latency [s]",
         "top1": "Top1",
         "top5": "Top5",
         "map": "mAP",

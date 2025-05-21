@@ -6,9 +6,6 @@ import os
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-import plotly.io as pio   
-pio.kaleido.scope.mathjax = None
-
 
 def main():
     database = pd.read_csv("database_updated.csv")
@@ -45,32 +42,7 @@ def main():
     #elif choice == 1:
     #    y_range = [0, 0.035]
 
-    """
-    df['Model'] = df['Model'].replace('MobileNetV2', 'V2')
-    df['Model'] = df['Model'].replace('MobileNetV2 INT8', "V2 INT8")
-    df['Model'] = df['Model'].replace('MobileNetV3 Large', "V3 Large")
-    df['Model'] = df['Model'].replace('MobileNetV3 Large INT8', "V3 Large INT8")
-    df['Model'] = df['Model'].replace('MobileNetV3 Small', "V3 Small")
-    df['Model'] = df['Model'].replace('MobileNetV3 Small INT8', "V3 Small INT8")
-    """
 
-
-    df_clean = remove_outliers_percentile(df, group_cols=["Model", "Framework"], value_col="latency")
-
-    df = df_clean
-
-    df_int8 = df[df['Model'].str.contains("INT8")]
-
-# Non-INT8 models only
-    df_non_int8 = df[~df['Model'].str.contains("INT8")]
-    
-    range_int8 = []
-    rannge_non_int8 = []
-
-    text_non_int8 = "MobileNet Model FP32" 
-    text_int8 = "MobileNet Model INT8" 
-
-    df = df_int8
 
 
     fig = go.Figure()
@@ -79,66 +51,38 @@ def main():
                             y=df['latency'][ df['Framework'] == 'TFLite' ],
                             legendgroup='Yes', scalegroup='Yes', name='TFLite',
                             side='negative',
-                            line_color='blue',
-                            width = 1)
+                            line_color='blue')
                 )
     fig.add_trace(go.Violin(x=df['Model'][ df['Framework'] == 'Arm NN Delegate' ],
                             y=df['latency'][ df['Framework'] == 'Arm NN Delegate' ],
                             legendgroup='No', scalegroup='No', name='Armnn NN Delegate',
                             side='positive',
-                            line_color='orange',
-                            width = 1)
+                            line_color='orange')
                 )
     fig.update_traces(meanline_visible=True)
 
 
     fig.update_layout(
-    violingap=0, violinmode='group',
+    violingap=0, violinmode='overlay',
     plot_bgcolor='white',
     autosize = True,
-    margin=dict(l=0, r=50, t=0, b=0),
+    margin=dict(l=50, r=300, t=50, b=50),
     font=dict(family="Arial", size=14), # White background
     xaxis=dict(
         showgrid=True, gridcolor='lightgray',  # Show gridlines on x-axis
-        zeroline=True, zerolinecolor='gray', title =dict(text = text_int8, font=dict(size=20)),
+        zeroline=True, zerolinecolor='gray', title =dict(text = "Model ", font=dict(size=24)),
         tickfont = dict(size=16)  # Add zero line
     ),
     yaxis=dict(
         showgrid=True, gridcolor='lightgray',  # Show gridlines on y-axis
-        zeroline=True, zerolinecolor='gray', title = dict(text = "Latency [s]", font=dict(size=20)), tickfont=dict(size=16)
+        zeroline=True, zerolinecolor='gray', title = dict(text = "Latency (s)", font=dict(size=24)), tickfont=dict(size=16)
     ),
-
-
-    legend=dict(
-        x=0.98,  # Near right edge
-        y=0.98,  # Near top
-        xanchor='right',
-        yanchor='top',
-        bgcolor='rgba(255,255,255,0.7)',
-        bordercolor='gray',
-        borderwidth=1,
-        font=dict(size=16)
-    )
-    )
-
-    fig.write_image("violin_latency.pdf", engine="kaleido")
-
-
-    #fig.update_traces(width=1)  # narrower violins
-
-    #fig.write_image("violin_latency.svg")
-    #fig.write_image("violin_latency.pdf")
-
+    legend = dict(font=dict(size=20))
+)
     fig.show()
 
 
-def remove_outliers_percentile(df, group_cols, value_col, lower_pct=0.01, upper_pct=0.99):
-    def filter_group(group):
-        lower = group[value_col].quantile(lower_pct)
-        upper = group[value_col].quantile(upper_pct)
-        return group[(group[value_col] >= lower) & (group[value_col] <= upper)]
-    
-    return df.groupby(group_cols, group_keys=False).apply(filter_group)
+
 
 def create_empty_dataframe():
     dict = {
