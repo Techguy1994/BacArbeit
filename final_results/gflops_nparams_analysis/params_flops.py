@@ -4,6 +4,8 @@ import sys
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+import numpy as np
 
 def main():
     database = pd.read_csv("database_updated.csv")
@@ -16,50 +18,76 @@ def main():
     print(df)
     df.to_csv(csv)
 
+    df['Model'] = df['Model'].replace('DeeplabV3 MobileNetV3 Large', 'DeeplabV3')
 
 
-# Set style for whitegrid
-    sns.set(style="whitegrid")
 
-    # Scale size values manually
-    min_bubble_size = 50  # Minimum bubble size
-    max_bubble_size = 2000  # Maximum bubble size
+    df_clean = df.dropna(subset=["median_lat", "GFLOPS", "NParams"])
 
-    print(df)
+    # Bubble size scaling
+    min_bubble_size = 50
+    max_bubble_size = 2000
+    lat_min = df_clean["median_lat"].min()
+    lat_max = df_clean["median_lat"].max()
+    df_clean["bubble_size"] = min_bubble_size + (df_clean["median_lat"] - lat_min) / (lat_max - lat_min) * (max_bubble_size - min_bubble_size)
 
-    # Create scatter plot
+    # Color palette mapping for models
+    unique_models = df_clean["Model"].unique()
+    palette = sns.color_palette(n_colors=len(unique_models))
+    color_map = dict(zip(unique_models, palette))
+
+    # Create the bubble plot
     plt.figure(figsize=(10, 6))
     scatter = sns.scatterplot(
-        data=df,
-        x="GFlops",
-        y="NParams in Million",
-        size="mean_lat",  # Use scaled size
+        data=df_clean,
+        x="GFLOPS",
+        y="NParams",
+        size="median_lat",
         sizes=(min_bubble_size, max_bubble_size),
-        hue="model_name",
-        alpha=0.7 # Adjust transparency
-        #legend="full"  # Ensure full legend appears
+        hue="Model",
+        palette=color_map,
+        alpha=0.7,
+        legend=False  # We'll add a custom legend
     )
 
-    # Customize the plot
-    plt.grid(True)  # Enable grid
-    plt.xlabel("GFlops", fontsize=20)
-    plt.ylabel("NParams in Million", fontsize=20)
-    #plt.title("", fontsize=24)
-
-    plt.xticks(fontsize=12)  # Change x-axis tick size
+    # Axis labels
+    plt.grid(True)
+    plt.xlabel("GFLOPS", fontsize=18)
+    plt.ylabel("Number of Parameters [10⁶]", fontsize=18)
+    plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
 
-    handles, labels = scatter.get_legend_handles_labels()
-    num_models = len(df["model_name"].unique())  # Number of unique models
+    plt.xlim(0, 120)  # Set x-axis range (adjust as needed)
+    plt.ylim(0, 50)
 
-    # Keep the legend inside the graph on the **left**
-    plt.legend(handles[1:num_models+1], labels[1:num_models+1], loc="upper left", frameon=True, title="Model", fontsize=12, title_fontsize=14) # Position legend inside on the 
+    # Custom legend: exact bubble size & latency for each model
+    df_sorted = df_clean.sort_values(by="median_lat", ascending=False)
 
-    # Show the plot
+    # Create custom legend handles from sorted data
+    custom_handles = [
+        Line2D(
+            [], [], linestyle="none", marker="o",
+            markersize=np.sqrt(row["bubble_size"])/2,
+            label=f"{row['Model']} ({(row['median_lat']):.2f} s)",
+            color=color_map[row["Model"]]
+        )
+        for _, row in df_sorted.iterrows()
+    ]
+
+    # Add the legend to the right of the plot
+    plt.legend(
+        handles=custom_handles,
+        title="Model (Median Latency [s])",
+        loc="upper left",
+        bbox_to_anchor=(1.01, 1.01),
+        fontsize=12,
+        title_fontsize=14,
+        labelspacing=1
+    )
+
+    plt.tight_layout()
+    plt.savefig("flops_custom_all_sizes.pdf", bbox_inches='tight')
     plt.show()
-
-    #fig = px.scatter(df, x="GFlops", y="NParams in Million", size="map", color="model_name", hover_name="model_name", size_max=60)
-    #fig.show()
 
 
 def create_empty_dataframe():
@@ -86,14 +114,19 @@ def interate_through_database(database, df):
         gflops_mparams_csv = "GFLOPS_MPARAMS.csv"
         gflops_mparams_df = pd.read_csv(gflops_mparams_csv, delimiter=";")
 
+        print(gflops_mparams_df["model"])
+        print(r["Model"])
+
+        print(gflops_mparams_df[gflops_mparams_df["model"] == r["Model"]]["GFLOPS"])
+
         gflops = gflops_mparams_df[gflops_mparams_df["model"] == r["Model"]]["GFLOPS"].item()
         mparams = gflops_mparams_df[gflops_mparams_df["model"] == r["Model"]]["MParams"].item()
 
         entry = {
                 "Model": r["Model"],
-                "mean_lat": [r["Median Latency [s]"]],
+                "median_lat": [r["Median Latency [s]"]],
                 "mAP": [r["mAP"]],
-                "GFlops": [gflops],
+                "GFLOPS": [gflops],
                 "NParams": [mparams]
             }
         

@@ -1,88 +1,117 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
 import seaborn as sns
 
+# Load and clean data
+df = pd.read_csv("database_updated.csv")
+df = df[~df['inference type'].isin(["seg", "det"])]
+df = df.drop(columns=['mIoU', 'mAP', 'inference type'])
 
-def main():
-    df = pd.read_csv("database_updated.csv")
+# Configuration: (Model, Metric)
+plots = [
+    ("MobileNetV3 Small", "Top1"),
+    ("MobileNetV3 Small", "Top5"),
+    ("MobileNetV3 Large", "Top5"),
+    ("MobileNetV2", "Top5"),
+]
 
-    df = df[df['inference type'] != "seg"]
-    df = df[df['inference type'] != "det"]
+# Create subplots
+fig, axes = plt.subplots(2, 2, figsize=(18, 12))
+axes = axes.flatten()
 
-    
+# Collect handles for legends
+all_framework_handles = {}
+all_model_handles = {}
 
-    db = db.drop('mIoU', axis=1)
-    db = db.drop('mAP', axis=1)
-    db = db.drop('inference type', axis=1)
+for i, (model, top) in enumerate(plots):
+    ax = axes[i]
+    df_model = df[df["Model"].str.contains(model)].copy()
 
-    db.to_csv("db.csv")
+    # Drop unused metric column
+    if top == "Top1" and "Top5" in df_model.columns:
+        df_model = df_model.drop("Top5", axis=1)
+    elif top == "Top5" and "Top1" in df_model.columns:
+        df_model = df_model.drop("Top1", axis=1)
 
-    df = db
+    df_model = df_model.sort_values(by='Median Latency [s]')
 
-    df.to_csv("df.csv")
-
-    mobileNetv2 = "MobileNetV2"
-    mobileNetv3l = "MobileNetV3 Large"
-    mobileNetv3s = "MobileNetV3 Small"
-
-    top1 = "Top1"
-    top5 = "Top5"
-
-    model = mobileNetv3s
-    top = top1
-
-    df = df[df["Model"].str.contains(mobileNetv2)==False]
-    df = df[df["Model"].str.contains(mobileNetv3l)==False]
-
-    df = df.sort_values(by='average latency')
-
-    # Extract Pareto front: increasing mIoU with increasing latency
+    # Pareto front extraction
     pareto_front = []
     max_top = -float("inf")
-
-    for _, row in df.iterrows():
+    for _, row in df_model.iterrows():
         if row[top] > max_top:
             pareto_front.append(row)
             max_top = row[top]
-
     pareto_df = pd.DataFrame(pareto_front)
 
-    
-
-    # Plot with Seaborn
-    plt.figure(figsize=(10, 6))
+    # Scatterplot (captures legend handles)
     sns.scatterplot(
-        data=df,
+        data=df_model,
         x=top,
         y="Median Latency [s]",
         hue="Frameworks",
         style="Model",
-        s=200  # Marker size, adjust as needed
+        s=450,
+        ax=ax
     )
 
+    # Pareto front line
     sns.lineplot(
-    data=pareto_df,
-    x=top,
-    y="average latency",
-    color="black",
-    linewidth=2,
-    marker="o",
-    label="Pareto Front",
-    alpha = 0.5,
-    linestyle="--"
+        data=pareto_df,
+        x=top,
+        y="Median Latency [s]",
+        color="black",
+        linewidth=2,
+        marker="o",
+        label="Pareto Front",
+        linestyle="--",
+        alpha=1.0,
+        markersize=8,
+        ax=ax
+    )
+
+    ax.set_title(f"{model} - {top}", fontsize=26)
+    ax.set_xlabel(top, fontsize=24)
+    ax.set_ylabel("Median Latency [s]", fontsize=24)
+    ax.tick_params(axis='both', labelsize=20)
+    ax.grid(True)
+
+    # Collect legend handles
+    handles, labels = ax.get_legend_handles_labels()
+    for h, l in zip(handles, labels):
+        if l in df_model["Frameworks"].unique():
+            all_framework_handles[l] = h
+        elif l in df_model["Model"].unique():
+            all_model_handles[l] = h
+
+# Remove auto legends from subplots
+for ax in axes:
+    ax.legend_.remove()
+
+# Place manual legends
+framework_legend = fig.legend(
+    handles=list(all_framework_handles.values()),
+    labels=list(all_framework_handles.keys()),
+    title="Frameworks",
+    loc='upper center',
+    bbox_to_anchor=(0.2, 1.05),
+    fontsize=17,
+    title_fontsize=20,
+    ncol=3
 )
 
-    plt.title(model)
-    plt.xlabel(top)
-    plt.ylabel("Latency Avg")
-    plt.legend(loc='upper left')  # Move legend out of the plot
-    plt.tight_layout()
-    plt.show()
+model_legend = fig.legend(
+    handles=list(all_model_handles.values()),
+    labels=list(all_model_handles.keys()),
+    title="Model",
+    loc='upper center',
+    bbox_to_anchor=(0.71, 1.05),
+    fontsize=17,
+    title_fontsize=20,
+    ncol=3
+)
 
-
-
-
-if __name__ == "__main__":
-    main()
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.savefig("class_scatter_subplots.pdf", bbox_inches='tight')
+#plt.show()

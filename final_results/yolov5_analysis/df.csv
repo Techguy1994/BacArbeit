@@ -1,21 +1,21 @@
-,Model,API,average latency,map,latency
-34,yolov5l,Tensorflow,6.541665149214999,0.361,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5l/yolov5l-fp16_tf_det_2024_5_22_10_9_ubuntus_3_onlylat.csv
-35,yolov5m,Tensorflow,2.7897835843379934,0.318,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5m/yolov5m-fp16_tf_det_2024_5_22_11_59_ubuntus_3_onlylat.csv
-36,yolov5n,Tensorflow,0.3239334988420141,0.154,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5n/yolov5n-fp16_tf_det_2024_5_22_12_47_ubuntus_3_onlylat.csv
-37,yolov5s,Tensorflow,0.9548971229069666,0.238,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5s/yolov5s-fp16_tf_det_2024_5_22_12_53_ubuntus_3_onlylat.csv
-38,yolov5l,Onnx,5.217692227631001,0.361,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5l/yolov5l_onnx_det_2024_5_22_13_47_ubuntus_3_onlylat.csv
-39,yolov5m,Onnx,2.5658269180580064,0.318,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5m/yolov5m_onnx_det_2024_5_22_15_15_ubuntus_3_onlylat.csv
-40,yolov5n,Onnx,0.5308960886989734,0.154,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5n/yolov5n_onnx_det_2024_5_22_15_58_ubuntus_3_onlylat.csv
-41,yolov5s,Onnx,1.0283740141909783,0.238,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5s/yolov5s_onnx_det_2024_5_22_16_7_ubuntus_3_onlylat.csv
-42,yolov5s,OpenVINO,0.9895916565540338,0.289,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5s/yolov5s_ov_det_2024_5_22_18_9_ubuntus_3_onlylat.csv
-43,yolov5m,OpenVINO,2.0203582274320344,0.36,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5m/yolov5m_ov_det_2024_5_22_17_34_ubuntus_3_onlylat.csv
-44,yolov5n,OpenVINO,0.4476165959269492,0.184,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5n/yolov5n_ov_det_2024_5_23_19_42_ubuntus_3_onlylat.csv
-45,yolov5l,OpenVINO,4.089123034262024,0.401,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5l/yolov5l_ov_det_2024_5_22_16_25_ubuntus_3_onlylat.csv
-46,yolov5l,PyTorch,8.472705778521009,0.437,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5l/_pytorch_det_2025_5_6_11_16_ubuntus_3_onlylat.csv
-47,yolov5m,PyTorch,4.305250943016007,0.398,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5m/_pytorch_det_2025_5_6_13_55_ubuntus_3_onlylat.csv
-48,yolov5n,PyTorch,1.0456038711819966,0.227,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5n/_pytorch_det_2025_5_6_15_34_ubuntus_3_onlylat.csv
-49,yolov5s,PyTorch,2.021437639671016,0.323,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5s/_pytorch_det_2025_5_6_16_18_ubuntus_3_onlylat.csv
-64,yolov5l,Armnn Delegate,3.304977297926006,0.361,/Users/marounel-chayeb/BacArbeit/final_results/results/det/delegate/yolov5l/yolov5l-fp16_delegate_det_2024_11_25_23_9_ubuntus_3_onlylat.csv
-65,yolov5m,Armnn Delegate,1.7239822932100106,0.318,/Users/marounel-chayeb/BacArbeit/final_results/results/det/delegate/yolov5m/yolov5m-fp16_delegate_det_2024_11_26_0_5_ubuntus_3_onlylat.csv
-66,yolov5n,Armnn Delegate,0.3922528115451495,0.154,/Users/marounel-chayeb/BacArbeit/final_results/results/det/delegate/yolov5n/yolov5n-fp16_delegate_det_2024_11_26_8_22_ubuntus_3_onlylat.csv
-67,yolov5s,Armnn Delegate,0.8447081222078341,0.238,/Users/marounel-chayeb/BacArbeit/final_results/results/det/delegate/yolov5s/yolov5s-fp16_delegate_det_2024_11_26_8_30_ubuntus_3_onlylat.csv
+,Unnamed: 0,Model,Frameworks,Mean Latency [s],mAP,latency,Median Latency [s],Standard Deviation [s],Variance [s²]
+18,34,Yolov5l,TFLite,6.541665149214999,0.361,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5l/yolov5l-fp16_tf_det_2024_5_22_10_9_ubuntus_3_onlylat.csv,6.553858817999753,0.0797255553201709,0.0063561641711096
+19,35,Yolov5m,TFLite,2.7897835843379934,0.318,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5m/yolov5m-fp16_tf_det_2024_5_22_11_59_ubuntus_3_onlylat.csv,2.7693464495000626,0.070122225349544,0.0049171264879722
+20,36,Yolov5n,TFLite,0.3239334988420141,0.154,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5n/yolov5n-fp16_tf_det_2024_5_22_12_47_ubuntus_3_onlylat.csv,0.3235921939995023,0.0042263757637538,1.7862252096445867e-05
+21,37,Yolov5s,TFLite,0.9548971229069666,0.238,/Users/marounel-chayeb/BacArbeit/final_results/results/det/tf/yolov5s/yolov5s-fp16_tf_det_2024_5_22_12_53_ubuntus_3_onlylat.csv,0.9520694604998426,0.0103388662824638,0.0001068921560066
+22,38,Yolov5l,ONNX,5.217692227631001,0.361,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5l/yolov5l_onnx_det_2024_5_22_13_47_ubuntus_3_onlylat.csv,5.216540528500445,0.0075983082575294,5.7734288376439576e-05
+23,39,Yolov5m,ONNX,2.5658269180580064,0.318,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5m/yolov5m_onnx_det_2024_5_22_15_15_ubuntus_3_onlylat.csv,2.565153866500168,0.0105479318320676,0.0001112588659339
+24,40,Yolov5n,ONNX,0.5308960886989734,0.154,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5n/yolov5n_onnx_det_2024_5_22_15_58_ubuntus_3_onlylat.csv,0.5307594189998781,0.0031404828053149,9.862632250479098e-06
+25,41,Yolov5s,ONNX,1.0283740141909783,0.238,/Users/marounel-chayeb/BacArbeit/final_results/results/det/onnx/yolov5s/yolov5s_onnx_det_2024_5_22_16_7_ubuntus_3_onlylat.csv,1.0289911589998155,0.0108864272532093,0.0001185142983394
+26,42,Yolov5s,OpenVINO,0.9895916565540338,0.289,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5s/yolov5s_ov_det_2024_5_22_18_9_ubuntus_3_onlylat.csv,0.9891115945010824,0.0130110035934325,0.0001692862145083
+27,43,Yolov5m,OpenVINO,2.0203582274320344,0.36,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5m/yolov5m_ov_det_2024_5_22_17_34_ubuntus_3_onlylat.csv,2.0186091095001757,0.0411401240592251,0.0016925098076084
+28,44,Yolov5n,OpenVINO,0.4476165959269492,0.184,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5n/yolov5n_ov_det_2024_5_23_19_42_ubuntus_3_onlylat.csv,0.4473713335028151,0.0033283577168519,1.1077965091327874e-05
+29,45,Yolov5l,OpenVINO,4.089123034262024,0.401,/Users/marounel-chayeb/BacArbeit/final_results/results/det/ov/yolov5l/yolov5l_ov_det_2024_5_22_16_25_ubuntus_3_onlylat.csv,4.0767286889995376,0.1718163030999566,0.0295208420109361
+30,46,Yolov5l,PyTorch,8.472705778521009,0.437,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5l/_pytorch_det_2025_5_6_11_16_ubuntus_3_onlylat.csv,8.468804917499938,0.0711472003199548,0.0050619241133677
+31,47,Yolov5m,PyTorch,4.305250943016007,0.398,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5m/_pytorch_det_2025_5_6_13_55_ubuntus_3_onlylat.csv,4.297749639499898,0.0304361168674513,0.0009263572099691
+32,48,Yolov5n,PyTorch,1.0456038711819966,0.227,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5n/_pytorch_det_2025_5_6_15_34_ubuntus_3_onlylat.csv,1.0465787205002923,0.0169706415205593,0.0002880026736193
+33,49,Yolov5s,PyTorch,2.021437639671016,0.323,/Users/marounel-chayeb/BacArbeit/final_results/results/det/pytorch/yolov5s/_pytorch_det_2025_5_6_16_18_ubuntus_3_onlylat.csv,2.0225975625007777,0.015892585685767,0.0002525742797794
+37,64,Yolov5l,Arm NN Delegate,3.304977297926006,0.361,/Users/marounel-chayeb/BacArbeit/final_results/results/det/delegate/yolov5l/yolov5l-fp16_delegate_det_2024_11_25_23_9_ubuntus_3_onlylat.csv,3.298866517499988,0.1977866896022088,0.0391195745838004
+38,65,Yolov5m,Arm NN Delegate,1.7239822932100106,0.318,/Users/marounel-chayeb/BacArbeit/final_results/results/det/delegate/yolov5m/yolov5m-fp16_delegate_det_2024_11_26_0_5_ubuntus_3_onlylat.csv,1.7212966804997905,0.0586205173291769,0.0034363650519403
+39,66,Yolov5n,Arm NN Delegate,0.3922528115451495,0.154,/Users/marounel-chayeb/BacArbeit/final_results/results/det/delegate/yolov5n/yolov5n-fp16_delegate_det_2024_11_26_8_22_ubuntus_3_onlylat.csv,0.3915521225026168,0.0093970594101811,8.830472555847352e-05
+40,67,Yolov5s,Arm NN Delegate,0.8447081222078341,0.238,/Users/marounel-chayeb/BacArbeit/final_results/results/det/delegate/yolov5s/yolov5s-fp16_delegate_det_2024_11_26_8_30_ubuntus_3_onlylat.csv,0.8435595974988246,0.0242785411355762,0.0005894475596718

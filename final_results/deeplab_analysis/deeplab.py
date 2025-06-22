@@ -1,97 +1,112 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-import sys
 import seaborn as sns
+from matplotlib.lines import Line2D
 
-def main():
-    database = pd.read_csv("database.csv")
-    csv = "deeplabv3_.csv"
+# Load and preprocess
+df = pd.read_csv("database_updated.csv")
+df = df[df['inference type'] != "class"]
+df = df[df['inference type'] != "det"]
+df = df.drop(columns=['Top1', 'Top5', 'mAP', 'inference type'])
+df["mIoU"] = df["mIoU"] / 100
+df = df.sort_values(by='Median Latency [s]')
 
-    database = database[database['inference type'] != "class"]
-    db = database[database['inference type'] != "det"]
+# Extract Pareto front
+pareto_front = []
+max_miou = -float("inf")
+for _, row in df.iterrows():
+    if row["mIoU"] > max_miou:
+        pareto_front.append(row)
+        max_miou = row["mIoU"]
+pareto_df = pd.DataFrame(pareto_front)
 
-    db = db.drop('top1', axis=1)
-    db = db.drop('top5', axis=1)
-    db = db.drop('map', axis=1)
-    db = db.drop('inference type', axis=1)
-    db = db.drop('os', axis=1)
+# Color and marker maps
+frameworks = df["Frameworks"].unique()
+models = df["Model"].unique()
+palette = sns.color_palette("tab10", len(frameworks))
+color_map = dict(zip(frameworks, palette))
 
-    db.to_csv("test.csv")
+markers = ['o', 's', 'D', '^', 'v', 'P', 'X', '<', '>', '*']
+marker_map = dict(zip(models, markers))
 
-    df = db
+# Set up plot
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.scatterplot(
+    data=df,
+    x="mIoU",
+    y="Median Latency [s]",
+    hue="Frameworks",
+    style="Model",
+    palette=color_map,
+    markers=marker_map,
+    s=200,
+    legend=False,
+    ax=ax
+)
 
-    df['api'] = df['api'].replace('onnx', 'Onnx')
-    df['api'] = df['api'].replace('ov', 'Openvino')
-    df['api'] = df['api'].replace('tf', 'Tensorflow')
-    df['api'] = df['api'].replace('delegate', 'Armnn Delegate')
-    df['api'] = df['api'].replace('pytorch', 'PyTorch')
-
-    df['model_name'] = df['model_name'].replace('deeplabv3_FP32', 'DeeplabV3 MobileNetV3 Large')
-    df['model_name'] = df['model_name'].replace('deeplabv3_mobilenet_v3_large', 'DeeplabV3 MobileNetV3 Large')
-    df['model_name'] = df['model_name'].replace('lite-model_deeplabv3-mobilenetv2_1_default_1', 'DeeplabV3 MobileNetV2 FP32')
-    df['model_name'] = df['model_name'].replace('lite-model_deeplabv3-mobilenetv2-int8_1_default_1', 'DeeplabV3 MobileNetV2 INT8')
-
-    
-
-    df = df.rename(columns={
-        "api": "API",
-        "model_name": "Model"
-    })
-
-    df["miou"] = df["miou"] / 100
-
-    df = df.sort_values(by='latency avg')
-
-    # Extract Pareto front: increasing mIoU with increasing latency
-    pareto_front = []
-    max_miou = -float("inf")
-
-    for _, row in df.iterrows():
-        if row["miou"] > max_miou:
-            pareto_front.append(row)
-            max_miou = row["miou"]
-
-    pareto_df = pd.DataFrame(pareto_front)
-
-    
-
-    # Plot with Seaborn
-    plt.figure(figsize=(10, 6))
-    sns.scatterplot(
-        data=df,
-        x="miou",
-        y="latency avg",
-        hue="API",
-        style="Model",
-        s=200  # Marker size, adjust as needed
-    )
-
-    sns.lineplot(
+# Pareto front line
+sns.lineplot(
     data=pareto_df,
-    x="miou",
-    y="latency avg",
+    x="mIoU",
+    y="Median Latency [s]",
     color="black",
     linewidth=2,
     marker="o",
-    label="Pareto Front",
-    alpha = 0.5,
-    linestyle="--"
+    alpha=1,
+    linestyle="--",
+    ax=ax
 )
 
-    plt.title("DeeplabV3")
-    plt.xlabel("mIoU")
-    plt.ylabel("Latency Avg")
-    plt.legend(loc='upper left')  # Move legend out of the plot
-    plt.tight_layout()
-    plt.show()
+# Custom legend handles
+framework_handles = [
+    Line2D([], [], marker='o', linestyle='none', color=color_map[fw], label=fw, markersize=10)
+    for fw in sorted(frameworks)
+]
 
+model_handles = [
+    Line2D([], [], marker=marker_map[m], linestyle='none', color='gray', label=m, markersize=10)
+    for m in sorted(models)
+]
 
+pareto_handle = Line2D([], [], color="black", linestyle="--", marker="o", label="Pareto Front", markersize=10)
 
+# Add legends
+legend1 = ax.legend(
+    handles=framework_handles,
+    title="Frameworks",
+    loc='upper left',
+    bbox_to_anchor=(1.01, 1.02),
+    title_fontsize=16,
+    fontsize=14
+)
+ax.add_artist(legend1)
 
+legend2 = ax.legend(
+    handles=model_handles,
+    title="Models",
+    loc='upper left',
+    bbox_to_anchor=(1.01, 0.6),
+    title_fontsize=16,
+    fontsize=14
+)
+ax.add_artist(legend2)
 
+#legend3 = ax.legend(
+#    handles=[pareto_handle],
+#    loc='upper left',
+#    bbox_to_anchor=(1.01, 0.3),
+#    title=None,
+#    fontsize=14
+#)
+#ax.add_artist(legend3)
 
+# Axis labels and title
+ax.set_title("DeeplabV3", fontsize=24)
+ax.set_xlabel("mIoU", fontsize=20)
+ax.set_ylabel("Median Latency [s]", fontsize=20)
 
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
 
-if __name__ == "__main__":
-    main()
+# Save directly to PDF — include external legends
+fig.savefig("deeplab_scatter.pdf", bbox_extra_artists=(legend1,legend2), bbox_inches='tight')

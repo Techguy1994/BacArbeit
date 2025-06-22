@@ -40,6 +40,11 @@ def main():
     df['model_name'] = df['model_name'].replace('lite-model_deeplabv3-mobilenetv2_1_default_1', 'DeeplabV3 MobileNetV2 FP32')
     df['model_name'] = df['model_name'].replace('lite-model_deeplabv3-mobilenetv2-int8_1_default_1', 'DeeplabV3 MobileNetV2 INT8')
 
+    df['model_name'] = df['model_name'].replace('yolov5l','Yolov5l')
+    df['model_name'] = df['model_name'].replace('yolov5m','Yolov5m')
+    df['model_name'] = df['model_name'].replace('yolov5n','Yolov5n')
+    df['model_name'] = df['model_name'].replace('yolov5s','Yolov5s')
+
     df = df.drop('os', axis=1)
 
     df = df.rename(columns={
@@ -52,9 +57,9 @@ def main():
         "miou": "mIoU"
     })
 
-    df["Median Latency [s]"] = 0
-    df["Standard Deviation [s]"] = 0 
-    df["Variance [s²]"] = 0
+    df["Median Latency [s]"] = 0.0
+    df["Standard Deviation [s]"] = 0.0 
+    df["Variance [s²]"] = 0.0
 
     for i,r in df.iterrows():
         latency_link = r["latency"]
