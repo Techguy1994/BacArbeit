@@ -121,6 +121,25 @@ def preprocess_tf_deeplab(image, input_shape, input_type):
 
     return image_data
 
+def preprocess_tf_deeplab_correct(image_path, input_shape, input_type):
+    import cv2
+    import numpy as np
+
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
+    image = cv2.resize(image, (input_shape[1], input_shape[2]))  # Width, Height
+
+    image = image.astype(np.float32) / 255.0  # Scale to [0, 1]
+
+    # Apply same mean/std normalization as PyTorch
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    image = (image - mean) / std
+
+    image_data = np.expand_dims(image, 0).astype(input_type)  # Add batch dimension
+
+    return image_data
+
 
 def preprocess_tf_deeplab_alt(image, input_shape, input_type):
     import cv2
@@ -195,27 +214,24 @@ def preprocess_onnx_deeplab_correct(image_path, image_height, image_width):
 
     return image_data
 
-def preprocess_pytorch_seg():
-
-    from torchvision import models, transforms
-
-    preprocess = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-])
-
-    return preprocess
-
-def preprocess_pytorch_deeplab(image, preprocess):
-
+def preprocess_pytorch_seg(image_height=512, image_width=512):
     from torchvision import transforms
 
-    from PIL import Image
-    input_image = Image.open(image)
-    input_image = input_image.convert("RGB")
+    preprocess = transforms.Compose([
+        transforms.Resize((image_height, image_width)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225])
+    ])
+    return preprocess
 
+
+def preprocess_pytorch_deeplab(image_path, preprocess):
+    from PIL import Image
+
+    input_image = Image.open(image_path).convert("RGB")
     input_tensor = preprocess(input_image)
-    input_batch = input_tensor.unsqueeze(0)
+    input_batch = input_tensor.unsqueeze(0)  # Add batch dimension
     return input_batch
 
 def preprocess_ov_yolo(shape, image):

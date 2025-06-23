@@ -98,7 +98,7 @@ def run_tf(args, raw_folder, overlay_folder, index_folder):
             index_file = os.path.join(index_folder, index_file)
 
             if args.profiler == "perfcounter":
-                preprocessed_image = pre.preprocess_tf_deeplab(image, input_shape, input_type)
+                preprocessed_image = pre.preprocess_tf_deeplab_correct(image, input_shape, input_type)
                 interpreter.set_tensor(input_details[0]['index'], preprocessed_image)
 
                 start_time = perf_counter()
@@ -408,37 +408,7 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
     bgr_images = [cv2.cvtColor(img, cv2.COLOR_RGB2BGR) for img in resized_images]
     input_tensors = [np.expand_dims(img, 0) for img in bgr_images]
     print("input tensor shape: ", input_tensors[0].shape)
-    
-    # --------------------------- Step 3. Set up input --------------------------------------------------------------------
-    # Read input images
-    #images = [cv2.imread(image_path) for image_path in args.images]
 
-    # Resize images to model input dims
-    #_, _, h, w = model.input().shape
-    #_, h, w, _ = model.input().shape
-    #print("Model input shape: ",model.input().shape)
-    #h, w = 224, 224
-
-    #resized_images = [cv2.resize(image, (513, 513)) for image in images]
-
-    # Add N dimension
-    #input_tensors = [np.expand_dims(image, 0) for image in resized_images]
-    
-
-    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
-    # Step 4. Inizialize Preprocessing for the model
-    #ppp = PrePostProcessor(model)
-    # Specify input image format
-    #ppp.input().tensor().set_element_type(Type.u8).set_layout(Layout("NHWC")).set_color_format(ColorFormat.RGB)
-    #  Specify preprocess pipeline to input image without resizing
-    #ppp.input().preprocess().convert_element_type(Type.f32).convert_color(ColorFormat.RGB).scale([255., 255., 255.])
-    # Specify model's input layout
-    #ppp.input().model().set_layout(Layout("NHWC"))
-    #  Specify output results format
-    #ppp.output().tensor().set_element_type(Type.f32)
-    # Embed above steps in the graph
-    #model = ppp.build()
-    #compiled_model = core.compile_model(model, "CPU")
 
     # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
     print("Preprocess")
