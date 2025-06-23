@@ -140,7 +140,7 @@ def preprocess_tf_deeplab_alt(image, input_shape, input_type):
 
     return image_data
 
-def preprocess_onnx_deeplab(image, input_type, image_height, image_width):
+def preprocess_onnx_deeplab(image, image_height, image_width):
     import cv2
     import numpy as np
     import sys
@@ -156,7 +156,7 @@ def preprocess_onnx_deeplab(image, input_type, image_height, image_width):
 
     return image_data
 
-def preprocess_onnx_deeplab_alt(image, input_type, image_height, image_width):
+def preprocess_onnx_deeplab_alt(image, image_height, image_width):
     import cv2
     import numpy as np
     import sys
@@ -173,6 +173,25 @@ def preprocess_onnx_deeplab_alt(image, input_type, image_height, image_width):
     image_data = np.expand_dims(image_data, 0)
     print(image_data.shape)
 
+
+    return image_data
+
+def preprocess_onnx_deeplab_correct(image_path, image_height, image_width):
+    import cv2
+    import numpy as np
+
+    image = cv2.imread(image_path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert to RGB
+    image = cv2.resize(image, (image_width, image_height))
+    image = image.astype(np.float32) / 255.0  # Scale to [0, 1]
+
+    # Apply PyTorch normalization
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    image = (image - mean) / std
+
+    image = image.transpose(2, 0, 1)  # To channels-first
+    image_data = np.expand_dims(image, 0).astype(np.float32)
 
     return image_data
 

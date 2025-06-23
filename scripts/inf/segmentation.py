@@ -267,7 +267,7 @@ def run_onnx(args, raw_folder, overlay_folder, index_folder):
             index_file = index_file.split(".")[0] + ".png"
             index_file = os.path.join(index_folder, index_file)
 
-            processed_image = pre.preprocess_onnx_deeplab_alt(image , input_data_type, image_height, image_width)
+            processed_image = pre.preprocess_onnx_deeplab_correct(image, image_height, image_width)
             print(processed_image.shape)
 
             if args.profiler == "perfcounter":
