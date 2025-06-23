@@ -400,42 +400,32 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
         log.error('Sample supports only single output topologies')
         return -1
     
-    # --------------------------- Step 3. Set up input --------------------------------------------------------------------
-    images = [cv2.imread(image_path) for image_path in args.images]
-    _, h, w, _ = model.input().shape
-    #print(model.input().shape)
-    resized_images = [cv2.resize(img, (w,h)) for img in images]
-    bgr_images = [cv2.cvtColor(img, cv2.COLOR_RGB2BGR) for img in resized_images]
-    input_tensors = [np.expand_dims(img, 0) for img in bgr_images]
-    print("input tensor shape: ", input_tensors[0].shape)
-
-
-    # --------------------------- Step 4. Apply preprocessing -------------------------------------------------------------
-    print("Preprocess")
     ppp = PrePostProcessor(model)
-    
+
+    # Assume model expects NCHW, input is standard BGR from cv2.imread()
     ppp.input().tensor() \
         .set_element_type(Type.u8) \
-        .set_layout(Layout('NHWC'))  # noqa: ECE001, N400
+        .set_layout(Layout('NHWC'))  # User provides NHWC, model receives correct layout
 
-    # 2) Adding explicit preprocessing steps:
-    # - apply linear resize from tensor spatial dims to model spatial dims
+    # Preprocessing: Resize and optional color conversion if needed
     ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
 
-    # 3) Here we suppose model has 'NCHW' layout for input
-    #ppp.input().model().set_layout(Layout('NCHW'))
-    ppp.input().model().set_layout(Layout('NHWC'))
+    # Model input layout: Keep as NCHW unless your IR model uses NHWC
+    ppp.input().model().set_layout(Layout('NCHW'))
 
-    # 4) Set output tensor information:
-    # - precision of tensor is supposed to be 'f32'
+    # Output as float32
     ppp.output().tensor().set_element_type(Type.f32)
 
-    # 5) Apply preprocessing modifying the original 'model'
+    # Apply preprocessing
     model = ppp.build()
 
-# --------------------------- Step 5. Loading model to the device -----------------------------------------------------
-    #log.info('Loading the model to the plugin')
-    #compiled_model = core.compile_model(model, device_name)
+# ------------------ Inference Setup ------------------
+
+    # Read raw BGR images
+    images = [cv2.imread(image_path) for image_path in args.images]
+
+    # Stack images along batch dimension (if multiple)
+    input_tensors = [np.expand_dims(img, 0) for img in images]
 
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
