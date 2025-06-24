@@ -392,6 +392,10 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
     # (.xml and .bin files) or (.onnx file)
     model = core.read_model(args.model)
 
+    print(f"Model has {len(model.outputs)} outputs")
+    for idx, output in enumerate(model.outputs):
+        print(f"Output {idx}: name={output.get_any_name()}, shape={output.shape}")
+
     if len(model.inputs) != 1:
         log.error('Sample supports only single input topologies')
         return -1
@@ -400,32 +404,36 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
         log.error('Sample supports only single output topologies')
         return -1
     
+
+    images = [cv2.imread(image_path) for image_path in args.images]  
+
+    # Model shape is NCHW: (1, 3, H, W)
+    _, c, h, w = model.input().shape
+
+    resized_images = [cv2.resize(img, (w, h)) for img in images]
+
+    # No need for color conversion, cv2.imread already returns BGR
+
+    # Convert to NCHW and add batch dimension
+    input_tensors = [np.expand_dims(img.transpose(2, 0, 1), 0) for img in resized_images]
+
+    print("input tensor shape: ", input_tensors[0].shape)  # Should print (1, 3, H, W)
+    
     ppp = PrePostProcessor(model)
 
-    # Assume model expects NCHW, input is standard BGR from cv2.imread()
     ppp.input().tensor() \
         .set_element_type(Type.u8) \
-        .set_layout(Layout('NHWC'))  # User provides NHWC, model receives correct layout
+        .set_layout(Layout('NHWC'))  # You provide NHWC, model expects NCHW
 
-    # Preprocessing: Resize and optional color conversion if needed
     ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
 
-    # Model input layout: Keep as NCHW unless your IR model uses NHWC
-    ppp.input().model().set_layout(Layout('NCHW'))
+    ppp.input().model().set_layout(Layout('NHWC'))  # IR model layout is NCHW
 
-    # Output as float32
     ppp.output().tensor().set_element_type(Type.f32)
 
-    # Apply preprocessing
     model = ppp.build()
 
 # ------------------ Inference Setup ------------------
-
-    # Read raw BGR images
-    images = [cv2.imread(image_path) for image_path in args.images]
-
-    # Stack images along batch dimension (if multiple)
-    input_tensors = [np.expand_dims(img, 0) for img in images]
 
     # --------------------------- Step 5. Loading model to the device -----------------------------------------------------
     log.info('Loading the model to the plugin')
@@ -467,7 +475,7 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
                 result = compiled_model.infer_new_request({0: input_tensor})
             
             if not args.skip_output:
-                print(result)
+                #print(result)
 
                 output = post.handle_output_deeplab_ov(result, img_org, raw_file, overlay_file, index_file, args.colormap, args.label)
                 output_dict = dat.store_output_dictionary_seg(output_dict, args.images[j], lat, output)

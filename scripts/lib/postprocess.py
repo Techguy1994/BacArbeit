@@ -832,7 +832,7 @@ def handle_output_deeplab_pytorch_old(output_data, image, raw_file, overlay_file
 
     return result
 
-def handle_output_deeplab_ov(output_data, image, raw_file, overlay_file, index_file, colormap, label):
+def handle_output_deeplab_ov_old(output_data, image, raw_file, overlay_file, index_file, colormap, label):
     import numpy as np
     import cv2
     import sys
@@ -842,6 +842,7 @@ def handle_output_deeplab_ov(output_data, image, raw_file, overlay_file, index_f
 
     for element in output_data:
         output = output_data[element][0]
+
         
 
     output_classes = np.uint8(np.array(output, dtype="int"))
@@ -868,6 +869,40 @@ def handle_output_deeplab_ov(output_data, image, raw_file, overlay_file, index_f
 
     resized_image = cv2.resize(output_image, (width,height), interpolation = cv2.INTER_AREA)
     index_image = cv2.resize(output_classes, (width, height), interpolation = cv2.INTER_AREA)
+    overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
+
+    cv2.imwrite(overlay_file, overlay_image)
+    cv2.imwrite(raw_file, resized_image)
+    cv2.imwrite(index_file, index_image)
+
+    return results
+
+def handle_output_deeplab_ov(output_data, image, raw_file, overlay_file, index_file, colormap, label):
+    import numpy as np
+    import cv2
+
+    width = image.shape[1]
+    height = image.shape[0]
+
+    for element in output_data:
+        logits = output_data[element][0]  # Shape: (21, H, W)
+        output_classes = np.argmax(logits, axis=0).astype(np.uint8)  # Class indices (H, W), 0 to 20
+
+    unique_labels = np.unique(output_classes)
+    label = np.asarray(label)
+
+    results = label[unique_labels]  # No more IndexError; max index is 20
+
+    output_image = np.zeros((output_classes.shape[0], output_classes.shape[1], 3), dtype=np.uint8)
+
+    for i in range(output_classes.shape[0]):
+        for j in range(output_classes.shape[1]):
+            output_image[i][j][0] = colormap[output_classes[i][j]][2]  # B
+            output_image[i][j][1] = colormap[output_classes[i][j]][1]  # G
+            output_image[i][j][2] = colormap[output_classes[i][j]][0]  # R
+
+    resized_image = cv2.resize(output_image, (width, height), interpolation=cv2.INTER_AREA)
+    index_image = cv2.resize(output_classes, (width, height), interpolation=cv2.INTER_AREA)
     overlay_image = cv2.addWeighted(image, 0.7, resized_image, 0.5, 0)
 
     cv2.imwrite(overlay_file, overlay_image)
