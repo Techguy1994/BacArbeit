@@ -70,7 +70,7 @@ def handle_arguments():
     if number == 136550:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "seg", "-m", "deeplabv3_FP32.xml", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
     if number == 136551:
-        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "seg", "-m", "deeplabv3_mobilenetv3_large_v2.xml", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "seg", "-m", "deeplabv3_mobilenetv3_large.xml", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
 
     #pytorch
     if number == 1338575:
@@ -88,7 +88,7 @@ def handle_arguments():
 
         #openvino
     if number == 4:
-        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "seg", "-m", "deeplabv3_mobilenetv3_large.xml", "-imgp", "/Users/marounel-chayeb/BacArbeit/pascal_voc_2012", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
+        subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "seg", "-m", "deeplabv3_mobilenetv3_large.xml", "-imgp", "/home/e1425396/BacArbeit/pascal_voc_2012", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-num_thr", "3"], shell=False)
 
     #deeplabv3 latency runs with MobileNetV3 large backbone 
 
@@ -100,9 +100,11 @@ def handle_arguments():
     if number == 1330001:
         subprocess.call(["python3", "run_inference.py", "-api", "delegate", "-t", "seg", "-m",  "deeplabv3_mobilenetv3_large_float32.tflite", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus", "-so", "-ri", "1000", "-num_thr", "3"], shell=False)
 
+    #onnx
     if number == 134026:
          subprocess.call(["python3", "run_inference.py", "-api", "onnx", "-t", "seg", "-m", "deeplabv3_mobilenetv3_large.onnx", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus","-so", "-ri", "1000", "-num_thr", "3"], shell=False)
 
+    #openvino
     if number == 136051:
         subprocess.call(["python3", "run_inference.py", "-api", "ov", "-t", "seg", "-m", "deeplabv3_mobilenetv3_large.xml", "-imgp", "/home/pi/sambashare/BacArbeit/pascal_voc_2012/", "-l", "pascal_voc_labels.txt", "-c", "pascal_voc_2012","-opd", "-ni", "1", "-os", "ubuntus","-so", "-ri", "1000", "-num_thr", "3"], shell=False)
 

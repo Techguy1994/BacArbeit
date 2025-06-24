@@ -911,6 +911,39 @@ def handle_output_deeplab_ov(output_data, image, raw_file, overlay_file, index_f
 
     return results
 
+def handle_output_deeplab_ov_new(result, original_w, original_h, image, raw_file, overlay_file, index_file, colormap, label):
+    import numpy as np
+    import sys
+    import cv2
+    from PIL import Image
+    import os
+
+    #print("--")
+    #print(index_file)
+
+    pred_mask = np.argmax(result[0], axis=0)  # (512, 512), class indices
+
+    # Resize prediction mask back to original size
+    pred_resized = Image.fromarray(pred_mask.astype(np.uint8)).resize((original_w, original_h), resample=Image.NEAREST)
+
+    # Save indexed prediction
+    #img_id = os.path.splitext(image_name)[0]
+    #save_path = os.path.join(save_dir, f"{img_id}.png")
+    pred_resized.save(index_file)
+
+    unique_labels = np.unique(pred_mask)
+    label = np.asarray(label)
+
+    results = label[unique_labels]
+
+    return results
+
+    # Resize ground truth mask to prediction size
+    #target_pil = Image.fromarray(np.array(target))
+    #target_resized = target_pil.resize(pred_ov.shape[::-1], resample=Image.NEAREST)
+    #target_np = np.array(target_resized)
+    #target_np[target_np == 255] = 0
+
 
 def softmax(x):
     import numpy as np

@@ -372,6 +372,108 @@ def run_sync_openvino(args, raw_folder, overlay_folder, index_folder):
     from openvino.runtime import InferRequest, AsyncInferQueue
     from openvino.preprocess import PrePostProcessor, ResizeAlgorithm, ColorFormat
     from openvino import Core, Layout, Type
+    import torchvision.transforms as transforms
+
+    import logging as log
+    import sys
+
+    print("Chosen API: Sync Openvino")
+    log.basicConfig(format='[ %(levelname)s ] %(message)s', level=log.INFO, stream=sys.stdout)
+
+    output_dict = dat.create_base_dictionary_seg()
+
+    device_name = "CPU"
+
+    preprocess = transforms.Compose([
+    transforms.Resize((512, 512)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                         std=[0.229, 0.224, 0.225])
+])
+
+    log.info('Creating OpenVINO Runtime Core')
+    core = Core()
+
+    if args.num_threads:
+        print("set thread")
+        config = {"PERFORMANCE_HINT": "LATENCY", "INFERENCE_NUM_THREADS": str(args.num_threads)} #"NUM_STREAMS": "1"} 
+    else: 
+        config = {"PERFORMANCE_HINT": "LATENCY"} 
+    compiled_model = core.compile_model(args.model, device_name, config)
+    #compiled_model = core.compile_model(model, device_name)
+    num_requests = compiled_model.get_property("OPTIMAL_NUMBER_OF_INFER_REQUESTS")
+    print("optimal number of requests", num_requests)
+
+    input_layer = compiled_model.input(0)
+    output_layer = compiled_model.output(0)
+
+    print(args.images)
+    
+
+    #image_list = sorted([f for f in os.listdir(args.images) if f.endswith(".jpg")])
+    print(f"Found {len(args.images)} images for inference.")
+
+    for i in range(args.niter):
+        for j, input_tensor in enumerate(args.images):
+            #print(input_tensor)
+            #image_path = os.path.join(image_folder, input_tensor)
+            image_path = input_tensor
+            img_pil = Image.open(image_path).convert("RGB")
+            original_w, original_h = img_pil.size
+
+
+            # Preprocess for OpenVINO
+            img_tensor = preprocess(img_pil)  # [C, H, W]
+            input_data = img_tensor.unsqueeze(0).numpy()  # [1, C, H, W]
+
+            raw_file = args.images[j].split("/")[-1]
+            #print(raw_file)
+            raw_file = raw_file.split(".")[0] + ".png"
+            raw_file = os.path.join(raw_folder, raw_file)
+
+            overlay_file = os.path.join(overlay_folder, args.images[j].split("/")[-1])
+
+            index_file = args.images[j].split("/")[-1]
+            index_file = index_file.split(".")[0] + ".png"
+            index_file = os.path.join(index_folder, index_file)
+            
+            img_org = cv2.imread(args.images[j])
+            #print(args.images[j])
+            #image_height, image_width = img_org.shape[1], img_org.shape[0]
+            
+            if args.profiler == "perfcounter":
+                start_time = perf_counter()
+                #result = compiled_model.infer_new_request({0: input_tensor})
+                result = compiled_model([input_data])[output_layer]
+                end_time = perf_counter()
+                lat = end_time - start_time
+                print("time in ms: ", lat*1000)
+            else:
+                lat = 0
+                result = compiled_model([input_data])[output_layer]
+            
+            if not args.skip_output:
+                #print(result)
+
+                output = post.handle_output_deeplab_ov_new(result, original_w, original_h, img_org, raw_file, overlay_file, index_file, args.colormap, args.label)
+                output_dict = dat.store_output_dictionary_seg(output_dict, args.images[j], lat, output)
+            else:
+                output_dict = dat.store_output_dictionary_seg_only_lat(output_dict, args.images[j], lat)
+
+            print(f"[{j+1}/{len(args.images)}]")
+
+        time.sleep(args.sleep) 
+
+
+    df = dat.create_pandas_dataframe(output_dict)
+    print("pandas output: ", df)    
+
+    return df
+
+def run_sync_openvino_old(args, raw_folder, overlay_folder, index_folder):
+    from openvino.runtime import InferRequest, AsyncInferQueue
+    from openvino.preprocess import PrePostProcessor, ResizeAlgorithm, ColorFormat
+    from openvino import Core, Layout, Type
 
     import logging as log
     import sys
