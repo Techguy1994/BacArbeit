@@ -109,6 +109,163 @@ def handle_output_openvino_moiblenet_class(output_data, label, n_big):
         
     return results
 
+def handle_output_tf_yolo_det_pytorch_style(output_details, interpreter, original_image, conf_thresh, file_name, label):
+    import numpy as np
+    import cv2
+
+    print("pytorch style")
+
+    results = []
+    all_det = []
+    nms_det = []
+
+    orig_H, orig_W = original_image.shape[:2]
+    #input_H, input_W = input_shape
+
+    # Get model output
+    output_data = interpreter.get_tensor(output_details[0]['index'])[0]  # [N, 85]
+
+    boxes = output_data[:, :4]  # Center x, Center y, w, h (likely normalized 0-1)
+    objectness = output_data[:, 4]
+    class_probs = output_data[:, 5:]
+
+    class_ids = np.argmax(class_probs, axis=-1)
+    class_confs = np.max(class_probs, axis=-1)
+    scores = objectness * class_confs
+
+    for i in range(len(scores)):
+        if scores[i] > conf_thresh:
+            # Convert center x,y,w,h to xmin, ymin, xmax, ymax
+            cx, cy, w, h = boxes[i]
+
+            # If model outputs normalized coordinates, scale to original image size
+            cx *= orig_W
+            cy *= orig_H
+            w *= orig_W
+            h *= orig_H
+
+            xmin = cx - w / 2
+            ymin = cy - h / 2
+            xmax = cx + w / 2
+            ymax = cy + h / 2
+
+            all_det.append((class_ids[i], [xmin, ymin, xmax, ymax], scores[i]))
+
+    # Manual NMS matching PyTorch style
+    def iou(box1, box2):
+        xi1 = max(box1[0], box2[0])
+        yi1 = max(box1[1], box2[1])
+        xi2 = min(box1[2], box2[2])
+        yi2 = min(box1[3], box2[3])
+        inter_area = max(0, xi2 - xi1) * max(0, yi2 - yi1)
+        
+        box1_area = max(0, box1[2] - box1[0]) * max(0, box1[3] - box1[1])
+        box2_area = max(0, box2[2] - box2[0]) * max(0, box2[3] - box2[1])
+        
+        union_area = box1_area + box2_area - inter_area
+        return inter_area / union_area if union_area > 0 else 0
+
+    while all_det:
+        best_idx = int(np.argmax([det[2] for det in all_det]))
+        best_det = all_det.pop(best_idx)
+        nms_det.append(best_det)
+        
+        all_det = [det for det in all_det if iou(det[1], best_det[1]) <= 0.45]
+
+    # Final results: identical format to PyTorch
+    for det in nms_det:
+        x1, y1, x2, y2 = det[1]
+        class_id = det[0]
+        score = det[2]
+
+        x_left = round(x1, 2)
+        y_left = round(y1, 2)
+        w = round(x2 - x1, 2)
+        h = round(y2 - y1, 2)
+
+        cv2.rectangle(original_image, (int(x1), int(y1)), (int(x2), int(y2)), (10, 255, 0), 2)
+
+        results.append({
+            "label": label[class_id],
+            "index": class_id,
+            "value": score,
+            "boxes": [x_left, y_left, w, h]
+        })
+
+    if results:
+        cv2.imwrite(file_name, original_image)
+
+    return results
+
+def handle_output_tf_yolo_det_new(output_details, interpreter, original_image, conf_thresh, file_name, label):
+    import numpy as np
+    import cv2
+
+    print("new")
+
+    results = []
+
+    # Get model output
+    output_data = interpreter.get_tensor(output_details[0]['index'])[0]  # [N, 85]
+
+    boxes = output_data[:, :4]  # [x, y, w, h]
+    objectness = output_data[:, 4]
+    class_probs = output_data[:, 5:]
+
+    # Final confidence = objectness × class confidence
+    class_ids = np.argmax(class_probs, axis=-1)
+    class_confs = np.max(class_probs, axis=-1)
+    scores = objectness * class_confs
+
+    orig_H, orig_W = original_image.shape[:2]
+
+    # Convert boxes from [x, y, w, h] to [x1, y1, x2, y2]
+    xyxy = np.zeros_like(boxes)
+    xyxy[:, 0] = boxes[:, 0] - boxes[:, 2] / 2  # x1
+    xyxy[:, 1] = boxes[:, 1] - boxes[:, 3] / 2  # y1
+    xyxy[:, 2] = boxes[:, 0] + boxes[:, 2] / 2  # x2
+    xyxy[:, 3] = boxes[:, 1] + boxes[:, 3] / 2  # y2
+
+    all_det = []
+    for i in range(len(scores)):
+        if scores[i] > conf_thresh:
+            xmin = max(0, xyxy[i, 0] * orig_W)
+            ymin = max(0, xyxy[i, 1] * orig_H)
+            xmax = min(orig_W, xyxy[i, 2] * orig_W)
+            ymax = min(orig_H, xyxy[i, 3] * orig_H)
+
+            all_det.append((class_ids[i], [xmin, ymin, xmax, ymax], scores[i]))
+
+    # NMS using OpenCV
+    boxes_list = [det[1] for det in all_det]
+    scores_list = [det[2] for det in all_det]
+
+    nms_det = []
+    if boxes_list:
+        indices = cv2.dnn.NMSBoxes(boxes_list, scores_list, conf_thresh, 0.45)
+
+        for idx in indices.flatten():
+            class_id, box, score = all_det[idx]
+            x_left = round(box[0], 2)
+            y_left = round(box[1], 2)
+            w = round(box[2] - box[0], 2)
+            h = round(box[3] - box[1], 2)
+
+            # Draw box on image
+            cv2.rectangle(original_image, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])), (10, 255, 0), 2)
+
+            results.append({
+                "label": label[class_id],
+                "index": class_id,
+                "value": score,
+                "boxes": [x_left, y_left, w, h]
+            })
+
+    # Save output image
+    cv2.imwrite(file_name, original_image)
+
+    return results
+
 
 def handle_output_tf_yolo_det_old(output_details, intepreter, original_image, thres, file_name, label):
     import numpy as np
@@ -207,6 +364,142 @@ def handle_output_tf_yolo_det(output_details, intepreter, original_image, thres,
     cv2.imwrite(file_name, output_img)
 
     return results
+
+import numpy as np
+import cv2
+
+def handle_output_pytorch_yolo_det_new(output, img_org, conf_thresh, img_result_file, labels):
+    import numpy as np
+    import cv2
+
+    results = []
+    all_det = []
+
+    # Extract detections
+    boxes = output.boxes.xyxy.cpu().numpy()  # [N, 4] xmin, ymin, xmax, ymax
+    scores = output.boxes.conf.cpu().numpy()  # [N]
+    class_ids = output.boxes.cls.cpu().numpy().astype(int)  # [N]
+
+    for i in range(len(scores)):
+        if conf_thresh <= scores[i] <= 1.0:
+            xmin, ymin, xmax, ymax = boxes[i]
+            all_det.append((class_ids[i], [xmin, ymin, xmax, ymax], scores[i]))
+
+    # NMS PyTorch output usually already applies NMS, but you can double-check with your NMS logic
+    nms_det = []
+
+    while all_det:
+        best_idx = int(np.argmax([det[2] for det in all_det]))
+        best_det = all_det.pop(best_idx)
+        nms_det.append(best_det)
+        
+        all_det = [det for det in all_det if iou(det[1], best_det[1]) <= 0.45]
+
+    for det in nms_det:
+        x1, y1, x2, y2 = det[1]
+        w = x2 - x1
+        h = y2 - y1
+
+        cv2.rectangle(img_org, (int(x1), int(y1)), (int(x2), int(y2)), (10, 255, 0), 2)
+
+        results.append({
+            "label": labels[det[0]],
+            "index": det[0],
+            "value": det[2],
+            "boxes": [round(x1, 2), round(y1, 2), round(w, 2), round(h, 2)]
+        })
+
+    if results:
+        cv2.imwrite(img_result_file, img_org)
+
+    return results
+
+
+def postprocess_yolov5(output_data, orig_img, labels, conf_thresh=0.25, iou_thresh=0.45, normalized=True, input_format="tflite"):
+    """
+    General postprocessing for TFLite and PyTorch/Ultralytics YOLOv5.
+
+    Args:
+        output_data: 
+            - [N, 85] for TFLite: [cx, cy, w, h, obj_conf, class_probs...]
+            - [N, 6] for PyTorch: [xmin, ymin, xmax, ymax, conf, class_id]
+        orig_img: Original image (for scaling)
+        labels: List of class labels
+        conf_thresh: Confidence threshold
+        iou_thresh: IoU threshold for NMS
+        normalized: True if outputs are normalized [0-1] (TFLite only)
+        input_format: "tflite" or "pytorch"
+
+    Returns:
+        results: List of dicts with label, class_id, confidence, boxes [x, y, w, h]
+    """
+
+    orig_H, orig_W = orig_img.shape[:2]
+    boxes, scores, class_ids = [], [], []
+
+    if input_format == "tflite":
+        for det in output_data:
+            cx, cy, w, h = det[:4]
+            obj_conf = det[4]
+            class_probs = det[5:]
+
+            class_id = np.argmax(class_probs)
+            class_conf = class_probs[class_id]
+            conf = obj_conf * class_conf
+
+            if conf >= conf_thresh:
+                if normalized:
+                    cx *= orig_W
+                    cy *= orig_H
+                    w *= orig_W
+                    h *= orig_H
+
+                xmin = cx - w / 2
+                ymin = cy - h / 2
+                xmax = cx + w / 2
+                ymax = cy + h / 2
+
+                boxes.append([xmin, ymin, xmax, ymax])
+                scores.append(conf)
+                class_ids.append(class_id)
+
+    elif input_format == "pytorch":
+        for det in output_data:
+            xmin, ymin, xmax, ymax, conf, class_id = det
+
+            if conf >= conf_thresh:
+                boxes.append([xmin, ymin, xmax, ymax])
+                scores.append(conf)
+                class_ids.append(int(class_id))
+
+    else:
+        raise ValueError(f"Unsupported input_format: {input_format}")
+
+    results = []
+
+    if boxes:
+        indices = cv2.dnn.NMSBoxes(boxes, scores, conf_thresh, iou_thresh)
+
+        for idx in indices.flatten():
+            box = boxes[idx]
+            score = scores[idx]
+            class_id = class_ids[idx]
+
+            x_left = round(box[0], 2)
+            y_left = round(box[1], 2)
+            width = round(box[2] - box[0], 2)
+            height = round(box[3] - box[1], 2)
+
+            results.append({
+                "label": labels[class_id],
+                "index": class_id,
+                "value": score,
+                "boxes": [x_left, y_left, width, height]
+            })
+
+    return results
+
+
 
 def handle_output_tf_yolo_det_alt(output_details, intepreter, original_image, thres, file_name, label):
     import numpy as np

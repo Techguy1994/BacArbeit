@@ -98,7 +98,7 @@ def run_tf(args, output_image_folder):
                 lat = 0
 
             if not args.skip_output:
-                output = post.handle_output_tf_yolo_det(output_details, interpreter, unprocessed_image, args.thres, image_result_file, args.label)
+                output = post.handle_output_tf_yolo_det_new(output_details, interpreter, unprocessed_image, args.thres, image_result_file, args.label)
                 output_dict = dat.store_output_dictionary_det(output_dict, image, lat, output)
             else: 
                 output_dict = dat.store_output_dictionary_det_only_lat(output_dict, image, lat)
@@ -277,6 +277,7 @@ def run_pytorch(args, output_image_folder):
         print("set thread")
         torch.set_num_threads(args.num_threads)
 
+
     if args.model == "yolov5l":
         from ultralytics import YOLO
         model = torch.hub.load("ultralytics/yolov5", "yolov5l", pretrained=True)
@@ -330,7 +331,7 @@ def run_pytorch(args, output_image_folder):
             else:
                 lat = 0
                 with torch.no_grad():
-                    output = model(input_image)
+                    output = model(input_image)[0]
 
             if not args.skip_output:
                 output = post.handle_output_pytorch_yolo_det(output, img_org, args.thres, image_result_file, args.label,(1, 1))

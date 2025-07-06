@@ -71,14 +71,16 @@ def preprocess_tflite_yolov5(image_path, height, width, data_type):
     import cv2
 
     image_data = cv2.imread(image_path)
-    orig_img = image_data
+    orig_img = image_data.copy()
     image_data = cv2.resize(image_data, (height, width))
-    #resized_img = image_data
-    if data_type is np.float32:
-        print("float model")
-        image_data = np.float32(image_data / 255)
-    image_data = np.expand_dims(image_data, axis=0)
 
+    if data_type == np.float32:
+        print("Applying normalization for float model")
+        image_data = np.float32(image_data) / 255.0
+    else:
+        print("Assuming raw 0-255 input for int8 model")
+
+    image_data = np.expand_dims(image_data, axis=0)
 
     return image_data, orig_img
 
